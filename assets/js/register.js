@@ -19,7 +19,12 @@
   if (!root) return;
 
   var STANDARD = 320;
-  var DEMO_RATES = { PLL25: { label: "Paterson Little League", price: 180 } };
+  /* An invented town, on purpose. Naming a real league against a discounted
+     price is the harm the gated-rate design exists to prevent, and a fake
+     price does not undo it: the organisation is findable and the implication
+     is that it pays less. This must not ship at the domain cutover either,
+     the lookup moves server side. */
+  var DEMO_RATES = { DEMO25: { label: "Demo Town Little League", price: 180 } };
 
   var state = { step: 1, rate: null, method: "online", player: "Mia" };
 

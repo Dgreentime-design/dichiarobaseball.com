@@ -1,0 +1,6 @@
+User-agent: *
+Allow: /
+Disallow: /register
+Disallow: /register.html
+
+Sitemap: https://dichiarobaseball.com/sitemap.xml

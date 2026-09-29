@@ -30,8 +30,8 @@
     },
     "codes": {
       "shape": {
-        "code": "PLL25",
-        "label": "Paterson Little League",
+        "code": "DEMO25",
+        "label": "Demo Town Little League",
         "type": "fixed_price | percent_off",
         "value": "180 for fixed_price, 10 for percent_off",
         "applies_to": "option id, or '*' for every option on the program",

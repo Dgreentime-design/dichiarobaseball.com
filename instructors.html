@@ -323,8 +323,13 @@
 
       <article class="person person--pending" id="gianna-sarlo" data-person data-tags="">
         <div class="person__media">
-          <div class="media media--4x3">
-            <img src="assets/img/dbsa-19-portrait-gianna-sarlo.jpg" alt="Gianna Sarlo" width="1600" height="2000" loading="lazy">
+          <!-- No photograph has been supplied for Gianna, so the card does not
+               ask for one. media--empty is set here rather than left to the
+               error handler in site.js: the handler produces the same labelled
+               placeholder, but only after a request has 404ed, which puts a
+               real error in the server logs for a file that is missing by
+               design. Add the <img> back when the academy supplies the photo. -->
+          <div class="media media--4x3 media--empty">
             <span class="media__label">dbsa-19-portrait-gianna-sarlo · Head and shoulders, net behind</span>
           </div>
         </div>

@@ -45,10 +45,16 @@ Every page is built. Nothing 404s.
 ### Two things to try
 
 **The town rate.** On step 3 of registration, open "Have a town or league
-code?" and enter `PLL25`. The Paterson Little League rate applies and the total
-drops to $180. Any other code returns one generic failure message, the same for
-every cause, on purpose. Then switch the payment method between online, at the
-facility and by check and finish, to see the three confirmations.
+code?" and enter `DEMO25`. The Demo Town Little League rate applies and the
+total drops to $180. Any other code returns one generic failure message, the
+same for every cause, on purpose. Then switch the payment method between
+online, at the facility and by check and finish, to see the three
+confirmations.
+
+The town is invented. No real league name may sit against a discounted price
+anywhere in this codebase, in a demo or otherwise: the organisation is
+findable and the implication that it pays less is exactly the harm the gated
+rates are designed to avoid.
 
 **An instructor bio.** On the Instructors page, "Read full bio" expands the card
 in place to the full row width and pushes the rest down. No separate page.

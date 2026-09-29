@@ -296,7 +296,7 @@
             <div class="field">
               <label for="rate-code">Town or league code</label>
               <div class="code-box__row">
-                <input class="input" id="rate-code" type="text" autocomplete="off" spellcheck="false" placeholder="e.g. PLL25">
+                <input class="input" id="rate-code" type="text" autocomplete="off" spellcheck="false" placeholder="e.g. DEMO25">
                 <button class="btn btn--secondary" type="button" data-apply-code>Apply</button>
               </div>
               <p class="field__hint" data-code-hint>Your town or league will have sent this to you.</p>
@@ -446,9 +446,11 @@
       <p class="meta">Prototype, not the built flow</p>
       <p>
         These are the real screens, walkable end to end, with no server behind them.
-        Nothing is stored, nothing is charged, and no email is sent. Two codes work here
-        so the town rate can be demonstrated: <strong>PLL25</strong> applies the Paterson
-        Little League rate, and anything else returns the one generic failure message.
+        Nothing is stored, nothing is charged, and no email is sent. One code works here
+        so the town rate can be demonstrated: <strong>DEMO25</strong> applies the Demo
+        Town Little League rate, and anything else returns the one generic failure
+        message. The town is invented, because naming a real league against a lower
+        price is the thing this design exists to prevent.
       </p>
       <p>
         In the built site that lookup is server side and rate limited, the rate never
