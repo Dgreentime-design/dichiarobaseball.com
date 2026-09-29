@@ -1,0 +1,238 @@
+/* ==========================================================================
+   Homepage. Band by band, in the order they appear.
+   ========================================================================== */
+
+/* --- Hero ---------------------------------------------------------------
+   Desktop: one full bleed image behind the copy.
+   Mobile:  the same image as a block above the copy. Same content, new
+            arrangement, which is the rule for every breakpoint.          */
+
+.hero { position: relative; background: var(--c-ink); color: var(--c-bone); overflow: hidden; }
+
+.hero__media { position: relative; }
+.hero__media::after {
+  content: ""; position: absolute; inset: 0;
+  background-image: var(--net); pointer-events: none;
+}
+
+.hero__inner {
+  position: relative; z-index: 2;
+  max-width: var(--container); margin-inline: auto;
+  padding: 0 var(--gutter);
+}
+.hero__copy { max-width: 820px; display: grid; gap: var(--s-6); padding: var(--band-y) 0; }
+.hero__copy .eyebrow { color: var(--c-red-bright); }
+.hero h1 { color: var(--c-bone); }
+.hero__lede { color: var(--c-dim); max-width: 62ch; }
+.hero__actions { display: flex; flex-wrap: wrap; gap: 14px; margin-top: var(--s-3); }
+.hero__scroll {
+  position: absolute; right: var(--gutter); bottom: 28px; z-index: 2;
+  font-family: var(--f-mono); font-size: var(--t-eyebrow);
+  letter-spacing: var(--ls-eyebrow); text-transform: uppercase;
+  color: var(--c-dim);
+}
+
+@media (min-width: 900px) {
+  .hero { min-height: 660px; display: grid; }
+  .hero__media { position: absolute; inset: 0; border-radius: 0; }
+  .hero__media::before {
+    content: ""; position: absolute; inset: 0; z-index: 1;
+    background: linear-gradient(90deg, rgba(23,18,15,.94) 0%, rgba(23,18,15,.82) 48%, rgba(23,18,15,.42) 100%);
+  }
+  .hero__media .media__label { z-index: 0; }
+  .hero__inner { align-self: center; width: 100%; }
+  .hero__copy { padding: 96px 0; }
+}
+@media (max-width: 899px) {
+  .hero__media { margin: 0 var(--gutter); }
+  .hero__copy { padding: var(--s-7) 0 var(--band-y); }
+  .hero__actions { display: grid; gap: 12px; }
+  .hero__actions .btn { width: 100%; }
+  .hero__scroll { display: none; }
+}
+
+/* --- Section header ------------------------------------------------------ */
+
+.section-head {
+  display: flex; align-items: flex-end; justify-content: space-between;
+  gap: var(--s-8); margin-bottom: var(--s-9);
+}
+.section-head__title { display: grid; gap: var(--s-5); }
+@media (max-width: 767px) {
+  .section-head { flex-direction: column; align-items: flex-start; gap: var(--s-5); margin-bottom: var(--s-7); }
+}
+
+/* --- Programs ----------------------------------------------------------- */
+
+.program-grid { display: grid; gap: var(--s-6); grid-template-columns: repeat(3, 1fr); }
+@media (max-width: 1179px) { .program-grid { grid-template-columns: repeat(2, 1fr); } }
+@media (max-width:  759px) { .program-grid { grid-template-columns: 1fr; } }
+
+.card {
+  display: flex; flex-direction: column;
+  background: var(--c-white);
+  border: 1px solid var(--c-line);
+  border-radius: var(--r-2);
+  overflow: hidden;
+}
+.card__media { position: relative; }
+.card__media .media { border-radius: 0; }
+.card__media .chip { position: absolute; left: 16px; top: 16px; }
+.card__body { display: flex; flex-direction: column; gap: var(--s-5); padding: var(--s-7) var(--s-7) var(--s-8); flex: 1; }
+.card__meta { color: var(--c-red); }
+.card__title { margin-top: -4px; }
+.card__facts { display: grid; }
+.card__fact {
+  display: grid; grid-template-columns: 72px 1fr; gap: 14px; align-items: baseline;
+  padding: 12px 0; border-top: 1px solid var(--c-line);
+}
+.card__fact:last-child { border-bottom: 1px solid var(--c-line); }
+.card__fact dt { font-family: var(--f-mono); font-size: var(--t-eyebrow); letter-spacing: var(--ls-meta); text-transform: uppercase; color: var(--c-muted); }
+.card__fact dd { margin: 0; font-size: var(--t-body-m); }
+.card__detail { color: var(--c-muted); }
+.card__action { margin-top: auto; padding-top: var(--s-2); }
+
+/* --- HitTrax ------------------------------------------------------------ */
+
+.hittrax { position: relative; background: var(--c-ink); color: var(--c-bone); overflow: hidden; }
+.hittrax__media { position: relative; }
+.hittrax__media::after { content: ""; position: absolute; inset: 0; background-image: var(--net); }
+.hittrax__inner { position: relative; z-index: 2; max-width: var(--container); margin-inline: auto; padding: 0 var(--gutter); }
+.hittrax__copy { max-width: 700px; display: grid; gap: var(--s-5); padding: var(--band-y) 0; }
+.hittrax__logo { height: 17px; width: auto; }
+.hittrax__lede { color: var(--c-dim); }
+.hittrax__metrics {
+  display: grid; grid-template-columns: repeat(3, 1fr);
+  gap: var(--s-5); margin-top: var(--s-4);
+}
+.hittrax__metric { display: grid; gap: 7px; }
+.hittrax__metric dt { font-family: var(--f-mono); font-size: var(--t-data-l); }
+.hittrax__metric dd {
+  margin: 0; font-family: var(--f-mono); font-size: var(--t-eyebrow);
+  letter-spacing: var(--ls-meta); text-transform: uppercase; color: var(--c-dim);
+}
+.hittrax__action { margin-top: var(--s-4); }
+.hittrax__action .btn { width: fit-content; }
+
+@media (min-width: 900px) {
+  .hittrax { min-height: 609px; display: grid; }
+  .hittrax__media { position: absolute; inset: 0; }
+  .hittrax__media::before {
+    content: ""; position: absolute; inset: 0; z-index: 1;
+    background: linear-gradient(90deg, rgba(23,18,15,.95) 0%, rgba(23,18,15,.86) 52%, rgba(23,18,15,.38) 100%);
+  }
+  .hittrax__inner { align-self: center; width: 100%; }
+}
+@media (max-width: 899px) {
+  .hittrax__media { margin: var(--band-y) var(--gutter) 0; }
+  .hittrax__copy { padding: var(--s-6) 0 var(--band-y); }
+  .hittrax__metrics { grid-template-columns: 1fr; gap: 0; }
+  .hittrax__metric {
+    grid-template-columns: 1fr auto; grid-auto-flow: column; align-items: baseline;
+    padding: 16px 0; border-bottom: 1px solid var(--c-line-dark); gap: 20px;
+  }
+  .hittrax__metric:first-child { border-top: 1px solid var(--c-line-dark); }
+  .hittrax__action .btn { width: 100%; }
+}
+
+/* --- Lessons and rentals ------------------------------------------------ */
+
+.split-grid { display: grid; gap: var(--s-6); grid-template-columns: repeat(2, 1fr); }
+@media (max-width: 1023px) { .split-grid { grid-template-columns: 1fr; } }
+
+.split {
+  display: grid; grid-template-columns: 220px 1fr;
+  background: var(--c-white); border: 1px solid var(--c-line);
+  border-radius: var(--r-2); overflow: hidden;
+}
+.split .media { border-radius: 0; height: 100%; }
+@media (min-width: 640px) { .split { min-height: 340px; } }
+.split__body { display: flex; flex-direction: column; gap: var(--s-4); padding: var(--s-8); }
+.split__eyebrow { color: var(--c-red); }
+.split__text { color: var(--c-muted); }
+.split__action { margin-top: var(--s-3); }
+.split__action .btn { width: fit-content; }
+@media (max-width: 639px) {
+  .split { grid-template-columns: 1fr; }
+  .split .media { aspect-ratio: 16 / 9; }
+  .split__body { padding: var(--s-6) var(--s-6) var(--s-7); }
+  .split__action .btn { width: 100%; }
+}
+
+/* --- Why DiChiaro ------------------------------------------------------- */
+
+.why__head { display: grid; gap: var(--s-5); margin-bottom: var(--s-10); }
+.why__facts { display: grid; grid-template-columns: repeat(4, 1fr); gap: var(--s-8) var(--s-6); }
+.why__fact { display: grid; gap: var(--s-3); align-content: start; }
+.why__fact h3 { font-weight: 700; font-size: var(--t-heading-s); }
+.why__fact p { color: var(--c-muted); font-size: var(--t-body-s); }
+.why__media { margin-top: var(--s-11); }
+@media (max-width: 1023px) { .why__facts { grid-template-columns: repeat(2, 1fr); } }
+@media (max-width:  639px) {
+  .why__facts { grid-template-columns: 1fr; gap: 0; }
+  .why__fact { padding: var(--s-5) 0; border-bottom: 1px solid var(--c-line); }
+  .why__fact:first-child { border-top: 1px solid var(--c-line); }
+  .why__media { margin-top: var(--s-8); order: -1; margin-bottom: var(--s-8); }
+  .why__inner { display: flex; flex-direction: column; }
+}
+
+/* --- Lou ---------------------------------------------------------------- */
+
+.lou__inner {
+  display: grid; grid-template-columns: 440px 1fr; gap: var(--s-7) var(--s-12);
+  align-items: start;
+}
+.lou__head   { grid-column: 2; grid-row: 1; display: grid; gap: var(--s-5); }
+.lou__media  { grid-column: 1; grid-row: 1 / span 2; position: sticky; top: var(--s-8); }
+.lou__copy   { grid-column: 2; grid-row: 2; }
+.lou__copy { display: grid; gap: var(--s-5); }
+.lou__quote { font-size: var(--t-body-l); line-height: 1.55; }
+.lou__attr { font-family: var(--f-mono); font-size: var(--t-data-m); color: var(--c-muted); }
+.lou__credits { margin-top: var(--s-5); display: grid; }
+.lou__credit {
+  display: grid; grid-template-columns: 110px 1fr; gap: 22px; align-items: baseline;
+  padding: 14px 0; border-top: 1px solid var(--c-line);
+}
+.lou__credit:last-child { border-bottom: 1px solid var(--c-line); }
+.lou__credit dt { font-family: var(--f-mono); font-size: var(--t-data-m); color: var(--c-red); }
+.lou__credit dd { margin: 0; font-size: var(--t-body-s); color: var(--c-muted); }
+
+@media (max-width: 1023px) {
+  .lou__inner { grid-template-columns: 1fr; gap: var(--s-7); }
+  /* Reset the desktop placement so the DOM order stands: head, image, copy. */
+  .lou__head, .lou__media, .lou__copy { grid-column: auto; grid-row: auto; }
+  .lou__media { position: static; }
+  .lou__credit { grid-template-columns: 1fr; gap: 6px; }
+}
+
+/* --- Testimonials ------------------------------------------------------- */
+
+.quotes { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--s-6); }
+@media (max-width: 1023px) { .quotes { grid-template-columns: 1fr; } }
+
+.quote {
+  display: grid; gap: var(--s-1); align-content: start;
+  background: var(--c-panel); border: 1px solid var(--c-line-dark);
+  border-radius: var(--r-2); padding: var(--s-7);
+}
+.quote__mark { font-family: var(--f-sans); font-weight: 900; font-size: 40px; line-height: 1; color: var(--c-red-bright); }
+.quote__text { font-size: var(--t-body-l); line-height: 1.5; color: var(--c-bone); }
+.quote__who { margin-top: var(--s-6); font-weight: 700; font-size: var(--t-body-m); }
+.quote__where { font-family: var(--f-mono); font-size: var(--t-data-m); color: var(--c-dim); }
+
+/* --- Register band ------------------------------------------------------ */
+
+.register__inner {
+  display: flex; align-items: center; justify-content: space-between;
+  gap: var(--s-9); max-width: var(--container); margin-inline: auto;
+}
+.register__copy { display: grid; gap: 14px; max-width: 1010px; }
+.register__copy p { color: rgba(255,255,255,.88); max-width: 70ch; }
+@media (max-width: 899px) {
+  .register__inner { flex-direction: column; align-items: flex-start; gap: var(--s-5); }
+  .register__inner .btn { width: 100%; }
+}
+
+/* Lou band: link out to the journey page. */
+.lou__more { margin-top: var(--s-6); }
+.lou__more .btn { width: auto; }

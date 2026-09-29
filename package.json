@@ -1,0 +1,15 @@
+{
+  "name": "dbsa-website",
+  "version": "1.0.0",
+  "private": true,
+  "description": "DiChiaro Baseball & Softball Academy. Static front end, v1.",
+  "type": "module",
+  "scripts": {
+    "build": "node build.mjs",
+    "start": "node build.mjs && npx --yes serve . -l 8080",
+    "verify": "node verify.mjs http://localhost:8080"
+  },
+  "devDependencies": {
+    "playwright": "^1.47.0"
+  }
+}

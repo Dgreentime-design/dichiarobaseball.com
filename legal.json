@@ -1,0 +1,385 @@
+[
+  {
+    "file": "waiver-and-policies.html",
+    "eyebrow": "Waiver and policies",
+    "title": "Waiver &amp; policies",
+    "lede": "Every player needs a signed waiver before their first session. It covers the whole season, not one program, so you sign it once and we carry it forward.",
+    "updated": "Last updated 14 September 2026",
+    "description": "The participation waiver, refund terms and academy policies for DiChiaro Baseball &amp; Softball Academy.",
+    "sections": [
+      {
+        "num": "01",
+        "title": "Who signs, and when",
+        "blocks": [
+          {
+            "t": "p",
+            "text": "A parent or legal guardian signs for every player under eighteen. Players over eighteen sign for themselves."
+          },
+          {
+            "t": "p",
+            "text": "The waiver is part of the online sign-up. You complete it at checkout, before payment, and nothing needs printing or posting."
+          },
+          {
+            "t": "p",
+            "text": "One signature covers the player for the season. If they join a second camp two months later, the step is skipped and the confirmation shows the date you signed."
+          }
+        ]
+      },
+      {
+        "num": "02",
+        "title": "What the waiver covers",
+        "blocks": [
+          {
+            "t": "p",
+            "text": "In plain terms, it says you understand that baseball and softball carry a risk of injury, that you accept that risk on the player&rsquo;s behalf, and that you allow us to arrange medical care if something happens while we cannot reach you."
+          },
+          {
+            "t": "ul",
+            "items": [
+              "Acknowledgement of the risks of athletic participation",
+              "Consent to emergency medical treatment",
+              "Release of liability for the academy, its staff and the premises",
+              "Confirmation that the player is medically fit to take part"
+            ]
+          },
+          {
+            "t": "note",
+            "text": "The wording above is a plain-language summary of the consent already printed on the academy&rsquo;s paper flyers. The binding text on this page must be drafted or approved by Michael&rsquo;s attorney before launch. Do not publish this section as written."
+          }
+        ]
+      },
+      {
+        "num": "03",
+        "title": "Photographs and video",
+        "blocks": [
+          {
+            "t": "p",
+            "text": "We sometimes photograph sessions for the website and Instagram. This is a separate, optional tick at checkout and it is never bundled into the waiver."
+          },
+          {
+            "t": "p",
+            "text": "You can say no and it changes nothing about the booking. If you say yes and change your mind later, email us and we will take the images down."
+          }
+        ]
+      },
+      {
+        "num": "04",
+        "title": "Refunds and cancellations",
+        "blocks": [
+          {
+            "t": "p",
+            "text": "Camps and clinics can be cancelled up to a set number of days before the first session for a full refund. After that we credit the fee against another program rather than refund it."
+          },
+          {
+            "t": "p",
+            "text": "Lesson packages are not refundable once purchased. This is stated at the point of sale, on the package itself, and on the receipt."
+          },
+          {
+            "t": "note",
+            "text": "The refund window is currently written as fourteen days before the first session. That number is a placeholder and needs confirming with Michael before this page goes live. It also appears on the program detail page, and the two must agree."
+          }
+        ]
+      },
+      {
+        "num": "05",
+        "title": "Missed sessions and weather",
+        "blocks": [
+          {
+            "t": "p",
+            "text": "The facility is indoors, so programs run whatever the weather. We only cancel for something that closes the building."
+          },
+          {
+            "t": "p",
+            "text": "If we cancel a session, it is rescheduled or credited. If a player misses a session for their own reasons, we cannot credit it, but we will usually find them a slot in another group that week if there is room."
+          }
+        ]
+      },
+      {
+        "num": "06",
+        "title": "Behaviour in the facility",
+        "blocks": [
+          {
+            "t": "p",
+            "text": "Players follow the instructions of the coaching staff at all times. Bats stay in the cages, and nobody steps into a live cage without being waved in."
+          },
+          {
+            "t": "p",
+            "text": "Parents are welcome to watch from the designated area. We ask that coaching is left to the coaches during a session, because a player hearing two sets of instructions learns neither."
+          }
+        ]
+      },
+      {
+        "num": "07",
+        "title": "Contacting us about this",
+        "blocks": [
+          {
+            "t": "p",
+            "text": "Questions about the waiver, a refund or a session go to <a href=\"mailto:info@dichiarobaseball.com\">info@dichiarobaseball.com</a> or <a href=\"tel:+12017736858\">(201) 773-6858</a>. We are at 18-01 Pollitt Drive, Fair Lawn, NJ 07410."
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "file": "privacy-policy.html",
+    "eyebrow": "Privacy",
+    "title": "Privacy policy",
+    "lede": "We collect what we need to run a booking and nothing else. We do not sell data, and we never see your card number.",
+    "updated": "Last updated 14 September 2026",
+    "description": "What DiChiaro Baseball &amp; Softball Academy collects, why, how long it is kept, and what a parent can ask to have removed.",
+    "sections": [
+      {
+        "num": "01",
+        "title": "What we collect",
+        "blocks": [
+          {
+            "t": "p",
+            "text": "When you register a player we ask for the player&rsquo;s name, date of birth and grade, and a parent or guardian&rsquo;s name, email address and mobile number. You can add a second contact and a note for the coach."
+          },
+          {
+            "t": "ul",
+            "items": [
+              "Player name, date of birth and grade",
+              "Parent or guardian name, email and mobile",
+              "An optional second contact",
+              "Waiver and photo-release choices",
+              "Which programs you booked and when"
+            ]
+          }
+        ]
+      },
+      {
+        "num": "02",
+        "title": "What we do not collect",
+        "blocks": [
+          {
+            "t": "p",
+            "text": "We do not ask for your postal address, because the only thing it was ever used for was card billing and the payment page handles that itself."
+          },
+          {
+            "t": "p",
+            "text": "We never see or store card numbers. Payment happens on Clover&rsquo;s own hosted checkout, and what comes back to us is a confirmation that the payment succeeded."
+          }
+        ]
+      },
+      {
+        "num": "03",
+        "title": "Why we hold it",
+        "blocks": [
+          {
+            "t": "p",
+            "text": "To run the booking, to know who is in the building on a given day, to reach a parent if something happens during a session, and to email confirmations, reminders and receipts."
+          },
+          {
+            "t": "p",
+            "text": "The date of birth is there to put a player in the right age group. It is not used for anything else."
+          }
+        ]
+      },
+      {
+        "num": "04",
+        "title": "Who we share it with",
+        "blocks": [
+          {
+            "t": "p",
+            "text": "Only the services that make the booking work."
+          },
+          {
+            "t": "ul",
+            "items": [
+              "Clover, which processes the payment",
+              "Constant Contact, which sends confirmations, reminders and receipts",
+              "Our website and database host"
+            ]
+          }
+        ]
+      },
+      {
+        "num": "05",
+        "title": "Marketing email",
+        "blocks": [
+          {
+            "t": "p",
+            "text": "Confirmations, reminders and receipts are part of the booking and are sent whether or not you join a mailing list."
+          },
+          {
+            "t": "p",
+            "text": "Anything else is opt-in and every message has an unsubscribe link that works."
+          }
+        ]
+      },
+      {
+        "num": "06",
+        "title": "How long we keep it",
+        "blocks": [
+          {
+            "t": "p",
+            "text": "Registration and waiver records are kept for as long as the academy needs them for insurance and safeguarding, then deleted."
+          },
+          {
+            "t": "p",
+            "text": "You can ask us to delete your details at any time by emailing <a href=\"mailto:info@dichiarobaseball.com\">info@dichiarobaseball.com</a>. If a waiver is still in force for the season we will tell you what we have to keep and why."
+          },
+          {
+            "t": "note",
+            "text": "Retention periods and the rights section should be checked against New Jersey requirements and the academy&rsquo;s insurance policy before this page is published."
+          }
+        ]
+      },
+      {
+        "num": "07",
+        "title": "Children&rsquo;s data",
+        "blocks": [
+          {
+            "t": "p",
+            "text": "Most of the people who train here are under eighteen. Accounts and bookings are made by a parent or guardian, never by the player, and we do not market to children."
+          }
+        ]
+      },
+      {
+        "num": "08",
+        "title": "Cookies",
+        "blocks": [
+          {
+            "t": "p",
+            "text": "The site uses the small number of cookies needed to keep a booking together between pages. If analytics are added later, they will be named here and you will be asked first."
+          }
+        ]
+      },
+      {
+        "num": "09",
+        "title": "Contacting us",
+        "blocks": [
+          {
+            "t": "p",
+            "text": "Email <a href=\"mailto:info@dichiarobaseball.com\">info@dichiarobaseball.com</a> or call <a href=\"tel:+12017736858\">(201) 773-6858</a>. The academy is at 18-01 Pollitt Drive, Fair Lawn, NJ 07410."
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "file": "terms-and-conditions.html",
+    "eyebrow": "Terms",
+    "title": "Terms &amp; conditions",
+    "lede": "The rules that apply when you book a program, a lesson or the facility with us, written in language a parent can read in one go.",
+    "updated": "Last updated 14 September 2026",
+    "description": "The terms that apply to booking a program, a lesson or the facility at DiChiaro Baseball &amp; Softball Academy.",
+    "sections": [
+      {
+        "num": "01",
+        "title": "Who you are dealing with",
+        "blocks": [
+          {
+            "t": "p",
+            "text": "This site belongs to DiChiaro Baseball &amp; Softball Academy, 18-01 Pollitt Drive, Fair Lawn, NJ 07410. Where these terms say we or us, that is who is meant."
+          }
+        ]
+      },
+      {
+        "num": "02",
+        "title": "Making a booking",
+        "blocks": [
+          {
+            "t": "p",
+            "text": "A booking is confirmed when payment has been taken and you have received a confirmation email, not when you submit the form."
+          },
+          {
+            "t": "p",
+            "text": "Places on camps and clinics are capped. If a program fills while you are part way through checkout we will tell you and offer the waitlist rather than take the money."
+          }
+        ]
+      },
+      {
+        "num": "03",
+        "title": "Prices and payment",
+        "blocks": [
+          {
+            "t": "p",
+            "text": "Prices shown on the site include everything unless the program page says otherwise. Where a program offers a payment plan, the schedule is shown before you pay."
+          },
+          {
+            "t": "p",
+            "text": "Payment is taken on Clover&rsquo;s hosted checkout. We do not handle or store card details at any point. Some programs also accept payment at the facility or by check, and the program page says which."
+          }
+        ]
+      },
+      {
+        "num": "04",
+        "title": "Cancellations and refunds",
+        "blocks": [
+          {
+            "t": "p",
+            "text": "The full refund and cancellation position is set out on the <a href=\"waiver-and-policies.html\">waiver and policies page</a>, which forms part of these terms."
+          },
+          {
+            "t": "p",
+            "text": "In short: camps and clinics can be cancelled up to a set number of days before the first session, and lesson packages are not refundable once bought."
+          },
+          {
+            "t": "note",
+            "text": "Cross-check this section against the final refund window once Michael confirms it, so the two pages cannot contradict each other."
+          }
+        ]
+      },
+      {
+        "num": "05",
+        "title": "Using the facility",
+        "blocks": [
+          {
+            "t": "p",
+            "text": "Everyone in the building follows the instructions of the coaching staff. We can ask a player or a spectator to leave if behaviour puts anyone at risk, and no refund is due in that case."
+          },
+          {
+            "t": "p",
+            "text": "Personal equipment is brought at your own risk. We are not responsible for property left in the facility."
+          }
+        ]
+      },
+      {
+        "num": "06",
+        "title": "Waivers",
+        "blocks": [
+          {
+            "t": "p",
+            "text": "A signed waiver is required before a player takes part in anything. Booking a program does not remove that requirement, and a player without a signed waiver cannot take the floor."
+          }
+        ]
+      },
+      {
+        "num": "07",
+        "title": "Liability",
+        "blocks": [
+          {
+            "t": "p",
+            "text": "Nothing in these terms limits liability where the law does not allow it to be limited. Beyond that, our responsibility is limited to the amount paid for the booking in question."
+          },
+          {
+            "t": "note",
+            "text": "This clause is placeholder wording and must be drafted or approved by the academy&rsquo;s attorney under New Jersey law before publication."
+          }
+        ]
+      },
+      {
+        "num": "08",
+        "title": "Changes to these terms",
+        "blocks": [
+          {
+            "t": "p",
+            "text": "We update this page when the way we run bookings changes. The date at the top tells you when it last changed, and the terms that apply to your booking are the ones published on the day you booked."
+          }
+        ]
+      },
+      {
+        "num": "09",
+        "title": "Governing law",
+        "blocks": [
+          {
+            "t": "p",
+            "text": "These terms are governed by the law of the State of New Jersey."
+          }
+        ]
+      }
+    ]
+  }
+]

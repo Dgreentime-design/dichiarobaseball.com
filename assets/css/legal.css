@@ -1,0 +1,77 @@
+/* ==========================================================================
+   Legal documents. One template, three pages: waiver and policies, privacy,
+   terms. Structure and styling live here, the words live in legal.json.
+   ========================================================================== */
+
+.legal-hero { background: var(--c-surface); padding: var(--band-y) var(--gutter); }
+.legal-hero__inner { max-width: var(--container); margin-inline: auto; }
+.legal-hero__copy { max-width: 820px; display: grid; gap: var(--s-5); }
+.legal-hero__lede { color: var(--c-muted); max-width: 72ch; }
+.legal-hero__date {
+  font-family: var(--f-mono); font-size: var(--t-eyebrow);
+  letter-spacing: var(--ls-meta); text-transform: uppercase; color: var(--c-muted);
+}
+
+.legal-layout {
+  display: grid; grid-template-columns: 300px minmax(0, 1fr); gap: var(--s-13);
+  align-items: start;
+}
+@media (max-width: 1023px) { .legal-layout { grid-template-columns: 1fr; gap: var(--s-8); } }
+
+/* --- Contents ------------------------------------------------------------ */
+
+.toc { position: sticky; top: var(--s-7); display: grid; gap: var(--s-4); }
+.toc__label {
+  font-family: var(--f-mono); font-weight: 500;
+  font-size: var(--t-eyebrow); letter-spacing: var(--ls-eyebrow);
+  text-transform: uppercase; color: var(--c-muted);
+}
+.toc ol { display: grid; }
+.toc a {
+  display: grid; grid-template-columns: 34px 1fr; gap: 10px; align-items: baseline;
+  padding: 11px 0; min-height: var(--tap);
+  border-top: 1px solid var(--c-line);
+  font-size: var(--t-body-s); line-height: 1.4;
+}
+.toc li:last-child a { border-bottom: 1px solid var(--c-line); }
+.toc a span:first-child { font-family: var(--f-mono); font-size: var(--t-eyebrow); color: var(--c-red); }
+.toc a:hover { color: var(--c-red); }
+@media (max-width: 1023px) {
+  .toc { position: static; }
+  .toc ol { grid-template-columns: repeat(2, 1fr); gap: 0 var(--s-6); }
+}
+@media (max-width: 639px) { .toc ol { grid-template-columns: 1fr; } }
+
+/* --- Document body -------------------------------------------------------- */
+
+.doc { display: grid; gap: var(--s-11); max-width: 78ch; }
+.doc section { display: grid; gap: var(--s-4); scroll-margin-top: var(--s-7); }
+.doc h2 { display: grid; grid-template-columns: 52px 1fr; gap: var(--s-3); align-items: baseline; }
+.doc h2 .num { font-family: var(--f-mono); font-weight: 400; font-size: var(--t-data-l); color: var(--c-red); }
+.doc p { font-size: var(--t-body-m); line-height: var(--lh-body); color: var(--c-muted); }
+.doc > section > p:first-of-type { color: var(--c-ink); }
+
+.doc ul { display: grid; gap: 10px; margin-top: var(--s-1); }
+.doc ul li {
+  position: relative; padding-left: 26px;
+  font-size: var(--t-body-m); line-height: var(--lh-body); color: var(--c-muted);
+}
+.doc ul li::before {
+  content: ""; position: absolute; left: 0; top: 13px;
+  width: 14px; height: 1px; background: var(--c-red);
+}
+
+.doc a { text-decoration: underline; text-underline-offset: 3px; }
+
+/* --- Draft note ----------------------------------------------------------
+   Amber, and deliberately loud. Nothing marked like this is publishable
+   until the academy's attorney has been through it. */
+
+.draft-note {
+  display: grid; gap: 10px;
+  background: var(--c-amber-bg); border-left: 3px solid var(--c-amber);
+  border-radius: 0 var(--r-2) var(--r-2) 0;
+  padding: var(--s-5) var(--s-6); color: var(--c-amber);
+}
+.draft-note .meta { color: var(--c-amber); }
+.draft-note p { font-size: var(--t-body-s); line-height: var(--lh-body); color: var(--c-amber); }

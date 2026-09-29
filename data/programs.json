@@ -1,0 +1,658 @@
+{
+  "_meta": {
+    "source": "Extracted from the nine academy flyers, 29 September 2026.",
+    "verified": "All 116 session dates checked against the calendar. Every one falls on the stated weekday.",
+    "venues": {
+      "facility": {
+        "name": "DiChiaro Baseball & Softball Academy",
+        "address": "18-01 Pollitt Drive, Fair Lawn, NJ 07410"
+      },
+      "superdome": {
+        "name": "Superdome Sports Center",
+        "address": "134 Hopper Avenue, Waldwick, NJ 07463"
+      }
+    },
+    "check_payable_to": "DiChiaro Baseball & Softball Academy",
+    "check_mail_to": "80 Carnot Avenue, Woodcliff Lake, NJ 07677",
+    "note": "The check mailing address is NOT the facility address. Confirmed on all nine flyers.",
+    "defaults": {
+      "payment_methods": [
+        "online",
+        "facility",
+        "check"
+      ],
+      "show_count_below": 8
+    },
+    "structure": {
+      "shape": "program -> options[] -> rates[]",
+      "why": "A program does not have a price. Its purchasable options do. Hit Night Winter has seven options because the package price changes with the number of Mondays in the month, and the old program-level price could not express that.",
+      "rule": "The standard price on an option is the only price the site ever renders. A rate is revealed by a code, server side, and never appears in any public payload."
+    },
+    "codes": {
+      "shape": {
+        "code": "PLL25",
+        "label": "Paterson Little League",
+        "type": "fixed_price | percent_off",
+        "value": "180 for fixed_price, 10 for percent_off",
+        "applies_to": "option id, or '*' for every option on the program",
+        "scope": "program slug",
+        "expires": "ISO date",
+        "max_uses": "integer or null",
+        "per_player": "true if the discount applies to each player on the registration, false if once per registration"
+      },
+      "security": [
+        "Lookup is server side. Code in, one price out. Never a list.",
+        "One identical failure message whatever the cause. Never existed, expired, wrong program and reserved places gone all read the same.",
+        "Constant time comparison. Rate limited to 5 attempts per minute per IP. Every attempt logged with a hashed IP.",
+        "No rate, discount or code ever appears in page HTML, JSON, the sitemap or any queryable API."
+      ],
+      "known": [
+        {
+          "label": "Ridgewood residents",
+          "type": "percent_off",
+          "value": 10,
+          "source": "Meeting notes, 21 September. Percentage, not a fixed price."
+        }
+      ]
+    },
+    "multi_player": {
+      "max": 4,
+      "source": "Meeting notes, 21 September. Families can add up to four players in one session.",
+      "pricing": "Total is the sum per player. Whether a code applies per player or once per registration is the per_player flag on the code.",
+      "waiver": "One waiver per player, not one per registration."
+    }
+  },
+  "programs": [
+    {
+      "slug": "little-league-fall-2026",
+      "name": "Little League Training Camp",
+      "season": "Fall 2026",
+      "sport": [
+        "baseball",
+        "softball"
+      ],
+      "ages": "6 to 12",
+      "status": "live",
+      "gated": false,
+      "summary": "Eight Sundays of fundamentals. Throwing, fielding, hitting and base running, taught slowly enough that the habits actually stick.",
+      "teaches": [
+        "Hitting drills",
+        "Tee work",
+        "Live BP",
+        "Soft toss",
+        "Fielding",
+        "Correct approach to ground balls",
+        "Proper footwork",
+        "Proper throwing mechanics"
+      ],
+      "schedule": {
+        "day": "Sunday",
+        "time": "2:30pm - 4:00pm",
+        "venue": "facility",
+        "dates": [
+          "2026-10-25",
+          "2026-11-01",
+          "2026-11-08",
+          "2026-11-15",
+          "2026-11-22",
+          "2026-11-29",
+          "2026-12-06",
+          "2026-12-13"
+        ]
+      },
+      "options": [
+        {
+          "id": "full",
+          "label": "Full camp, 8 sessions",
+          "price": 320,
+          "rates": []
+        }
+      ],
+      "flyer": "Little League Fall 2026.pdf",
+      "zip": "camps"
+    },
+    {
+      "slug": "little-league-winter-2027",
+      "name": "Little League Training Camp",
+      "season": "Winter 2027",
+      "sport": [
+        "baseball",
+        "softball"
+      ],
+      "ages": "6 to 12",
+      "status": "live",
+      "gated": false,
+      "summary": "Nine Sundays of fundamentals through the winter.",
+      "teaches": [
+        "Hitting drills",
+        "Tee work",
+        "Live BP",
+        "Soft toss",
+        "Fielding",
+        "Correct approach to ground balls",
+        "Proper footwork",
+        "Proper throwing mechanics"
+      ],
+      "schedule": {
+        "day": "Sunday",
+        "time": "2:30pm - 4:00pm",
+        "venue": "facility",
+        "dates": [
+          "2027-01-03",
+          "2027-01-10",
+          "2027-01-17",
+          "2027-01-24",
+          "2027-01-31",
+          "2027-02-07",
+          "2027-02-14",
+          "2027-02-21",
+          "2027-02-28"
+        ]
+      },
+      "options": [
+        {
+          "id": "full",
+          "label": "Full camp, 9 sessions",
+          "price": 350,
+          "rates": []
+        }
+      ],
+      "flyer": "Little League Winter 2027.pdf",
+      "zip": "live"
+    },
+    {
+      "slug": "little-league-march-2027",
+      "name": "Little League Training Camp",
+      "season": "March 2027",
+      "sport": [
+        "baseball",
+        "softball"
+      ],
+      "ages": "6 to 12",
+      "status": "live",
+      "gated": false,
+      "summary": "A shorter four-Sunday block in March.",
+      "teaches": [
+        "Hitting drills",
+        "Tee work",
+        "Live BP",
+        "Soft toss",
+        "Fielding",
+        "Correct approach to ground balls",
+        "Proper footwork",
+        "Proper throwing mechanics"
+      ],
+      "schedule": {
+        "day": "Sunday",
+        "time": "2:30pm - 4:00pm",
+        "venue": "facility",
+        "dates": [
+          "2027-03-07",
+          "2027-03-14",
+          "2027-03-21",
+          "2027-03-28"
+        ]
+      },
+      "options": [
+        {
+          "id": "full",
+          "label": "Full camp, 4 sessions",
+          "price": 165,
+          "rates": []
+        }
+      ],
+      "flyer": "Little League March 2027.pdf",
+      "zip": "live"
+    },
+    {
+      "slug": "infield-camp-2026-27",
+      "name": "Lou DiChiaro's Infield Camp",
+      "season": "2026-27",
+      "sport": [
+        "baseball",
+        "softball"
+      ],
+      "ages": "Grades 4 to 8 and high school",
+      "status": "live",
+      "gated": false,
+      "summary": "Fifteen Saturdays of nothing but infield. Ground ball approach, footwork, double plays, slow rollers and relays.",
+      "teaches": [
+        "Correct approach to ground balls",
+        "Proper footwork",
+        "Proper throwing mechanics",
+        "Position specifics",
+        "Double plays",
+        "Slow rollers",
+        "Different ground ball angles",
+        "Relays",
+        "Two-man drills",
+        "Soft hand drills"
+      ],
+      "schedule": {
+        "day": "Saturday",
+        "venue": "split",
+        "groups": [
+          {
+            "id": "grades-4-8",
+            "label": "Grades 4-8",
+            "time": "9:00am - 10:30am"
+          },
+          {
+            "id": "high-school",
+            "label": "High school",
+            "time": "10:30am - 12:00pm"
+          }
+        ],
+        "combined": {
+          "label": "Both groups combined, Superdome",
+          "time": "8:00am - 10:00am",
+          "dates": [
+            "2027-02-13",
+            "2027-02-20",
+            "2027-02-27"
+          ]
+        },
+        "dates": [
+          "2026-11-14",
+          "2026-11-21",
+          "2026-12-05",
+          "2026-12-12",
+          "2026-12-19",
+          "2027-01-02",
+          "2027-01-09",
+          "2027-01-16",
+          "2027-01-23",
+          "2027-01-30",
+          "2027-02-06",
+          "2027-02-13",
+          "2027-02-20",
+          "2027-02-27",
+          "2027-03-06"
+        ]
+      },
+      "options": [
+        {
+          "id": "full",
+          "label": "Pay in full",
+          "price": 950,
+          "rates": []
+        },
+        {
+          "id": "two-payments",
+          "label": "Two payments",
+          "price": 950,
+          "schedule": [
+            {
+              "amount": 475,
+              "when": "at registration"
+            },
+            {
+              "amount": 475,
+              "when": "2027-01-01"
+            }
+          ],
+          "rates": []
+        }
+      ],
+      "flyer": "Dichiaro Infield Camp-'26-27.pdf",
+      "zip": "camps",
+      "needs_confirming": [
+        "Flyer lists Feb 6 under the facility dates and Feb 13, 20, 27 as combined Superdome sessions. The site currently shows four Superdome dates including Feb 6. Confirm which."
+      ]
+    },
+    {
+      "slug": "hit-night-fall-2026",
+      "name": "Monday Hit Night",
+      "season": "Fall 2026",
+      "sport": [
+        "baseball",
+        "softball"
+      ],
+      "ages": "10 to 18",
+      "status": "live",
+      "gated": false,
+      "summary": "One hour of high-rep hitting against live pitching and machines. Drop in for a session or buy the month.",
+      "teaches": [
+        "Professional instruction",
+        "Proper approach to hitting",
+        "Tee work",
+        "Soft toss",
+        "Live hitting (baseball)",
+        "Machine (softball)"
+      ],
+      "schedule": {
+        "day": "Monday",
+        "venue": "facility",
+        "groups": [
+          {
+            "id": "softball",
+            "label": "Softball",
+            "time": "7:00pm - 8:00pm"
+          },
+          {
+            "id": "baseball",
+            "label": "Baseball",
+            "time": "8:00pm - 9:00pm"
+          }
+        ],
+        "dates": [
+          "2026-09-14",
+          "2026-09-21",
+          "2026-09-28",
+          "2026-10-05",
+          "2026-10-12",
+          "2026-10-19",
+          "2026-10-26",
+          "2026-11-02",
+          "2026-11-09",
+          "2026-11-16",
+          "2026-11-23",
+          "2026-11-30",
+          "2026-12-07",
+          "2026-12-14",
+          "2026-12-21",
+          "2026-12-28"
+        ]
+      },
+      "options": [
+        {
+          "id": "drop-in",
+          "label": "Single session",
+          "price": 30,
+          "rates": []
+        },
+        {
+          "id": "sept",
+          "label": "September package, 3 sessions",
+          "price": 75,
+          "rates": []
+        },
+        {
+          "id": "oct",
+          "label": "October package, 4 sessions",
+          "price": 100,
+          "rates": []
+        },
+        {
+          "id": "nov",
+          "label": "November package, 5 sessions",
+          "price": 125,
+          "rates": []
+        },
+        {
+          "id": "dec",
+          "label": "December package, 4 sessions",
+          "price": 100,
+          "rates": []
+        }
+      ],
+      "flyer": "Hit Night-Fall 2026.pdf",
+      "zip": "camps",
+      "needs_confirming": [
+        "FLYER PRICING ERROR. The registration section prints November at $25 and December at $125. The schedule and the $25-a-session package rate make those $125 and $100. Prices above follow the schedule, not the registration box. Confirm before this flyer goes out again."
+      ]
+    },
+    {
+      "slug": "hit-night-winter-2027",
+      "name": "Monday Hit Night",
+      "season": "Winter 2027",
+      "sport": [
+        "baseball",
+        "softball"
+      ],
+      "ages": "10 to 18",
+      "status": "live",
+      "gated": false,
+      "summary": "The same format running January through June.",
+      "teaches": [
+        "Professional instruction",
+        "Proper approach to hitting",
+        "Tee work",
+        "Soft toss",
+        "Live hitting (baseball)",
+        "Machine (softball)"
+      ],
+      "schedule": {
+        "day": "Monday",
+        "venue": "facility",
+        "groups": [
+          {
+            "id": "softball",
+            "label": "Softball",
+            "time": "7:30pm - 8:30pm"
+          },
+          {
+            "id": "baseball",
+            "label": "Baseball",
+            "time": "8:30pm - 9:30pm"
+          }
+        ],
+        "dates": [
+          "2027-01-04",
+          "2027-01-11",
+          "2027-01-18",
+          "2027-01-25",
+          "2027-02-01",
+          "2027-02-08",
+          "2027-02-15",
+          "2027-02-22",
+          "2027-03-01",
+          "2027-03-08",
+          "2027-03-15",
+          "2027-03-22",
+          "2027-03-29",
+          "2027-04-05",
+          "2027-04-12",
+          "2027-04-19",
+          "2027-04-26",
+          "2027-05-03",
+          "2027-05-10",
+          "2027-05-17",
+          "2027-05-24",
+          "2027-06-07",
+          "2027-06-14",
+          "2027-06-21",
+          "2027-06-28"
+        ]
+      },
+      "options": [
+        {
+          "id": "drop-in",
+          "label": "Single session",
+          "price": 30,
+          "rates": []
+        },
+        {
+          "id": "jan",
+          "label": "January package, 4 sessions",
+          "price": 100,
+          "rates": []
+        },
+        {
+          "id": "feb",
+          "label": "February package, 4 sessions",
+          "price": 100,
+          "rates": []
+        },
+        {
+          "id": "mar",
+          "label": "March package, 5 sessions",
+          "price": 125,
+          "rates": []
+        },
+        {
+          "id": "apr",
+          "label": "April package, 4 sessions",
+          "price": 100,
+          "rates": []
+        },
+        {
+          "id": "may",
+          "label": "May package, 4 sessions",
+          "price": 100,
+          "rates": []
+        },
+        {
+          "id": "jun",
+          "label": "June package, 4 sessions",
+          "price": 100,
+          "rates": []
+        }
+      ],
+      "flyer": "Hit Night-Winter 2027.pdf",
+      "zip": "camps",
+      "needs_confirming": [
+        "Flyer has a typo in the March dates, printed as 'March 1, 8l, 15, 22, 29'.",
+        "Start times move 30 minutes later than the Fall season. Confirm that is intended."
+      ]
+    },
+    {
+      "slug": "iha-softball-winter-2027",
+      "name": "IHA Softball Training Program",
+      "season": "Winter 2027",
+      "sport": [
+        "softball"
+      ],
+      "ages": "IHA squad",
+      "status": "live",
+      "gated": true,
+      "summary": "Hitting and fielding for the IHA squad. Nine Mondays.",
+      "teaches": [
+        "Hitting drills",
+        "Tee work",
+        "Live BP",
+        "Infield and outfield drills"
+      ],
+      "schedule": {
+        "day": "Monday",
+        "time": "3:00pm - 4:30pm",
+        "venue": "facility",
+        "dates": [
+          "2027-01-04",
+          "2027-01-11",
+          "2027-01-18",
+          "2027-01-25",
+          "2027-02-01",
+          "2027-02-08",
+          "2027-02-15",
+          "2027-02-22",
+          "2027-03-01"
+        ]
+      },
+      "options": [
+        {
+          "id": "full",
+          "label": "Full program, 9 sessions",
+          "price": 330,
+          "rates": []
+        }
+      ],
+      "flyer": "Dichiaro Programs-IHA  Winter '27.pdf",
+      "zip": "live"
+    },
+    {
+      "slug": "fair-lawn-hs-softball-2027",
+      "name": "Fair Lawn HS Softball Training Program",
+      "season": "Winter 2027",
+      "sport": [
+        "softball"
+      ],
+      "ages": "Fair Lawn HS squad",
+      "status": "live",
+      "gated": true,
+      "summary": "Hitting and fielding for the Fair Lawn HS squad. Eight Wednesdays.",
+      "teaches": [
+        "Hitting drills",
+        "Tee work",
+        "Live BP",
+        "Infield and outfield drills"
+      ],
+      "schedule": {
+        "day": "Wednesday",
+        "time": "8:30pm - 10:00pm",
+        "venue": "facility",
+        "dates": [
+          "2027-01-06",
+          "2027-01-13",
+          "2027-01-20",
+          "2027-01-27",
+          "2027-02-03",
+          "2027-02-10",
+          "2027-02-17",
+          "2027-02-24"
+        ]
+      },
+      "options": [
+        {
+          "id": "full",
+          "label": "Full program, 8 sessions",
+          "price": 295,
+          "rates": []
+        }
+      ],
+      "flyer": "Fair Lawn Softball_2027.pdf",
+      "zip": "live",
+      "needs_confirming": [
+        "This flyer has no photo and video consent paragraph. IHA, Little League, Infield and Hit Night all do."
+      ]
+    },
+    {
+      "slug": "old-tappan-hs-2026-27",
+      "name": "Old Tappan HS Hitting and Fielding",
+      "season": "2026-27",
+      "sport": [
+        "baseball"
+      ],
+      "ages": "Old Tappan HS squad",
+      "status": "live",
+      "gated": true,
+      "summary": "Fifteen Sundays of hitting for the Old Tappan squad.",
+      "teaches": [
+        "Hitting drills",
+        "Tee work",
+        "Live BP",
+        "Infield and outfield drills"
+      ],
+      "schedule": {
+        "day": "Sunday",
+        "time": "4:00pm - 5:30pm",
+        "time_change": {
+          "from": "2027-01-03",
+          "time": "7:00pm - 8:30pm"
+        },
+        "venue": "facility",
+        "dates": [
+          "2026-11-22",
+          "2026-11-29",
+          "2026-12-06",
+          "2026-12-13",
+          "2026-12-20",
+          "2027-01-03",
+          "2027-01-10",
+          "2027-01-17",
+          "2027-01-24",
+          "2027-01-31",
+          "2027-02-07",
+          "2027-02-14",
+          "2027-02-21",
+          "2027-02-28",
+          "2027-03-07"
+        ]
+      },
+      "options": [
+        {
+          "id": "full",
+          "label": "Full program, 15 sessions",
+          "price": 550,
+          "rates": []
+        }
+      ],
+      "flyer": "Old Tappan HS_2026-27.pdf",
+      "zip": "live",
+      "needs_confirming": [
+        "This flyer has no photo and video consent paragraph.",
+        "Session time changes from 4:00pm to 7:00pm starting 3 January. The site needs to show both."
+      ]
+    }
+  ]
+}

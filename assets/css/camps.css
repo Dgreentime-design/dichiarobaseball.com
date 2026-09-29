@@ -1,0 +1,138 @@
+/* ==========================================================================
+   Camps & Clinics landing page.
+   ========================================================================== */
+
+/* --- Page hero ---------------------------------------------------------- */
+
+.page-hero { background: var(--c-ink); color: var(--c-bone); padding: var(--band-y) var(--gutter); }
+.page-hero__inner { max-width: var(--container); margin-inline: auto; }
+.page-hero__copy { max-width: 900px; display: grid; gap: var(--s-5); }
+.page-hero h1 { color: var(--c-bone); }
+.page-hero__lede { color: var(--c-dim); max-width: 72ch; }
+
+/* --- Filter bar ---------------------------------------------------------
+   Real filtering, not decoration. Without JavaScript every card stays
+   visible and the bar is still readable, so nothing is lost.            */
+
+.filters {
+  position: sticky; top: 0; z-index: 40;
+  background: var(--c-bone);
+  border-bottom: 1px solid var(--c-line);
+  padding: 20px var(--gutter);
+}
+.filters__inner {
+  max-width: var(--container); margin-inline: auto;
+  display: flex; align-items: center; gap: var(--s-6); flex-wrap: wrap;
+}
+.filters__label {
+  font-family: var(--f-mono); font-weight: 500;
+  font-size: var(--t-eyebrow); letter-spacing: var(--ls-eyebrow);
+  text-transform: uppercase; color: var(--c-muted); flex: none;
+}
+.filters__pills { display: flex; gap: 10px; flex-wrap: wrap; }
+.pill {
+  display: inline-flex; align-items: center; min-height: var(--tap);
+  padding: 12px 18px; border-radius: var(--r-1);
+  background: var(--c-white); color: var(--c-ink);
+  box-shadow: inset 0 0 0 1px var(--c-line);
+  font-family: var(--f-sans); font-weight: 700;
+  font-size: var(--t-nav); letter-spacing: var(--ls-nav);
+  text-transform: uppercase;
+  transition: background-color .16s var(--ease), color .16s var(--ease), box-shadow .16s var(--ease);
+}
+.pill:hover { background: var(--c-bone-dim); }
+.pill[aria-pressed="true"] {
+  background: var(--c-ink); color: var(--c-bone);
+  box-shadow: inset 0 0 0 1px var(--c-ink);
+}
+.filters__count {
+  margin-left: auto; flex: none;
+  font-family: var(--f-mono); font-size: var(--t-data-m); color: var(--c-muted);
+}
+
+@media (max-width: 767px) {
+  .filters { padding: 14px var(--gutter); }
+  .filters__inner { gap: var(--s-3); }
+  .filters__label { width: 100%; }
+  .filters__pills {
+    flex-wrap: nowrap; overflow-x: auto; padding-bottom: 4px;
+    scrollbar-width: none; -ms-overflow-style: none;
+    scroll-snap-type: x proximity;
+  }
+  .filters__pills::-webkit-scrollbar { display: none; }
+  .pill { flex: none; scroll-snap-align: start; }
+  .filters__count { width: 100%; margin-left: 0; }
+}
+
+/* --- Programs ----------------------------------------------------------- */
+
+.programs { padding: var(--band-y) var(--gutter); background: var(--c-bone); }
+.programs__grid {
+  max-width: var(--container); margin-inline: auto;
+  display: grid; grid-template-columns: repeat(2, 1fr); gap: var(--s-6);
+}
+@media (max-width: 899px) { .programs__grid { grid-template-columns: 1fr; } }
+
+.programs__empty {
+  max-width: var(--container); margin-inline: auto;
+  padding: var(--s-9) 0; text-align: center; color: var(--c-muted);
+}
+.programs__empty[hidden] { display: none; }
+
+.card--wide .card__body { gap: var(--s-6); padding: var(--s-7) var(--s-8) var(--s-8); }
+.card--wide .card__identity { display: grid; gap: 10px; }
+.card--wide .card__sub { font-family: var(--f-mono); font-size: var(--t-data-m); color: var(--c-muted); }
+.card--wide .card__intro { color: var(--c-muted); }
+.card--wide .card__fact { grid-template-columns: 96px 1fr; padding: 13px 0; }
+.card--wide .card__actions { display: flex; gap: 12px; margin-top: auto; padding-top: var(--s-2); }
+.card--wide .card__actions .btn { flex: 1; }
+.card--soon { background: var(--c-surface); }
+.card--soon .card__media .media { filter: saturate(.6); }
+
+@media (max-width: 479px) {
+  .card--wide .card__actions { flex-direction: column; }
+  /* Keep the label and value on one row: stacking five facts costs more
+     vertical space than the wrapped values do. */
+  .card--wide .card__fact { grid-template-columns: 72px 1fr; gap: 12px; }
+}
+
+/* --- Team and specialty band -------------------------------------------- */
+
+.team-band { background: var(--c-surface); padding: var(--band-y) var(--gutter); }
+.team-band__inner {
+  max-width: var(--container); margin-inline: auto;
+  display: flex; align-items: center; justify-content: space-between; gap: var(--s-13);
+}
+.team-band__copy { display: grid; gap: var(--s-4); max-width: 912px; }
+.team-band__copy p { color: var(--c-muted); max-width: 78ch; }
+@media (max-width: 899px) {
+  .team-band__inner { flex-direction: column; align-items: flex-start; gap: var(--s-6); }
+  .team-band__inner .btn { width: 100%; }
+}
+
+/* --- Quotes on this page ------------------------------------------------- */
+
+.quotes--plain .quote { gap: var(--s-6); }
+.quotes--plain .quote__text { font-size: var(--t-body-m); }
+
+/* Two buttons sharing one row need a little less padding than a lone one,
+   so the longest label ("Tell me when it opens") still sits on one line. */
+.card--wide .card__actions .btn { padding-inline: 16px; font-size: 0.9375rem; }
+
+/* --- Stub pages ----------------------------------------------------------
+   Designed but not built yet. Real header and footer, so the prototype
+   navigates end to end instead of dead-ending in a 404. */
+
+.stub__copy { max-width: 760px; display: grid; gap: var(--s-5); }
+.stub__list { display: grid; gap: 12px; margin-top: var(--s-2); }
+.stub__list li {
+  position: relative; padding-left: 26px;
+  font-size: var(--t-body-m); line-height: var(--lh-body);
+}
+.stub__list li::before {
+  content: ""; position: absolute; left: 0; top: 11px;
+  width: 14px; height: 2px; background: var(--c-red);
+}
+.stub__note { border-top: 1px solid var(--c-line); padding-top: var(--s-5); margin-top: var(--s-3); }
+.stub__actions { display: flex; flex-wrap: wrap; gap: 12px; margin-top: var(--s-3); }
+@media (max-width: 479px) { .stub__actions .btn { width: 100%; } }

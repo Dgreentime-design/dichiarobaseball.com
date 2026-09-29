@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="en">
+<head>
+{{> head }}
+
+<title>{{title}} · DiChiaro Baseball &amp; Softball Academy</title>
+<meta name="description" content="{{intro}}">
+<meta name="robots" content="noindex">
+</head>
+
+<body>
+<a class="skip-link" href="#main">Skip to content</a>
+
+{{> header }}
+
+{{> menu }}
+
+<main id="main">
+
+<section class="page-hero">
+  <div class="page-hero__inner">
+    <div class="page-hero__copy">
+      <p class="eyebrow eyebrow--on-dark">{{status}}</p>
+      <h1 class="display-l">{{title}}</h1>
+      <p class="page-hero__lede body-l">{{intro}}</p>
+    </div>
+  </div>
+</section>
+
+<section class="band band--bone">
+  <div class="container stub">
+    <div class="stub__copy">
+      <h2 class="heading-l">What this page will hold</h2>
+      <ul class="stub__list">{{list}}</ul>
+      <p class="body-m muted stub__note">
+        The design for this page is finished. It is queued behind the homepage and the
+        camps listing, which were built first so the registration path could be reviewed
+        end to end.
+      </p>
+      <div class="stub__actions">
+        <a class="btn btn--primary" href="camps-and-clinics.html">See camps &amp; clinics</a>
+        <a class="btn btn--outline" href="./">Back to the homepage</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+{{> marquee }}
+
+</main>
+
+{{> footer }}
+
+<script src="assets/js/site.js" defer></script>
+</body>
+</html>

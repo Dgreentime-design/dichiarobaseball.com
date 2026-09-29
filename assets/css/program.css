@@ -1,0 +1,186 @@
+/* ==========================================================================
+   Program detail. One template, ten blocks, six always on and four that
+   switch with the content. The order never changes: a block is on or off,
+   it never moves.
+   ========================================================================== */
+
+/* --- Breadcrumb ---------------------------------------------------------- */
+
+.crumbs {
+  display: flex; flex-wrap: wrap; align-items: center; gap: 10px;
+  font-family: var(--f-mono); font-size: var(--t-eyebrow);
+  letter-spacing: var(--ls-meta); text-transform: uppercase; color: var(--c-dim);
+}
+.crumbs a {
+  display: inline-flex; align-items: center; min-height: 32px;
+  text-decoration: underline; text-underline-offset: 3px;
+}
+.crumbs a:hover { color: var(--c-bone); }
+.crumbs [aria-current] { color: var(--c-bone); }
+
+/* --- Hero facts strip ---------------------------------------------------- */
+
+.prog-facts {
+  display: grid; grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: var(--s-6); margin-top: var(--s-4);
+}
+.prog-facts .stat { border-top-color: var(--c-red); }
+.prog-facts .stat dt {
+  font-family: var(--f-mono); font-weight: 400;
+  font-size: var(--t-data-l); letter-spacing: 0; color: var(--c-bone);
+}
+.prog-facts .stat dd { color: var(--c-dim); }
+.prog-facts .stat--label dt {
+  font-family: var(--f-mono); font-size: var(--t-eyebrow);
+  letter-spacing: var(--ls-eyebrow); text-transform: uppercase; color: var(--c-dim);
+}
+.prog-facts .stat--label dd {
+  font-family: var(--f-sans); font-weight: 700; font-size: var(--t-body-m);
+  text-transform: none; letter-spacing: 0; color: var(--c-bone);
+}
+@media (max-width: 767px) { .prog-facts { grid-template-columns: repeat(2, 1fr); gap: var(--s-6) var(--s-5); } }
+
+.prog-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 14px; margin-top: var(--s-5); }
+.prog-actions .status {
+  font-family: var(--f-mono); font-size: var(--t-data-m); color: var(--c-turf-light);
+}
+@media (max-width: 599px) { .prog-actions { display: grid; } .prog-actions .btn { width: 100%; } }
+
+/* --- Groups -------------------------------------------------------------- */
+
+.group-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: var(--s-6); }
+@media (max-width: 899px) { .group-grid { grid-template-columns: 1fr; } }
+.group {
+  display: grid; gap: var(--s-4); align-content: start;
+  background: var(--c-white); border: 1px solid var(--c-line);
+  border-radius: var(--r-2); padding: var(--s-7);
+}
+.group__head { display: flex; align-items: center; justify-content: space-between; gap: var(--s-5); flex-wrap: wrap; }
+.group__when { font-family: var(--f-mono); font-size: var(--t-data-m); color: var(--c-muted); }
+.group p { color: var(--c-muted); font-size: var(--t-body-s); }
+.group .btn { margin-top: var(--s-2); }
+
+/* --- Skills, nine numbered items ---------------------------------------- */
+
+.skills { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--s-7) var(--s-6); }
+@media (max-width: 899px) { .skills { grid-template-columns: repeat(2, 1fr); } }
+@media (max-width: 599px) { .skills { grid-template-columns: 1fr; gap: 0; } }
+.skill { display: grid; gap: 10px; align-content: start; padding-top: var(--s-4); border-top: 1px solid var(--c-line); }
+.skill__n { font-family: var(--f-mono); font-size: var(--t-data-m); color: var(--c-red); }
+.skill h3 { font-weight: 700; font-size: var(--t-heading-s); }
+.skill p { color: var(--c-muted); font-size: var(--t-body-s); }
+@media (max-width: 599px) { .skill { padding: var(--s-5) 0; } }
+
+/* --- Schedule ------------------------------------------------------------ */
+
+.schedule__head { display: flex; align-items: flex-end; justify-content: space-between; gap: var(--s-6); flex-wrap: wrap; }
+.months { display: grid; gap: var(--s-2); margin-top: var(--s-7); }
+.month {
+  display: grid; grid-template-columns: 180px 1fr; gap: var(--s-6); align-items: center;
+  padding: var(--s-5) 0; border-top: 1px solid var(--c-line-dark);
+}
+.month:last-child { border-bottom: 1px solid var(--c-line-dark); }
+.month__name { font-family: var(--f-mono); font-size: var(--t-data-m); color: var(--c-dim); }
+.month__days { display: flex; flex-wrap: wrap; gap: 8px; }
+.day {
+  display: inline-flex; align-items: center; min-height: 38px;
+  padding: 9px 14px; border-radius: var(--r-1);
+  background: var(--c-panel); border: 1px solid var(--c-line-dark);
+  font-family: var(--f-mono); font-size: var(--t-data-m); color: var(--c-bone);
+}
+.day--away { background: transparent; border-color: var(--c-red-bright); color: var(--c-red-bright); }
+@media (max-width: 767px) { .month { grid-template-columns: 1fr; gap: var(--s-3); } }
+
+.schedule__key { display: grid; gap: 10px; margin-top: var(--s-6); }
+.schedule__key li {
+  position: relative; padding-left: 24px;
+  font-family: var(--f-mono); font-size: var(--t-data-m); color: var(--c-dim);
+}
+.schedule__key li::before {
+  content: ""; position: absolute; left: 0; top: 8px;
+  width: 12px; height: 12px; border-radius: var(--r-1);
+  background: var(--c-panel); border: 1px solid var(--c-line-dark);
+}
+.schedule__key li.is-away::before { background: transparent; border-color: var(--c-red-bright); }
+
+/* --- Pricing plans ------------------------------------------------------- */
+
+.plans { display: grid; grid-template-columns: repeat(2, 1fr); gap: var(--s-6); }
+@media (max-width: 899px) { .plans { grid-template-columns: 1fr; } }
+.plan {
+  display: grid; gap: var(--s-4); align-content: start;
+  background: var(--c-white); border: 1px solid var(--c-line);
+  border-radius: var(--r-2); padding: var(--s-7) var(--s-8) var(--s-8);
+}
+.plan__label {
+  font-family: var(--f-mono); font-weight: 500;
+  font-size: var(--t-eyebrow); letter-spacing: var(--ls-eyebrow);
+  text-transform: uppercase; color: var(--c-red);
+}
+.plan__amount { display: grid; gap: 4px; }
+.plan__amount strong { font-family: var(--f-sans); font-weight: 900; font-size: var(--t-display-l); letter-spacing: var(--ls-title); line-height: 1; }
+.plan__amount span { font-family: var(--f-mono); font-size: var(--t-data-m); color: var(--c-muted); }
+.plan p { color: var(--c-muted); font-size: var(--t-body-s); }
+.plan .btn { margin-top: var(--s-2); }
+
+.included { display: flex; flex-wrap: wrap; gap: var(--s-4) var(--s-8); margin-top: var(--s-7); }
+.included li {
+  display: flex; align-items: center; gap: 10px;
+  font-size: var(--t-body-s); color: var(--c-muted);
+}
+.included li::before { content: "\2713"; color: var(--c-turf); font-size: var(--t-body-m); }
+
+/* The code-gated price block. The standard price is the only price the site
+   ever shows: the town rate appears only once a code has been accepted. */
+.code-link { margin-top: var(--s-5); }
+.code-link a {
+  font-size: var(--t-body-s); color: var(--c-red);
+  text-decoration: underline; text-underline-offset: 3px;
+  display: inline-flex; align-items: center; min-height: 32px;
+}
+
+/* --- Instructor block ---------------------------------------------------- */
+
+.instructor-split { display: grid; grid-template-columns: 440px minmax(0, 1fr); gap: var(--s-12); align-items: start; }
+@media (max-width: 1023px) { .instructor-split { grid-template-columns: 1fr; gap: var(--s-7); } }
+
+/* --- Venues -------------------------------------------------------------- */
+
+.venues { display: grid; grid-template-columns: repeat(2, 1fr); gap: var(--s-6); }
+@media (max-width: 899px) { .venues { grid-template-columns: 1fr; } }
+.venue {
+  background: var(--c-white); border: 1px solid var(--c-line);
+  border-radius: var(--r-2); overflow: hidden;
+}
+.venue .media { border-radius: 0; }
+.venue__body { display: grid; gap: var(--s-3); padding: var(--s-7); }
+.venue__head { display: flex; align-items: center; justify-content: space-between; gap: var(--s-4); flex-wrap: wrap; }
+.venue__count { font-family: var(--f-mono); font-size: var(--t-data-m); color: var(--c-muted); }
+.venue address { font-style: normal; font-size: var(--t-body-m); }
+.venue__when { font-family: var(--f-mono); font-size: var(--t-data-m); color: var(--c-muted); }
+.venue .btn { margin-top: var(--s-3); width: fit-content; }
+
+/* --- FAQ, native disclosure --------------------------------------------- */
+
+.faq { display: grid; }
+.faq details { border-top: 1px solid var(--c-line); }
+.faq details:last-of-type { border-bottom: 1px solid var(--c-line); }
+.faq summary {
+  display: flex; align-items: center; justify-content: space-between; gap: var(--s-5);
+  padding: var(--s-5) 0; min-height: var(--tap);
+  font-weight: 700; font-size: var(--t-heading-s); cursor: pointer;
+  list-style: none;
+}
+.faq summary::-webkit-details-marker { display: none; }
+.faq summary::after {
+  content: "+"; font-family: var(--f-mono); font-size: var(--t-data-l);
+  color: var(--c-red); flex: none; line-height: 1;
+}
+.faq details[open] summary::after { content: "\2212"; }
+.faq details > p {
+  padding: 0 var(--s-9) var(--s-6) 0;
+  color: var(--c-muted); font-size: var(--t-body-m); line-height: var(--lh-body);
+  max-width: 78ch;
+}
+.schedule__head { margin-top: var(--s-5); }
+.schedule__lede { margin-top: var(--s-5); }

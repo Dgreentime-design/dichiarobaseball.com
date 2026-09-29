@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="en">
+<head>
+{{> head }}
+
+<title>{{title}} · DiChiaro Baseball &amp; Softball Academy</title>
+<meta name="description" content="{{description}}">
+<link rel="canonical" href="https://dichiarobaseball.com/{{file}}">
+</head>
+
+<body>
+<a class="skip-link" href="#main">Skip to content</a>
+
+{{> header }}
+
+{{> menu }}
+
+<main id="main">
+
+<section class="legal-hero">
+  <div class="legal-hero__inner">
+    <div class="legal-hero__copy">
+      <p class="eyebrow">{{eyebrow}}</p>
+      <h1 class="display-l">{{title}}</h1>
+      <p class="legal-hero__lede body-l">{{lede}}</p>
+      <p class="legal-hero__date">{{updated}}</p>
+    </div>
+  </div>
+</section>
+
+<section class="band band--bone">
+  <div class="container legal-layout">
+
+    <nav class="toc" aria-labelledby="toc-label">
+      <p class="toc__label" id="toc-label">On this page</p>
+      <ol>{{toc}}</ol>
+    </nav>
+
+    <div class="doc">{{body}}</div>
+
+  </div>
+</section>
+
+<section class="band band--surface" aria-labelledby="legal-help-title">
+  <div class="crosslink__inner">
+    <div class="crosslink__copy">
+      <h2 class="heading-l" id="legal-help-title">Questions about any of this?</h2>
+      <p class="body-m">
+        Call the facility on <a href="tel:+12017736858">(201) 773-6858</a> or email
+        <a href="mailto:info@dichiarobaseball.com">info@dichiarobaseball.com</a> and we
+        will talk it through.
+      </p>
+    </div>
+    <a class="btn btn--secondary" href="contact.html">Contact us</a>
+  </div>
+</section>
+
+{{> marquee }}
+
+</main>
+
+{{> footer }}
+
+<script src="assets/js/site.js" defer></script>
+</body>
+</html>

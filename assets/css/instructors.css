@@ -1,0 +1,93 @@
+/* ==========================================================================
+   Instructors. One card template, expanding in place to the full row width.
+   No per-instructor page, so there is one thing to maintain.
+   ========================================================================== */
+
+.roster { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--s-6); }
+@media (max-width: 1023px) { .roster { grid-template-columns: repeat(2, 1fr); } }
+@media (max-width:  639px) { .roster { grid-template-columns: 1fr; } }
+
+.person {
+  display: flex; flex-direction: column;
+  background: var(--c-white); border: 1px solid var(--c-line);
+  border-radius: var(--r-2); overflow: hidden;
+}
+.person__media { position: relative; }
+.person__media .media { border-radius: 0; }
+.person__media .chip { position: absolute; left: 16px; top: 16px; }
+.person__body { display: flex; flex-direction: column; gap: var(--s-4); padding: var(--s-6) var(--s-7) var(--s-7); flex: 1; }
+.person__identity { display: grid; gap: 4px; }
+.person__role { font-family: var(--f-mono); font-size: var(--t-data-m); color: var(--c-muted); }
+.person__teaches {
+  font-family: var(--f-mono); font-size: var(--t-eyebrow);
+  letter-spacing: var(--ls-meta); text-transform: uppercase; color: var(--c-red);
+}
+.person__creds { display: grid; gap: 10px; }
+.person__creds li {
+  position: relative; padding-left: 20px;
+  font-size: var(--t-body-s); line-height: 1.5; color: var(--c-muted);
+}
+.person__creds li::before {
+  content: ""; position: absolute; left: 0; top: 10px;
+  width: 10px; height: 1px; background: var(--c-red);
+}
+.person__toggle {
+  margin-top: auto; padding-top: var(--s-5);
+  display: flex; align-items: center; justify-content: space-between; gap: var(--s-3);
+  min-height: var(--tap);
+  font-weight: 700; font-size: var(--t-nav);
+  letter-spacing: var(--ls-nav); text-transform: uppercase; color: var(--c-red);
+  border-top: 1px solid var(--c-line);
+  width: 100%; text-align: left;
+}
+.person__toggle .sign { font-family: var(--f-mono); font-size: var(--t-data-l); line-height: 1; }
+.person__toggle:hover { color: #B02019; }
+
+/* --- Expanded ------------------------------------------------------------
+   The card takes the full row and the ones below it push down. Handled with
+   grid-column, so nothing is positioned absolutely and nothing overlaps. */
+
+.person.is-open { grid-column: 1 / -1; }
+.person.is-open .person__collapsed { display: none; }
+.person.is-open .person__expanded { display: grid; }
+.person__expanded { display: none; }
+
+.person.is-open { flex-direction: row; }
+.person.is-open .person__media { flex: none; width: 440px; }
+.person.is-open .person__media .media { height: 100%; aspect-ratio: auto; }
+.person.is-open .person__body { padding: var(--s-8); gap: var(--s-6); }
+
+.person__expanded { gap: var(--s-6); }
+.person__head { display: flex; align-items: flex-start; justify-content: space-between; gap: var(--s-6); }
+.bio-block { display: grid; gap: var(--s-3); }
+.bio-block h4 {
+  font-family: var(--f-mono); font-weight: 500;
+  font-size: var(--t-eyebrow); letter-spacing: var(--ls-eyebrow);
+  text-transform: uppercase; color: var(--c-red);
+}
+.bio-block li {
+  position: relative; padding-left: 22px;
+  font-size: var(--t-body-s); line-height: var(--lh-body);
+}
+.bio-block li + li { margin-top: 8px; }
+.bio-block li::before {
+  content: ""; position: absolute; left: 0; top: 11px;
+  width: 12px; height: 1px; background: var(--c-line);
+}
+.person__cta { display: flex; flex-wrap: wrap; align-items: center; gap: var(--s-6); margin-top: var(--s-2); }
+
+@media (max-width: 899px) {
+  .person.is-open { flex-direction: column; }
+  .person.is-open .person__media { width: 100%; }
+  .person.is-open .person__media .media { aspect-ratio: 4 / 5; }
+  .person.is-open .person__body { padding: var(--s-6); }
+  .person__head { flex-direction: column; gap: var(--s-4); }
+  .person__cta { width: 100%; }
+  .person__cta .btn { width: 100%; }
+}
+
+/* --- A person whose bio the academy has not supplied yet ---------------- */
+
+.person--pending .person__creds li::before { background: var(--c-line); }
+.person--pending .person__teaches { color: var(--c-muted); }
+.person__collapsed { display: grid; gap: var(--s-4); }
