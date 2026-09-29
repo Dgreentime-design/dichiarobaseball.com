@@ -122,10 +122,51 @@ placeholders disappear on their own. Nothing else needs changing.
 Eighteen master files serve every placement on the site. Master sizes and the
 reuse map are in the image list doc.
 
+## The machine layer
+
+`build.mjs` generates `robots.txt`, `sitemap.xml` and `llms.txt` from the
+pages it actually wrote, so a route cannot appear in one and not the others.
+It also writes the JSON-LD: `SportsActivityLocation` on the homepage and the
+contact page, and one `Event` per session per group on the program page,
+built from the verified dates in `data/programs.json`.
+
+**The origin is one value.** `SITE_ORIGIN`, then the Vercel domain, then
+`https://dichiarobaseball.com`. Every canonical and `og:url` is rewritten to
+it at build time.
+
+**Indexing is opt in.** A build is only treated as the live site when
+`SITE_ORIGIN` is set to the production domain. Anything else, including a
+local build and including Vercel's own production deployment before the
+domain is pointed here, gets `noindex` on every page and a blanket disallow
+in `robots.txt`. At the cutover, set `SITE_ORIGIN=https://dichiarobaseball.com`
+in the Vercel project's environment variables.
+
+`register.html` is `noindex` at every origin. It is a transaction, not a page
+to arrive at from a search, and it carries no canonical for the same reason.
+
+`llms.txt` lists the open programs only. A gated program appears on no page
+of the site, so naming it in the file that exists for crawlers would publish
+what the gate withholds. It reads the `gated` flag, so the assignment can
+change in the data.
+
+**Clean URLs are off.** `cleanUrls: true` in `vercel.json` served every page
+except the site root, which 404ed: `/index.html` redirected to `/` and `/`
+resolved to nothing. Every internal link and every canonical in `pages/` is
+written with `.html` anyway, so `.html` is now both what is served and what
+is declared, and no canonical points at a redirect. If clean URLs are wanted
+later, the canonicals in `pages/` have to change with them.
+
 ## Checks before a review
 
     npm start             # in one terminal
     npm run verify        # in another
+
+Four checks across all fourteen pages. Three more scripts go further, and
+each takes a deployed URL as well as running against `localhost:8080`:
+
+    node scripts/check-jsonld.mjs [url]      structured data parses and is usable
+    node scripts/check-prototype.mjs [url]   the empty card and the demo rate code
+    node scripts/check-deployed.mjs <url>    what a deployment actually serves
 
 Four checks across all twelve pages:
 

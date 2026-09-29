@@ -51,7 +51,19 @@ const ORIGIN = (
   process.env.SITE_ORIGIN ||
   (VERCEL_HOST ? `https://${VERCEL_HOST}` : PROD_ORIGIN)
 ).replace(/\/+$/, "");
-const IS_PROD = ORIGIN === PROD_ORIGIN;
+
+/* Indexing is opt in, and the opt in is setting SITE_ORIGIN to the real
+   domain. Not "the resolved origin happens to be the production domain":
+   that made the default dangerous, because `vercel deploy` builds locally
+   when it cannot reach the account, VERCEL_URL is then unset, the origin
+   falls back to the production domain, and a review copy ships indexable
+   and claiming to be the live site. Which is the exact failure this is
+   here to stop, and it got as far as a real deployment before it showed.
+
+   So the safe state is the default. A build with nothing set is a review
+   copy. Set SITE_ORIGIN=https://dichiarobaseball.com at the cutover, in
+   the Vercel project's environment variables, and indexing turns on. */
+const IS_PROD = process.env.SITE_ORIGIN === PROD_ORIGIN;
 
 /* Pages that stay out of the index whatever the origin. The registration
    flow is a transaction, not a page anyone should arrive at from a search. */
@@ -400,10 +412,13 @@ if (existsSync("legal.json") && existsSync(join(PAGES, "_legal.html"))) {
    wrote, so a route cannot appear in one and not the others, and a page
    added to pages/ turns up in all three without anyone editing a list.
 
-   cleanUrls is on in vercel.json, so /about.html serves at /about. The
-   canonical form is the clean one, and that is what the sitemap lists. */
+   URLs keep the .html, because that is what the site actually is: every
+   internal link and every canonical in pages/ is written that way.
+   cleanUrls was on in vercel.json and had to come out, it 404ed the site
+   root, so /about.html is both what is served and what is declared. One
+   form everywhere, and no canonical pointing at a redirect. */
 
-const clean = (file) => (file === "index.html" ? "/" : "/" + file.replace(/\.html$/, ""));
+const urlFor = (file) => (file === "index.html" ? "/" : "/" + file);
 const indexable = built.filter((p) => !p.noindex).sort((a, b) => a.file.localeCompare(b.file));
 
 /* Nothing but the real domain may be crawled. On a review copy this is a
@@ -411,12 +426,12 @@ const indexable = built.filter((p) => !p.noindex).sort((a, b) => a.file.localeCo
    tag stops a page that is already known from being listed, robots.txt
    stops it being fetched in the first place. */
 writeFileSync("robots.txt", IS_PROD
-  ? `User-agent: *\nAllow: /\nDisallow: /register\nDisallow: /register.html\n\nSitemap: ${ORIGIN}/sitemap.xml\n`
+  ? `User-agent: *\nAllow: /\nDisallow: /register.html\n\nSitemap: ${ORIGIN}/sitemap.xml\n`
   : `# Review deployment, not the live site. Nothing here should be indexed.\nUser-agent: *\nDisallow: /\n`);
 
 writeFileSync("sitemap.xml",
   `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n` +
-  indexable.map((p) => `  <url><loc>${ORIGIN}${clean(p.file)}</loc></url>`).join("\n") +
+  indexable.map((p) => `  <url><loc>${ORIGIN}${urlFor(p.file)}</loc></url>`).join("\n") +
   `\n</urlset>\n`);
 
 /* llms.txt, following the convention: what this is, then the pages worth
@@ -435,7 +450,7 @@ writeFileSync("llms.txt", [
   "",
   "## Pages",
   "",
-  ...indexable.map((p) => `- [${p.title}](${ORIGIN}${clean(p.file)})${p.description ? ": " + p.description : ""}`),
+  ...indexable.map((p) => `- [${p.title}](${ORIGIN}${urlFor(p.file)})${p.description ? ": " + p.description : ""}`),
   "",
   "## Programs",
   "",
