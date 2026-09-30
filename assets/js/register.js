@@ -1,9 +1,14 @@
 /* ==========================================================================
-   Registration prototype.
+   Registration.
 
    The three steps and the confirmation are panels on one page, switched
-   client side. Nothing is stored and nothing is charged: this exists so the
-   whole path can be walked in a review before the application is built.
+   client side. Step 3 posts to /api/checkout/session, which prices the
+   cart on the server and stores the registration.
+
+   Paying online sends the parent to the payment page. Coming back is not
+   proof of payment, so the confirmation screen starts at "confirming" and
+   polls /api/registration/:id/status until the server, which only learns
+   of a payment from a verified webhook, says confirmed or failed.
 
    IMPORTANT, for whoever picks this up: the rate lookup below is a stand-in.
    In the built site a code goes to the server and one rate comes back. No
@@ -27,6 +32,11 @@
   var DEMO_RATES = { DEMO25: { label: "Demo Town Little League", price: 180 } };
 
   var state = { step: 1, rate: null, method: "online", player: "Mia" };
+
+  /* The one program this page renders. The summary, dates and copy on the
+     page are all for this option, so it is the one the server prices. */
+  var PROGRAM = { slug: "little-league-fall-2026", option: "full" };
+  var STORE_KEY = "dbsa-registration";
 
   var panels = document.querySelectorAll("[data-step]");
   var markers = document.querySelectorAll("[data-step-marker]");
@@ -119,7 +129,7 @@
       } else if (n === 2) {
         go(3);
       } else {
-        finish();
+        submit(form);
       }
     });
   });
@@ -235,6 +245,44 @@
       next: [["Today", "A confirmation email with the full schedule, the amount and where to send the check."],
              ["A week before", "A reminder with what to bring, and a note if the check has not reached us yet."],
              ["First session", "Arrive ten minutes early. If the check is still in the post, bring it with you."]]
+    },
+    /* Back from the payment page, before the server has heard from Clover.
+       Claims nothing: the payment may not have happened at all. */
+    confirming: {
+      eyebrow: "One moment",
+      fullTitle: "Confirming your payment.",
+      lede: "We are waiting for Clover to confirm the payment. This usually takes a few seconds. Please keep this page open.",
+      status: "Confirming payment",
+      paid: false,
+      when: "Today",
+      accepted: "Card, through Clover",
+      state: "Not yet confirmed",
+      note: "If this does not change within a minute, call (201) 773-6858 and quote your reference. Please do not pay again.",
+      next: [["Now", "This page updates on its own as soon as the payment is confirmed."]]
+    },
+    failed: {
+      eyebrow: "Not registered",
+      fullTitle: "The payment did not go through.",
+      lede: "Nothing has been charged and the place is not confirmed. You can start again and pay online, at the facility or by check.",
+      status: "Not paid",
+      paid: false,
+      when: "Not charged",
+      accepted: "Card, through Clover",
+      state: "Payment declined",
+      note: "Questions about the payment go to (201) 773-6858.",
+      next: [["Now", "Start the registration again and choose how you would like to pay."]]
+    },
+    unknown: {
+      eyebrow: "Not found",
+      fullTitle: "We could not find that registration.",
+      lede: "The link may be incomplete. Nothing on this page means a payment was taken or a place was confirmed.",
+      status: "Unknown",
+      paid: false,
+      when: "",
+      accepted: "",
+      state: "Unknown",
+      note: "Call (201) 773-6858 and we will look it up.",
+      next: [["Now", "Start the registration again, or call us to check."]]
     }
   };
 
@@ -243,16 +291,19 @@
     if (el) el.textContent = text;
   }
 
-  function finish() {
-    var c = COPY[state.method];
+  /* Renders the confirmation panel for one state. The amount always comes
+     from the server's answer, never from the price shown on the page. */
+  function finish(key, registrationId, amountCents) {
+    var c = COPY[key];
     set("[data-confirm-eyebrow]", c.eyebrow);
-    set("[data-confirm-title]", state.player + c.title);
+    set("[data-confirm-title]", c.fullTitle || state.player + c.title);
     set("[data-confirm-lede]", c.lede);
-    set("[data-due-amount]", money(price()) + ".00");
+    set("[data-due-amount]", typeof amountCents === "number" ? "$" + (amountCents / 100).toFixed(2) : "");
     set("[data-due-when]", c.when);
     set("[data-due-accepted]", c.accepted);
     set("[data-due-state]", c.state);
-    set("[data-due-note]", c.note);
+    set("[data-due-note]", registrationId ? c.note.replace("DBSA-2026-0418", registrationId) : c.note);
+    set(".confirm-ref", registrationId ? "Reference " + registrationId : "");
 
     var status = document.querySelector("[data-due-status]");
     if (status) {
@@ -270,6 +321,128 @@
     go(4);
   }
 
+  /* --- Submitting ----------------------------------------------------------- */
+
+  function val(id) {
+    var el = document.getElementById(id);
+    return el ? el.value.trim() : "";
+  }
+  function checked(id) {
+    var el = document.getElementById(id);
+    return !!(el && el.checked);
+  }
+  function remember(value) {
+    try {
+      if (value) sessionStorage.setItem(STORE_KEY, JSON.stringify(value));
+      else sessionStorage.removeItem(STORE_KEY);
+    } catch (e) { /* storage blocked: the query string still carries the ID */ }
+  }
+  function recall() {
+    try { return JSON.parse(sessionStorage.getItem(STORE_KEY) || "null"); } catch (e) { return null; }
+  }
+
+  function showError(form, message) {
+    var el = form.querySelector("[data-submit-error]");
+    if (!el) {
+      el = document.createElement("p");
+      el.className = "field__error";
+      el.setAttribute("role", "alert");
+      el.setAttribute("data-submit-error", "");
+      form.querySelector(".reg__actions").insertAdjacentElement("beforebegin", el);
+    }
+    el.textContent = message;
+  }
+
+  function submit(form) {
+    var button = form.querySelector("[data-submit-label]");
+    if (button.disabled) return;
+    button.disabled = true;
+
+    var payload = {
+      programSlug: PROGRAM.slug,
+      optionId: PROGRAM.option,
+      paymentMethod: state.method,
+      players: [{
+        firstName: val("p1-first"),
+        lastName: val("p1-last"),
+        dateOfBirth: val("p1-dob"),
+        grade: val("p1-grade"),
+        coachNote: val("coach-note")
+      }],
+      parent: {
+        firstName: val("g-first"),
+        lastName: val("g-last"),
+        email: val("g-email"),
+        phone: val("g-mobile")
+      },
+      waiverAccepted: checked("waiver-agree"),
+      photoConsent: checked("photo-consent")
+    };
+
+    fetch("/api/checkout/session", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload)
+    })
+      .then(function (res) {
+        return res.json().catch(function () { return {}; }).then(function (data) {
+          if (!res.ok) throw new Error(data.error || "Something went wrong.");
+          return data;
+        });
+      })
+      .then(function (data) {
+        if (data.redirectUrl) {
+          remember({ id: data.registrationId, player: state.player });
+          window.location.assign(data.redirectUrl);
+          return;
+        }
+        finish(state.method, data.registrationId, data.amountCents);
+      })
+      .catch(function (err) {
+        button.disabled = false;
+        var message = err instanceof TypeError ? "We could not reach the server." : err.message;
+        showError(form, /charged/.test(message) ? message : message + " Nothing has been charged.");
+      });
+  }
+
+  /* --- Back from the payment page ------------------------------------------ */
+
+  /* The registration comes from the query string, or, when the payment
+     provider returns to a fixed URL with ?checkout=return, from the ID
+     remembered before leaving. */
+  function returning() {
+    var params = new URLSearchParams(window.location.search);
+    var saved = recall();
+    var id = params.get("registration") || (params.get("checkout") === "return" && saved ? saved.id : null);
+    if (!id) return false;
+    if (saved && saved.id === id && saved.player) state.player = saved.player;
+
+    var tries = 0;
+    finish("confirming", id);
+
+    (function poll() {
+      fetch("/api/registration/" + encodeURIComponent(id) + "/status", { cache: "no-store" })
+        .then(function (res) {
+          if (res.status === 404) return { status: "unknown" };
+          if (!res.ok) throw new Error();
+          return res.json();
+        })
+        .then(function (data) {
+          if (data.status === "confirmed") {
+            remember(null);
+            finish(data.paymentMethod || "online", id, data.amountCents);
+          } else if (data.status === "failed" || data.status === "unknown") {
+            finish(data.status, id, data.amountCents);
+          } else {
+            set("[data-due-amount]", "$" + (data.amountCents / 100).toFixed(2));
+            if (++tries < 30) setTimeout(poll, 2000);
+          }
+        })
+        .catch(function () { if (++tries < 30) setTimeout(poll, 2000); });
+    })();
+    return true;
+  }
+
   /* --- Adding a player ----------------------------------------------------- */
 
   var addPlayer = document.querySelector("[data-add-player]");
@@ -285,8 +458,13 @@
 
   /* --- Start --------------------------------------------------------------- */
 
-  var hash = (window.location.hash || "").match(/^#step-([1-4])$/);
-  if (hash) state.step = Number(hash[1]);
+  /* The confirmation is never reachable from the address bar alone: #step-4
+     on its own would show a registered screen for a registration that does
+     not exist. Only the steps of the form are. */
   renderTotals();
-  renderStep(false);
+  if (!returning()) {
+    var hash = (window.location.hash || "").match(/^#step-([1-3])$/);
+    if (hash) state.step = Number(hash[1]);
+    renderStep(false);
+  }
 })();
