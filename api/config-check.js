@@ -35,7 +35,15 @@ export async function GET(request) {
   const id = new URL(request.url).searchParams.get("registration");
   if (id) {
     if (!REGISTRATION_ID.test(id)) return json({ error: "Not a registration ID" }, 400);
-    const rows = await store().all(id);
+    let rows;
+    try {
+      rows = await store().all(id);
+    } catch (e) {
+      /* Only the HTTP status and Airtable's error type, which name the
+         problem without carrying any configured value. */
+      const m = String(e.message).match(/^Airtable (\d+): .*?"type"\s*:\s*"([A-Z_]+)"/);
+      return json({ storageError: m ? { status: Number(m[1]), type: m[2] } : { kind: e.name } }, 502);
+    }
     return json({
       registration: id,
       rows: rows.length,
