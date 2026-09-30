@@ -20,7 +20,7 @@
 <!-- ===================================================================== -->
 <!-- Progress                                                              -->
 <!-- ===================================================================== -->
-<nav class="progress" aria-label="Registration progress" data-progress>
+<nav class="progress" aria-label="Registration progress" data-progress hidden>
   <div class="progress__inner">
     <div class="progress__step" data-step-marker="1" data-state="now">
       <span class="progress__marker">01</span>
@@ -42,7 +42,26 @@
 <!-- ===================================================================== -->
 <!-- Step 01 · Players and parent                                          -->
 <!-- ===================================================================== -->
-<section class="reg step-panel" data-step="1" aria-labelledby="s1-title">
+<section class="reg step-panel" data-program-missing aria-labelledby="missing-title" hidden>
+  <div class="reg__inner">
+    <div class="reg__form">
+      <div class="reg__head">
+        <p class="eyebrow">Registration</p>
+        <h1 class="display-l" id="missing-title">We could not find that program.</h1>
+        <p class="body-l">
+          The link you followed does not match a program that is open for registration.
+          Nothing has been saved and nothing has been charged. Choose a program and
+          register from its page.
+        </p>
+      </div>
+      <div class="reg__actions">
+        <a class="btn btn--primary" href="camps-and-clinics.html">See camps and clinics</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="reg step-panel" data-step="1" aria-labelledby="s1-title" hidden>
   <div class="reg__inner">
     <form class="reg__form" data-step-form="1" novalidate>
 
@@ -139,17 +158,16 @@
 
     <aside class="summary">
       <p class="summary__eyebrow">You are registering for</p>
-      <h2 class="heading-m">Little League Training Camp</h2>
+      <h2 class="heading-m" data-program-name></h2>
       <dl class="summary__facts">
-        <div class="summary__fact"><dt>Dates</dt><dd>Oct 25 to Dec 13</dd></div>
-        <div class="summary__fact"><dt>Day</dt><dd>Sundays, 2:30 to 4:00pm</dd></div>
-        <div class="summary__fact"><dt>Sessions</dt><dd>8</dd></div>
-        <div class="summary__fact"><dt>Where</dt><dd>18-01 Pollitt Drive</dd></div>
-        <div class="summary__fact summary__fact--rate" data-rate-row hidden><dt>Rate</dt><dd data-rate-label></dd></div>
+        <div class="summary__fact"><dt>Dates</dt><dd data-program-dates></dd></div>
+        <div class="summary__fact"><dt>Day</dt><dd data-program-day></dd></div>
+        <div class="summary__fact"><dt>Sessions</dt><dd data-program-sessions></dd></div>
+        <div class="summary__fact"><dt>Where</dt><dd data-program-where></dd></div>
       </dl>
       <dl class="summary__total">
         <dt>Total</dt>
-        <dd data-total>$320</dd>
+        <dd data-total></dd>
       </dl>
       <p class="summary__note">One player. Adding a sibling updates this total.</p>
     </aside>
@@ -212,7 +230,7 @@
           </div>
           <div class="field">
             <label for="sign-date">Date</label>
-            <input class="input" id="sign-date" type="text" value="21 September 2026" readonly>
+            <input class="input" id="sign-date" type="text" value="" readonly data-sign-date>
           </div>
         </div>
       </div>
@@ -234,15 +252,14 @@
 
     <aside class="summary">
       <p class="summary__eyebrow">You are registering for</p>
-      <h2 class="heading-m">Little League Training Camp</h2>
+      <h2 class="heading-m" data-program-name></h2>
       <dl class="summary__facts">
-        <div class="summary__fact"><dt>Dates</dt><dd>Oct 25 to Dec 13</dd></div>
-        <div class="summary__fact"><dt>Day</dt><dd>Sundays, 2:30 to 4:00pm</dd></div>
-        <div class="summary__fact"><dt>Sessions</dt><dd>8</dd></div>
-        <div class="summary__fact"><dt>Where</dt><dd>18-01 Pollitt Drive</dd></div>
-        <div class="summary__fact summary__fact--rate" data-rate-row hidden><dt>Rate</dt><dd data-rate-label></dd></div>
+        <div class="summary__fact"><dt>Dates</dt><dd data-program-dates></dd></div>
+        <div class="summary__fact"><dt>Day</dt><dd data-program-day></dd></div>
+        <div class="summary__fact"><dt>Sessions</dt><dd data-program-sessions></dd></div>
+        <div class="summary__fact"><dt>Where</dt><dd data-program-where></dd></div>
       </dl>
-      <dl class="summary__total"><dt>Total</dt><dd data-total>$320</dd></dl>
+      <dl class="summary__total"><dt>Total</dt><dd data-total></dd></dl>
       <p class="summary__note">One player. Adding a sibling updates this total.</p>
     </aside>
   </div>
@@ -269,39 +286,21 @@
           <h3 class="heading-s">What you are paying for</h3>
         </div>
         <div class="lines">
+          <div data-options hidden></div>
+
           <div class="line">
             <div class="line__copy">
-              <span>Little League Training Camp, fall</span>
-              <small>8 Sundays, Oct 25 to Dec 13. One player.</small>
+              <span data-line-name></span>
+              <small data-line-detail></small>
             </div>
-            <span class="line__price" data-line-price>$320</span>
-          </div>
-
-          <div class="rate-applied" data-rate-applied hidden>
-            <span><span aria-hidden="true">&#10003;</span> <span data-rate-label></span> rate applied</span>
-            <button type="button" data-remove-code>Remove code</button>
+            <span class="line__price" data-line-price></span>
           </div>
 
           <div class="line line--total">
             <div class="line__copy">Total due today</div>
-            <span class="line__price" data-total>$320</span>
+            <span class="line__price" data-due-today></span>
           </div>
-        </div>
-
-        <div class="code-box" id="code">
-          <p data-code-prompt>
-            <button class="code-toggle" type="button" data-code-toggle>Have a town or league code?</button>
-          </p>
-          <div data-code-field hidden>
-            <div class="field">
-              <label for="rate-code">Town or league code</label>
-              <div class="code-box__row">
-                <input class="input" id="rate-code" type="text" autocomplete="off" spellcheck="false" placeholder="e.g. DEMO25">
-                <button class="btn btn--secondary" type="button" data-apply-code>Apply</button>
-              </div>
-              <p class="field__hint" data-code-hint>Your town or league will have sent this to you.</p>
-            </div>
-          </div>
+          <p class="reg-card__note" data-line-later hidden></p>
         </div>
       </div>
 
@@ -356,15 +355,14 @@
 
     <aside class="summary">
       <p class="summary__eyebrow">You are registering for</p>
-      <h2 class="heading-m">Little League Training Camp</h2>
+      <h2 class="heading-m" data-program-name></h2>
       <dl class="summary__facts">
-        <div class="summary__fact"><dt>Dates</dt><dd>Oct 25 to Dec 13</dd></div>
-        <div class="summary__fact"><dt>Day</dt><dd>Sundays, 2:30 to 4:00pm</dd></div>
-        <div class="summary__fact"><dt>Sessions</dt><dd>8</dd></div>
-        <div class="summary__fact"><dt>Where</dt><dd>18-01 Pollitt Drive</dd></div>
-        <div class="summary__fact summary__fact--rate" data-rate-row hidden><dt>Rate</dt><dd data-rate-label></dd></div>
+        <div class="summary__fact"><dt>Dates</dt><dd data-program-dates></dd></div>
+        <div class="summary__fact"><dt>Day</dt><dd data-program-day></dd></div>
+        <div class="summary__fact"><dt>Sessions</dt><dd data-program-sessions></dd></div>
+        <div class="summary__fact"><dt>Where</dt><dd data-program-where></dd></div>
       </dl>
-      <dl class="summary__total"><dt>Total</dt><dd data-total>$320</dd></dl>
+      <dl class="summary__total"><dt>Total</dt><dd data-total></dd></dl>
       <p class="summary__note">One player. Adding a sibling updates this total.</p>
     </aside>
   </div>
@@ -378,13 +376,11 @@
   <div class="confirm-band">
     <div class="confirm-band__inner">
       <div class="confirm-band__copy">
-        <p class="eyebrow" data-confirm-eyebrow>You are in</p>
-        <h2 class="display-l" id="done-title" data-confirm-title>Mia is registered.</h2>
-        <p class="body-l" data-confirm-lede>
-          Little League Training Camp, fall. Eight Sundays starting 25 October.
-        </p>
+        <p class="eyebrow" data-confirm-eyebrow></p>
+        <h2 class="display-l" id="done-title" data-confirm-title></h2>
+        <p class="body-l" data-confirm-lede></p>
       </div>
-      <p class="confirm-ref">Reference DBSA-2026-0418</p>
+      <p class="confirm-ref"></p>
     </div>
   </div>
 
@@ -394,44 +390,33 @@
 
         <div class="reg-card">
           <div class="reg-card__head"><h3 class="heading-s">What happens next</h3></div>
-          <dl class="handoff__steps" data-next-steps>
-            <div class="handoff__step"><dt>Today</dt><dd>A confirmation email with the full schedule and your receipt.</dd></div>
-            <div class="handoff__step"><dt>A week before</dt><dd>A reminder with what to bring.</dd></div>
-            <div class="handoff__step"><dt>First session</dt><dd>Arrive ten minutes early. Sunday 25 October, 2:30pm.</dd></div>
-          </dl>
+          <dl class="handoff__steps" data-next-steps></dl>
         </div>
 
-        <div class="reg-card">
+        <div class="reg-card" data-dates-card hidden>
           <div class="reg-card__head">
-            <h3 class="heading-s">All eight sessions</h3>
+            <h3 class="heading-s" data-dates-title></h3>
             <a class="code-toggle" href="contact.html?about=calendar">Add to calendar</a>
           </div>
-          <div class="dates">
-            <span class="day">Sun 25 Oct</span><span class="day">Sun 1 Nov</span>
-            <span class="day">Sun 8 Nov</span><span class="day">Sun 15 Nov</span>
-            <span class="day">Sun 22 Nov</span><span class="day">Sun 29 Nov</span>
-            <span class="day">Sun 6 Dec</span><span class="day">Sun 13 Dec</span>
-          </div>
-          <p class="reg-card__note">All sessions run 2:30 to 4:00pm at 18-01 Pollitt Drive, Fair Lawn.</p>
+          <div class="dates" data-dates></div>
+          <p class="reg-card__note" data-dates-note></p>
         </div>
 
         <div class="reg__actions">
-          <a class="btn btn--secondary" href="register.html">Register another player</a>
+          <a class="btn btn--secondary" href="register.html" data-register-again>Register another player</a>
           <a class="reg__back" href="camps-and-clinics.html">Back to camps and clinics</a>
         </div>
       </div>
 
       <aside class="due">
-        <p class="due__status" data-due-status>Payment due at the facility</p>
+        <p class="due__status" data-due-status></p>
         <dl class="summary__facts">
-          <div class="summary__fact"><dt>Amount</dt><dd data-due-amount>$320.00</dd></div>
-          <div class="summary__fact"><dt>Due</dt><dd data-due-when>First session, 25 Oct</dd></div>
-          <div class="summary__fact"><dt>Accepted</dt><dd data-due-accepted>Card, cash or check</dd></div>
-          <div class="summary__fact"><dt>Status</dt><dd data-due-state>Not yet paid</dd></div>
+          <div class="summary__fact"><dt>Amount</dt><dd data-due-amount></dd></div>
+          <div class="summary__fact"><dt>Due</dt><dd data-due-when></dd></div>
+          <div class="summary__fact"><dt>Accepted</dt><dd data-due-accepted></dd></div>
+          <div class="summary__fact"><dt>Status</dt><dd data-due-state></dd></div>
         </dl>
-        <p class="summary__note" data-due-note>
-          Prefer to pay online instead? Call (201) 773-6858 and we can send a payment link.
-        </p>
+        <p class="summary__note" data-due-note></p>
       </aside>
     </div>
   </div>
@@ -443,21 +428,19 @@
 <section class="band band--bone">
   <div class="container">
     <div class="build-note">
-      <p class="meta">Prototype, not the built flow</p>
+      <p class="meta">Review copy, not the launched flow</p>
       <p>
-        These are the real screens, walkable end to end, with no server behind them.
-        Nothing is stored, nothing is charged, and no email is sent. One code works here
-        so the town rate can be demonstrated: <strong>DEMO25</strong> applies the Demo
-        Town Little League rate, and anything else returns the one generic failure
-        message. The town is invented, because naming a real league against a lower
-        price is the thing this design exists to prevent.
+        Registering here saves a real registration. The price is worked out by the
+        server from the program and option, never taken from this page. Paying online
+        sends you to a payment page, and your place is confirmed only when the payment
+        is confirmed to us directly by the payment provider. Coming back to this page
+        is not treated as proof of payment. Paying at the facility or by check saves the
+        registration straight away, with nothing charged.
       </p>
       <p>
-        In the built site that lookup is server side and rate limited, the rate never
-        appears in the page source, and no list of towns or codes is ever downloadable.
-        Shipping the demo lookup as written would defeat the whole point of the design:
-        anyone could read the page source and see which towns pay less. The rules are in
-        the registration build spec.
+        No emails are sent yet, so the confirmation and reminder emails described on
+        this page do not arrive. Town and league codes are not available yet, so every
+        registration here is at the standard price.
       </p>
     </div>
   </div>

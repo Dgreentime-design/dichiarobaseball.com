@@ -69,7 +69,7 @@ function webhook(sessionId, { status = "APPROVED", secret = SECRET, header = "mo
 
 /* Walks the real form to the payment page in a browser. */
 async function walkToCheckout(page) {
-  await page.goto(`${BASE}/register.html`);
+  await page.goto(`${BASE}/register.html?program=little-league-fall-2026`);
   await page.fill("#p1-first", "Mia");
   await page.fill("#p1-last", "Rodriguez");
   await page.fill("#p1-dob", "03 / 14 / 2016");

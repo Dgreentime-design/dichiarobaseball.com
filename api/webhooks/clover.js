@@ -14,6 +14,7 @@
    500 so the provider retries, rather than 200 and a lost confirmation.
    ========================================================================== */
 
+import "../_lib/guard.js";
 import { store } from "../_lib/store.js";
 import { provider } from "../_lib/providers/index.js";
 import { json } from "../_lib/http.js";

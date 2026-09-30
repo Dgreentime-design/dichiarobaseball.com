@@ -11,6 +11,7 @@
    are written confirmed straight away with no provider call.
    ========================================================================== */
 
+import "../_lib/guard.js";
 import { priceCart, CartError, PAYMENT_METHODS, MAX_PLAYERS } from "../_lib/programs.js";
 import { store, StoreUnavailable } from "../_lib/store.js";
 import { provider } from "../_lib/providers/index.js";

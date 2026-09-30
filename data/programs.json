@@ -46,14 +46,7 @@
         "Constant time comparison. Rate limited to 5 attempts per minute per IP. Every attempt logged with a hashed IP.",
         "No rate, discount or code ever appears in page HTML, JSON, the sitemap or any queryable API."
       ],
-      "known": [
-        {
-          "label": "Ridgewood residents",
-          "type": "percent_off",
-          "value": 10,
-          "source": "Meeting notes, 21 September. Percentage, not a fixed price."
-        }
-      ]
+      "known": "Not recorded here. This file is served publicly, so no real code, rate or town name may appear in it. Known rates stay in the meeting notes they came from until the code system exists to hold them privately."
     },
     "multi_player": {
       "max": 4,

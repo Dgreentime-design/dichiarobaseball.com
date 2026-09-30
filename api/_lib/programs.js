@@ -14,7 +14,13 @@ const DATA = JSON.parse(readFileSync(new URL("../../data/programs.json", import.
 export const PAYMENT_METHODS = DATA._meta.defaults.payment_methods;
 export const MAX_PLAYERS = DATA._meta.multi_player.max;
 
+export const VENUES = DATA._meta.venues;
+export const CHECK_PAYABLE_TO = DATA._meta.check_payable_to;
+export const CHECK_MAIL_TO = DATA._meta.check_mail_to;
+
 export class CartError extends Error {}
+
+export const findProgram = (slug) => DATA.programs.find((p) => p.slug === slug) || null;
 
 /* Returns { program, option, amountCents, lineItems } or throws CartError.
 
@@ -23,7 +29,7 @@ export class CartError extends Error {}
    Refusing is the safe failure, a silent fallback to the standard price
    would charge a family the wrong amount. */
 export function priceCart({ programSlug, optionId, rateId, playerCount }) {
-  const program = DATA.programs.find((p) => p.slug === programSlug);
+  const program = findProgram(programSlug);
   if (!program || program.status !== "live") throw new CartError("Unknown program");
   if (program.gated) throw new CartError("This program needs a code, and codes are not available yet");
 

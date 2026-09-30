@@ -1,20 +1,26 @@
 /* ==========================================================================
    Registration.
 
+   register.html?program=<slug> renders the program named in the link, from
+   /api/programs/<slug>. That endpoint prices every option with the same
+   function that prices the charge, so no total on this page can differ
+   from what the server charges. An unknown or missing slug shows "we could
+   not find that program" and never a different program: a silent fallback
+   on a page that takes money is how a parent pays for the wrong thing.
+
    The three steps and the confirmation are panels on one page, switched
    client side. Step 3 posts to /api/checkout/session, which prices the
-   cart on the server and stores the registration.
+   cart again on the server and stores the registration.
 
    Paying online sends the parent to the payment page. Coming back is not
    proof of payment, so the confirmation screen starts at "confirming" and
    polls /api/registration/:id/status until the server, which only learns
    of a payment from a verified webhook, says confirmed or failed.
 
-   IMPORTANT, for whoever picks this up: the rate lookup below is a stand-in.
-   In the built site a code goes to the server and one rate comes back. No
-   rate, code or town name may ever appear in a public payload, or anyone can
-   read the page source and see which towns pay less, which is the exact harm
-   the design exists to prevent. See the registration build spec.
+   Town and league codes are not built. When they are, a code goes to the
+   server and one rate comes back. No rate, code or town name may ever
+   appear in a public payload, or anyone can read the page source and see
+   which towns pay less. See the registration build spec.
    ========================================================================== */
 
 (function () {
@@ -23,46 +29,132 @@
   var root = document.querySelector("[data-progress]");
   if (!root) return;
 
-  var STANDARD = 320;
-  /* An invented town, on purpose. Naming a real league against a discounted
-     price is the harm the gated-rate design exists to prevent, and a fake
-     price does not undo it: the organisation is findable and the implication
-     is that it pays less. This must not ship at the domain cutover either,
-     the lookup moves server side. */
-  var DEMO_RATES = { DEMO25: { label: "Demo Town Little League", price: 180 } };
-
-  var state = { step: 1, rate: null, method: "online", player: "Mia" };
-
-  /* The one program this page renders. The summary, dates and copy on the
-     page are all for this option, so it is the one the server prices. */
-  var PROGRAM = { slug: "little-league-fall-2026", option: "full" };
+  var state = { step: 1, method: "online", player: "Mia", program: null, option: null };
   var STORE_KEY = "dbsa-registration";
+
+  /* ?plan= on the program page's links, mapped to option IDs. */
+  var PLANS = { full: "full", two: "two-payments" };
 
   var panels = document.querySelectorAll("[data-step]");
   var markers = document.querySelectorAll("[data-step-marker]");
 
-  function money(n) { return "$" + n; }
-  function price() { return state.rate ? state.rate.price : STANDARD; }
+  /* --- Formatting -------------------------------------------------------- */
+
+  var MONTHS = ["January", "February", "March", "April", "May", "June", "July",
+                "August", "September", "October", "November", "December"];
+  var DAYS = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+
+  function money(cents) {
+    return "$" + (cents % 100 === 0 ? String(cents / 100) : (cents / 100).toFixed(2));
+  }
+  function moneyExact(cents) { return "$" + (cents / 100).toFixed(2); }
+
+  /* Dates in programs.json are ISO days with no time, so parse them as
+     calendar dates, not as instants that a timezone could shift. */
+  function day(iso) {
+    var p = iso.split("-").map(Number);
+    return new Date(Date.UTC(p[0], p[1] - 1, p[2]));
+  }
+  function long(iso) { var d = day(iso); return d.getUTCDate() + " " + MONTHS[d.getUTCMonth()]; }
+  function longYear(iso) { return long(iso) + " " + day(iso).getUTCFullYear(); }
+  function short(iso) { var d = day(iso); return d.getUTCDate() + " " + MONTHS[d.getUTCMonth()].slice(0, 3); }
+  function monthDay(iso) { var d = day(iso); return MONTHS[d.getUTCMonth()].slice(0, 3) + " " + d.getUTCDate(); }
+  function chip(iso) { var d = day(iso); return DAYS[d.getUTCDay()].slice(0, 3) + " " + short(iso); }
+
+  /* "2:30pm - 4:00pm" reads "2:30 to 4:00pm", as the rest of the site does. */
+  function span(t) {
+    var parts = (t || "").split(/\s*-\s*/);
+    if (parts.length !== 2) return t || "";
+    var a = parts[0].match(/(am|pm)$/), b = parts[1].match(/(am|pm)$/);
+    var start = a && b && a[1] === b[1] ? parts[0].slice(0, -2) : parts[0];
+    return start + " to " + parts[1];
+  }
+
+  function when(schedule) {
+    var plural = schedule.day ? schedule.day + "s" : "";
+    if (schedule.groups && schedule.groups.length) {
+      return plural + ", " + schedule.groups.map(function (g) { return g.label + " " + span(g.time); }).join(", ");
+    }
+    return plural + (schedule.time ? ", " + span(schedule.time) : "");
+  }
+
+  /* Whether the chosen option covers every date of the program. Monthly
+     packages and single sessions do not, so no date list is shown for them
+     rather than a list the parent has not bought. */
+  function wholeProgram(option) {
+    return !!option && (option.id === "full" || option.later.length > 0);
+  }
+
+  function laterText(o) {
+    return o.later.map(function (l) { return money(l.amountCents) + " on " + longYear(l.when); }).join(", ");
+  }
 
   /* --- Rendering --------------------------------------------------------- */
 
-  function renderTotals() {
-    Array.prototype.forEach.call(document.querySelectorAll("[data-total]"), function (el) {
-      el.textContent = money(price());
-    });
-    var line = document.querySelector("[data-line-price]");
-    if (line) line.textContent = money(price());
+  function setAll(sel, text) {
+    Array.prototype.forEach.call(document.querySelectorAll(sel), function (el) { el.textContent = text; });
+  }
+  function set(sel, text) {
+    var el = document.querySelector(sel);
+    if (el) el.textContent = text;
+  }
 
-    Array.prototype.forEach.call(document.querySelectorAll("[data-rate-row]"), function (row) {
-      row.hidden = !state.rate;
-    });
-    Array.prototype.forEach.call(document.querySelectorAll("[data-rate-label]"), function (el) {
-      el.textContent = state.rate ? state.rate.label : "";
-    });
-    var applied = document.querySelector("[data-rate-applied]");
-    if (applied) applied.hidden = !state.rate;
-    var prompt = document.querySelector("[data-code-prompt]");
-    if (prompt) prompt.hidden = !!state.rate;
+  function renderProgram() {
+    var p = state.program, s = p.schedule;
+    var dates = s.dates;
+    setAll("[data-program-name]", p.name);
+    setAll("[data-program-dates]", dates.length ? monthDay(dates[0]) + " to " + monthDay(dates[dates.length - 1]) : "");
+    setAll("[data-program-day]", when(s));
+    setAll("[data-program-sessions]", dates.length ? String(dates.length) : "");
+    setAll("[data-program-where]", p.venues.map(function (v) { return v.address.split(",")[0]; }).join(" and "));
+    set("[data-line-name]", p.name + ", " + p.season);
+
+    var again = document.querySelector("[data-register-again]");
+    if (again) again.setAttribute("href", "register.html?program=" + encodeURIComponent(p.slug));
+
+    var box = document.querySelector("[data-options]");
+    if (p.options.length > 1) {
+      box.innerHTML = p.options.map(function () {
+        return '<label class="choice"><input type="radio" name="option">' +
+          '<span class="choice__copy"><strong></strong><span></span></span></label>';
+      }).join("");
+      Array.prototype.forEach.call(box.querySelectorAll(".choice"), function (label, i) {
+        var o = p.options[i];
+        var input = label.querySelector("input");
+        input.value = o.id;
+        input.checked = !!state.option && state.option.id === o.id;
+        label.querySelector("strong").textContent = o.label;
+        label.querySelector(".choice__copy span").textContent = o.later.length
+          ? money(o.dueNowCents) + " today, then " + laterText(o)
+          : money(o.dueNowCents);
+        input.addEventListener("change", function () {
+          state.option = o;
+          box.classList.remove("is-invalid");
+          var err = document.querySelector("[data-submit-error]");
+          if (err) err.textContent = "";
+          renderTotals();
+        });
+      });
+      box.hidden = false;
+    }
+    renderTotals();
+  }
+
+  /* Every amount on screen comes from the server's pricing of one option.
+     Until an option is chosen, no total is shown at all. */
+  function renderTotals() {
+    var o = state.option;
+    setAll("[data-total]", o ? money(o.totalCents) : "");
+    set("[data-line-price]", o ? money(o.totalCents) : "");
+    set("[data-due-today]", o ? money(o.dueNowCents) : "");
+    set("[data-line-detail]", o ? o.label + ". One player." : "Choose an option above. One player.");
+    var later = document.querySelector("[data-line-later]");
+    if (later) {
+      later.hidden = !(o && o.later.length);
+      later.textContent = o && o.later.length
+        ? "Then " + laterText(o) + "."
+        : "";
+    }
   }
 
   function renderStep(moveFocus) {
@@ -76,6 +168,13 @@
       else m.removeAttribute("data-state");
     });
     if (root) root.hidden = state.step > 3;
+
+    /* The waiver carries the date it is actually signed. */
+    if (state.step === 2) {
+      var now = new Date();
+      var input = document.querySelector("[data-sign-date]");
+      if (input) input.value = now.getDate() + " " + MONTHS[now.getMonth()] + " " + now.getFullYear();
+    }
 
     /* Move focus to the new step's heading so a keyboard or screen reader
        user lands in the right place. Not on first render: nothing should
@@ -96,6 +195,14 @@
     renderStep(true);
   }
 
+  function missing(heading) {
+    var panel = document.querySelector("[data-program-missing]");
+    if (heading) panel.querySelector("h1").textContent = heading;
+    panel.hidden = false;
+    root.hidden = true;
+    Array.prototype.forEach.call(panels, function (p) { p.hidden = true; });
+  }
+
   /* --- Validation -------------------------------------------------------- */
 
   function validate(form) {
@@ -108,6 +215,14 @@
       if (field) field.classList.toggle("is-invalid", bad);
       if (bad && ok) { el.focus(); ok = false; }
     });
+    var box = form.querySelector("[data-options]");
+    if (ok && box && !box.hidden && !state.option) {
+      box.classList.add("is-invalid");
+      showError(form, "Choose an option to continue.");
+      var first = box.querySelector("input");
+      if (first) first.focus();
+      ok = false;
+    }
     return ok;
   }
 
@@ -154,77 +269,35 @@
     });
   });
 
-  /* --- Town and league codes ---------------------------------------------- */
-
-  var codeToggle = document.querySelector("[data-code-toggle]");
-  var codeField = document.querySelector("[data-code-field]");
-  if (codeToggle && codeField) {
-    codeToggle.addEventListener("click", function () {
-      codeField.hidden = false;
-      codeToggle.closest("[data-code-prompt]").hidden = true;
-      var input = document.getElementById("rate-code");
-      if (input) input.focus();
-    });
-  }
-
-  var apply = document.querySelector("[data-apply-code]");
-  if (apply) {
-    apply.addEventListener("click", function () {
-      var input = document.getElementById("rate-code");
-      var hint = document.querySelector("[data-code-hint]");
-      var field = input.closest(".field");
-      var match = DEMO_RATES[(input.value || "").trim().toUpperCase()];
-
-      if (match) {
-        state.rate = match;
-        field.classList.remove("is-invalid");
-        codeField.hidden = true;
-        input.value = "";
-        renderTotals();
-      } else {
-        /* One message, whatever the reason. Never confirm a near miss: a
-           different message for expired, wrong program or never existed turns
-           this field into an oracle for guessing valid codes. */
-        field.classList.add("is-invalid");
-        hint.textContent = "We do not recognise that code.";
-        hint.className = "field__error";
-        input.focus();
-      }
-    });
-  }
-
-  var removeCode = document.querySelector("[data-remove-code]");
-  if (removeCode) {
-    removeCode.addEventListener("click", function () {
-      state.rate = null;
-      renderTotals();
-    });
-  }
-
   /* --- Confirmation ------------------------------------------------------- */
 
+  /* {start} {startShort} {first} {payableTo} {mailTo} {ref} are filled from
+     the program and the registration. Where a value is not known, for a
+     monthly package or a return with no program remembered, the sentence
+     that needs it is left out rather than guessed. */
   var COPY = {
     online: {
       eyebrow: "You are in",
       title: " is registered.",
-      lede: "Little League Training Camp, fall. Eight Sundays starting 25 October. Your card has been charged and the receipt is on its way.",
+      lede: "Your card has been charged and the receipt is on its way.",
       status: "Paid",
       paid: true,
       when: "Paid " + "today",
       accepted: "Card, through Clover",
       state: "Paid in full",
+      statePart: "First payment made",
       note: "A receipt is in your inbox. Questions about the payment go to (201) 773-6858.",
       next: [["Today", "A confirmation email with the full schedule and your receipt."],
              ["A week before", "A reminder with what to bring."],
-             ["First session", "Arrive ten minutes early. Sunday 25 October, 2:30pm."]]
+             ["First session", "Arrive ten minutes early.{first}"]]
     },
     facility: {
       eyebrow: "Place held",
       title: " is registered.",
-      lede: "Little League Training Camp, fall. Eight Sundays starting 25 October. Nothing has been charged. Bring payment to the first session and we will settle up at the desk.",
+      lede: "Nothing has been charged. Bring payment to the first session and we will settle up at the desk.",
       status: "Payment due at the facility",
       paid: false,
-      when: "First session, 25 Oct",
+      when: "First session{startShort}",
       accepted: "Card, cash or check",
       state: "Registered, payment due",
       note: "Prefer to pay online instead? Call (201) 773-6858 and we can send a payment link.",
@@ -235,13 +308,13 @@
     check: {
       eyebrow: "Place held",
       title: " is registered.",
-      lede: "Little League Training Camp, fall. Eight Sundays starting 25 October. Nothing has been charged. Send or bring a check made out to DiChiaro Baseball & Softball Academy.",
+      lede: "Nothing has been charged. Send or bring a check made out to {payableTo}.",
       status: "Payment due by check",
       paid: false,
-      when: "Before the first session, 25 Oct",
-      accepted: "Check, payable to DiChiaro Baseball & Softball Academy",
+      when: "Before the first session{startShort}",
+      accepted: "Check, payable to {payableTo}",
       state: "Registered, payment due",
-      note: "Posting it? 18-01 Pollitt Drive, Fair Lawn NJ 07410. Write reference DBSA-2026-0418 on the memo line.",
+      note: "Posting it? {mailTo}. Write reference {ref} on the memo line.",
       next: [["Today", "A confirmation email with the full schedule, the amount and where to send the check."],
              ["A week before", "A reminder with what to bring, and a note if the check has not reached us yet."],
              ["First session", "Arrive ten minutes early. If the check is still in the post, bring it with you."]]
@@ -286,24 +359,40 @@
     }
   };
 
-  function set(sel, text) {
-    var el = document.querySelector(sel);
-    if (el) el.textContent = text;
+  function fill(text, values) {
+    return text.replace(/\{(\w+)\}/g, function (_, k) { return values[k] || ""; });
   }
 
-  /* Renders the confirmation panel for one state. The amount always comes
-     from the server's answer, never from the price shown on the page. */
-  function finish(key, registrationId, amountCents) {
+  /* ctx: { id, amountCents, programLabel, optionLabel } from the server. */
+  function finish(key, ctx) {
+    ctx = ctx || {};
     var c = COPY[key];
+    var p = state.program, o = state.option;
+    var whole = p && wholeProgram(o) && p.schedule.dates.length;
+    var start = whole ? p.schedule.dates[0] : null;
+    var slot = p && !p.schedule.groups.length && p.schedule.time ? ", " + p.schedule.time.split(/\s*-\s*/)[0] : "";
+    var values = {
+      startShort: start ? ", " + short(start) : "",
+      first: start ? " " + DAYS[day(start).getUTCDay()] + " " + long(start) + slot + "." : "",
+      payableTo: p ? p.check.payableTo : "",
+      mailTo: p ? p.check.mailTo : "",
+      ref: ctx.id || ""
+    };
+
+    var program = ctx.programLabel || (p ? p.name + ", " + p.season : "");
+    var option = ctx.optionLabel || (o ? o.label : "");
+    var about = [program, option].filter(Boolean).join(". ");
+    var lede = (about ? about + (start ? ", starting " + long(start) : "") + ". " : "") + fill(c.lede, values);
+
     set("[data-confirm-eyebrow]", c.eyebrow);
     set("[data-confirm-title]", c.fullTitle || state.player + c.title);
-    set("[data-confirm-lede]", c.lede);
-    set("[data-due-amount]", typeof amountCents === "number" ? "$" + (amountCents / 100).toFixed(2) : "");
-    set("[data-due-when]", c.when);
-    set("[data-due-accepted]", c.accepted);
-    set("[data-due-state]", c.state);
-    set("[data-due-note]", registrationId ? c.note.replace("DBSA-2026-0418", registrationId) : c.note);
-    set(".confirm-ref", registrationId ? "Reference " + registrationId : "");
+    set("[data-confirm-lede]", c.fullTitle ? fill(c.lede, values) : lede);
+    set("[data-due-amount]", typeof ctx.amountCents === "number" ? moneyExact(ctx.amountCents) : "");
+    set("[data-due-when]", fill(c.when, values));
+    set("[data-due-accepted]", fill(c.accepted, values));
+    set("[data-due-state]", key === "online" && o && o.later.length ? c.statePart : key === "online" && !o ? c.status : c.state);
+    set("[data-due-note]", fill(c.note, values));
+    set(".confirm-ref", ctx.id ? "Reference " + ctx.id : "");
 
     var status = document.querySelector("[data-due-status]");
     if (status) {
@@ -313,9 +402,29 @@
 
     var steps = document.querySelector("[data-next-steps]");
     if (steps) {
-      steps.innerHTML = c.next.map(function (row) {
-        return '<div class="handoff__step"><dt>' + row[0] + "</dt><dd>" + row[1] + "</dd></div>";
+      steps.innerHTML = c.next.map(function () {
+        return '<div class="handoff__step"><dt></dt><dd></dd></div>';
       }).join("");
+      Array.prototype.forEach.call(steps.children, function (row, i) {
+        row.querySelector("dt").textContent = c.next[i][0];
+        row.querySelector("dd").textContent = fill(c.next[i][1], values);
+      });
+    }
+
+    /* The session list, only when the purchase covers every date. */
+    var card = document.querySelector("[data-dates-card]");
+    var showDates = c.paid || key === "facility" || key === "check";
+    if (card) {
+      card.hidden = !(whole && showDates);
+      if (!card.hidden) {
+        var dates = p.schedule.dates;
+        set("[data-dates-title]", "All " + dates.length + " sessions");
+        document.querySelector("[data-dates]").innerHTML = dates.map(function (d) {
+          return '<span class="day">' + chip(d) + "</span>";
+        }).join("");
+        set("[data-dates-note]", "Sessions run " + when(p.schedule) + " at " +
+          p.venues.map(function (v) { return v.address; }).join(" and ") + ".");
+      }
     }
 
     go(4);
@@ -359,8 +468,8 @@
     button.disabled = true;
 
     var payload = {
-      programSlug: PROGRAM.slug,
-      optionId: PROGRAM.option,
+      programSlug: state.program.slug,
+      optionId: state.option.id,
       paymentMethod: state.method,
       players: [{
         firstName: val("p1-first"),
@@ -392,11 +501,11 @@
       })
       .then(function (data) {
         if (data.redirectUrl) {
-          remember({ id: data.registrationId, player: state.player });
+          remember({ id: data.registrationId, player: state.player, program: state.program.slug, option: state.option.id });
           window.location.assign(data.redirectUrl);
           return;
         }
-        finish(state.method, data.registrationId, data.amountCents);
+        finish(state.method, { id: data.registrationId, amountCents: data.amountCents });
       })
       .catch(function (err) {
         button.disabled = false;
@@ -405,41 +514,70 @@
       });
   }
 
+  /* --- Loading ------------------------------------------------------------- */
+
+  function loadProgram(slug) {
+    return fetch("/api/programs/" + encodeURIComponent(slug), { cache: "no-store" }).then(function (res) {
+      return res.json().catch(function () { return null; }).then(function (data) {
+        if (res.status === 404) return null;
+        if (!res.ok || !data) throw new Error(String(res.status));
+        return data;
+      });
+    });
+  }
+
+  function useProgram(program, optionId) {
+    state.program = program;
+    state.option = program.options.length === 1
+      ? program.options[0]
+      : program.options.filter(function (o) { return o.id === optionId; })[0] || null;
+    renderProgram();
+  }
+
   /* --- Back from the payment page ------------------------------------------ */
 
   /* The registration comes from the query string, or, when the payment
      provider returns to a fixed URL with ?checkout=return, from the ID
      remembered before leaving. */
-  function returning() {
-    var params = new URLSearchParams(window.location.search);
+  function returning(params) {
     var saved = recall();
     var id = params.get("registration") || (params.get("checkout") === "return" && saved ? saved.id : null);
     if (!id) return false;
-    if (saved && saved.id === id && saved.player) state.player = saved.player;
+    var mine = saved && saved.id === id ? saved : null;
+    if (mine && mine.player) state.player = mine.player;
 
-    var tries = 0;
-    finish("confirming", id);
+    var ready = mine && mine.program
+      ? loadProgram(mine.program).then(function (p) { if (p) useProgram(p, mine.option); }).catch(function () {})
+      : Promise.resolve();
 
-    (function poll() {
-      fetch("/api/registration/" + encodeURIComponent(id) + "/status", { cache: "no-store" })
-        .then(function (res) {
-          if (res.status === 404) return { status: "unknown" };
-          if (!res.ok) throw new Error();
-          return res.json();
-        })
-        .then(function (data) {
-          if (data.status === "confirmed") {
-            remember(null);
-            finish(data.paymentMethod || "online", id, data.amountCents);
-          } else if (data.status === "failed" || data.status === "unknown") {
-            finish(data.status, id, data.amountCents);
-          } else {
-            set("[data-due-amount]", "$" + (data.amountCents / 100).toFixed(2));
-            if (++tries < 30) setTimeout(poll, 2000);
-          }
-        })
-        .catch(function () { if (++tries < 30) setTimeout(poll, 2000); });
-    })();
+    ready.then(function () {
+      var tries = 0;
+      finish("confirming", { id: id });
+
+      (function poll() {
+        fetch("/api/registration/" + encodeURIComponent(id) + "/status", { cache: "no-store" })
+          .then(function (res) {
+            return res.json().catch(function () { return null; }).then(function (data) {
+              if (res.status === 404) return { status: "unknown" };
+              if (!res.ok || !data) throw new Error();
+              return data;
+            });
+          })
+          .then(function (data) {
+            var ctx = { id: id, amountCents: data.amountCents, programLabel: data.program, optionLabel: data.option };
+            if (data.status === "confirmed") {
+              remember(null);
+              finish(data.paymentMethod || "online", ctx);
+            } else if (data.status === "failed" || data.status === "unknown") {
+              finish(data.status, ctx);
+            } else {
+              set("[data-due-amount]", moneyExact(data.amountCents));
+              if (++tries < 30) setTimeout(poll, 2000);
+            }
+          })
+          .catch(function () { if (++tries < 30) setTimeout(poll, 2000); });
+      })();
+    });
     return true;
   }
 
@@ -460,11 +598,23 @@
 
   /* The confirmation is never reachable from the address bar alone: #step-4
      on its own would show a registered screen for a registration that does
-     not exist. Only the steps of the form are. */
-  renderTotals();
-  if (!returning()) {
-    var hash = (window.location.hash || "").match(/^#step-([1-3])$/);
-    if (hash) state.step = Number(hash[1]);
-    renderStep(false);
+     not exist. Only the steps of the form are, and only once the program in
+     the link has loaded. */
+  var params = new URLSearchParams(window.location.search);
+  if (!returning(params)) {
+    var slug = params.get("program");
+    if (!slug) {
+      missing();
+    } else {
+      loadProgram(slug)
+        .then(function (program) {
+          if (!program) { missing(); return; }
+          useProgram(program, PLANS[params.get("plan")] || null);
+          var hash = (window.location.hash || "").match(/^#step-([1-3])$/);
+          if (hash) state.step = Number(hash[1]);
+          renderStep(false);
+        })
+        .catch(function () { missing("We could not load that program."); });
+    }
   }
 })();

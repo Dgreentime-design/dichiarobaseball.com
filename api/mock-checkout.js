@@ -7,6 +7,7 @@
    touches storage: the webhook handler is the only thing that confirms.
    ========================================================================== */
 
+import "./_lib/guard.js";
 import { MockProvider } from "./_lib/providers/mock.js";
 
 const esc = (s) => String(s).replace(/[&<>"']/g, (c) => `&#${c.charCodeAt(0)};`);
