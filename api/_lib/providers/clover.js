@@ -9,9 +9,10 @@
    in the Clover-Signature header as t=<ts>,v1=<hex HMAC-SHA256 of
    "<ts>.<raw body>"> with the webhook's signing secret.
 
-   Success, failure and cancel redirect URLs are set in the Clover
-   dashboard, not per request, so returnUrl is accepted for the interface
-   but Clover does not use it. See the round 02 report.
+   returnUrl is sent as redirectUrls.success, .failure and .cancel, so the
+   parent comes back to the registration that was just started. Clover's
+   dashboard can also hold fixed redirect URLs; the per-request ones are
+   the documented way to vary them by session.
 
    Every value comes from the environment:
      CLOVER_ENV             sandbox | production
@@ -45,7 +46,7 @@ const field = (obj, name) => obj[name] ?? obj[name[0].toUpperCase() + name.slice
 export const CloverProvider = {
   name: "clover",
 
-  async createCheckoutSession({ registrationId, lineItems, amountCents, customer = {} }) {
+  async createCheckoutSession({ registrationId, lineItems, amountCents, returnUrl, customer = {} }) {
     const { base, merchantId, token } = config();
 
     const cart = lineItems.map((l) => ({
@@ -72,7 +73,8 @@ export const CloverProvider = {
           lastName: customer.lastName,
           phoneNumber: customer.phone
         },
-        shoppingCart: { lineItems: cart }
+        shoppingCart: { lineItems: cart },
+        redirectUrls: { success: returnUrl, failure: returnUrl, cancel: returnUrl }
       })
     });
     if (!res.ok) throw new Error(`Clover checkout ${res.status}: ${(await res.text()).slice(0, 300)}`);
