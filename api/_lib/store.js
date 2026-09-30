@@ -43,11 +43,12 @@ function airtable() {
   /* Values in a formula are quoted, so escape the quote and the escape. */
   const quote = (v) => `'${String(v).replace(/\\/g, "\\\\").replace(/'/g, "\\'")}'`;
 
-  async function findOne(field, value) {
-    const q = new URLSearchParams({ filterByFormula: `{${field}}=${quote(value)}`, maxRecords: "1" });
+  async function findAll(field, value, max = 1) {
+    const q = new URLSearchParams({ filterByFormula: `{${field}}=${quote(value)}`, maxRecords: String(max) });
     const { records } = await call(`?${q}`);
-    return records[0] || null;
+    return records;
   }
+  const findOne = async (field, value) => (await findAll(field, value))[0] || null;
 
   return {
     async create(fields) {
@@ -56,6 +57,9 @@ function airtable() {
     async get(id) {
       const r = await findOne("registration_id", id);
       return r ? r.fields : null;
+    },
+    async all(id) {
+      return (await findAll("registration_id", id, 10)).map((r) => r.fields);
     },
     async findBySession(sessionId) {
       const r = await findOne("checkout_session_id", sessionId);
@@ -80,6 +84,7 @@ function localFile() {
   return {
     async create(fields) { write([...read(), { ...fields, created_at: new Date().toISOString() }]); },
     async get(id) { return read().find((r) => r.registration_id === id) || null; },
+    async all(id) { return read().filter((r) => r.registration_id === id); },
     async findBySession(sessionId) { return read().find((r) => r.checkout_session_id === sessionId) || null; },
     async update(id, fields) {
       const rows = read();
