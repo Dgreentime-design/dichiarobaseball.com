@@ -16,7 +16,8 @@ Restated in full, every round.
 - Do not remove or weaken the `noindex, nofollow` meta tag on any page.
 - Do not change `robots.txt`.
 - Do not set `SITE_ORIGIN` in the Vercel environment.
-- Do not merge to another branch, do not force-push, do not rewrite history.
+- Do not push to `main`, do not merge into `main`, do not force-push, do not rewrite history.
+  Push to `review` freely.
 - Delete nothing. If something looks obsolete, report it and leave it.
 - Work only inside this repository, `~/projects/dichiarobaseball.com`.
 - Never write a secret, token, key or merchant ID into any file in the repository, including
@@ -26,22 +27,38 @@ Restated in full, every round.
 - Anything outside this round's scope goes in the report as a finding, not a fix.
 - Stop at the checkpoint at the end and report. Do not continue into the next piece of work.
 
+## Where this round runs: the `review` branch
+
+This round works on the `review` branch, never on `main`.
+
+A local hook, `builder-guard.mjs`, blocks pushes to `main` and `master` so that publishing waits for
+a human. That is deliberate and it stays. But this round needs deployed URLs to verify anything, so
+pushing to `review` is how you get them: every push to `review` produces a Vercel preview
+deployment, which you can then check yourself without a human in the loop.
+
+So: commit and push to `review` as often as you need. Never push to `main`. Daniel merges `review`
+into `main` when he has reviewed the work. If a push to `review` is blocked, stop and report it
+rather than trying `main` instead.
+
 ## Step 0: project identity check
 
-Before reading or writing anything else, run and report all four:
+Before reading or writing anything else, run and report all five:
 
 ```
 pwd
 git remote get-url origin
+git rev-parse --abbrev-ref HEAD
 git status --porcelain
-git rev-list --left-right --count origin/main...HEAD
+git rev-list --left-right --count origin/review...HEAD
 ```
 
 Expected: `/Users/danielgreenwood/projects/dichiarobaseball.com`, remote
-`https://github.com/Dgreentime-design/dichiarobaseball.com.git`, a clean tree, and `0 0`.
+`https://github.com/Dgreentime-design/dichiarobaseball.com.git`, branch `review`, a clean tree, and
+`0 0`.
 
-No commit SHA is named here on purpose. If any of the four does not match, STOP, write nothing,
-report the mismatch and wait.
+No commit SHA is named here on purpose. If any of the five does not match, STOP, write nothing,
+report the mismatch and wait. If the branch is not `review`, switching to it is the fix, but report
+before you switch.
 
 ## The one rule this round exists to enforce
 
@@ -57,10 +74,14 @@ than necessary, this is why.
 
 1. **Verify serverless functions work here before building on the assumption.** `vercel.json` sets
    `outputDirectory: "."` with a custom `buildCommand`, and the repo has no `api/` directory. Add a
-   trivial `api/health.js` returning `{ ok: true }`, confirm it responds on the deployed URL, and
-   report the result. If `outputDirectory: "."` conflicts with function detection, report the
-   conflict and stop rather than restructuring the project unilaterally. Everything else in this
-   round depends on this answer.
+   trivial `api/health.js` returning `{ ok: true }`, commit it to `review`, push, wait for the
+   preview deployment, and curl `/api/health` on the preview URL. Report the preview URL and the
+   response. If `outputDirectory: "."` conflicts with function detection, report the conflict and
+   stop rather than restructuring the project unilaterally. Everything else in this round depends on
+   this answer, so do not proceed past it on an assumption.
+
+   If the preview URL returns a Vercel login page rather than the site, deployment protection is on
+   for preview deployments. Report that and stop. It is a setting only Daniel can change.
 
 2. **Write the provider adapter.** One interface, two implementations:
 
@@ -142,8 +163,8 @@ Run each of these against a local dev server with `PAYMENT_PROVIDER=mock` and re
 Numbered, in this order:
 
 1. Step 0 output, verbatim.
-2. Task 1 result: do serverless functions work with the current `vercel.json`, and what did
-   `/api/health` return on the deployed URL.
+2. Task 1 result: the preview URL, whether serverless functions work with the current `vercel.json`,
+   and what `/api/health` returned.
 3. Files added or changed, with one line each on what they do.
 4. The six verification results above, pass or fail, with the failure detail for any fail.
 5. Exactly which environment variables the code now reads, by name. Names only, never values.
