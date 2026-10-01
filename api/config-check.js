@@ -42,7 +42,7 @@ export async function GET(request) {
     id = reg.registration_id;
   }
   if (id) {
-    if (!REGISTRATION_ID.test(id)) return json({ error: "Not a registration ID" }, 400);
+    if (!REGISTRATION_ID.test(id) && !/^UNMATCHED-[0-9A-F]{12}$/.test(id)) return json({ error: "Not a registration ID" }, 400);
     let rows;
     try {
       rows = await store().all(id);
