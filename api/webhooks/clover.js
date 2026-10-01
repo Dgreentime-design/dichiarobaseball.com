@@ -18,6 +18,7 @@ import "../_lib/guard.js";
 import { store } from "../_lib/store.js";
 import { provider } from "../_lib/providers/index.js";
 import { json } from "../_lib/http.js";
+import { explain } from "../_lib/providers/signature.js";
 
 /* TEMPORARY, round 05: capture the real payload shape. The last few
    requests are kept in this instance's memory and readable with GET on a
@@ -41,6 +42,7 @@ export async function POST(request) {
     headerNames: [...request.headers.keys()],
     bodyBytes: Buffer.byteLength(rawBody),
     body: parsed,
+    signature: explain(rawBody, request.headers.get("clover-signature"), process.env.CLOVER_WEBHOOK_SECRET),
     status: null,
     response: null
   };
