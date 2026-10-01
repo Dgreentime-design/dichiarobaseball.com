@@ -117,10 +117,13 @@ export async function POST(request) {
     if (process.env.VERCEL_ENV === "preview") {
       const m = String(e.message).match(/^(Airtable|Clover checkout) (\d+): (.*)$/s);
       const type = m && (m[3].match(/"(?:type|code|errorCode)"\s*:\s*"([A-Za-z_]+)"/) || [])[1];
+      /* Airtable names an unknown field in its message. A field name is
+         schema, not configuration, so it is safe to show. */
+      const field = m && (m[3].match(/Unknown field name: \\?"([\w ]{1,64})\\?"/) || [])[1];
       body.diagnostic = {
         stage,
         registrationId,
-        upstream: m ? { service: m[1], status: Number(m[2]), type: type || null } : { kind: e.name, message: m ? null : String(e.message).slice(0, 80) }
+        upstream: m ? { service: m[1], status: Number(m[2]), type: type || null, field: field || null } : { kind: e.name, message: m ? null : String(e.message).slice(0, 80) }
       };
     }
     return json(body, status);
