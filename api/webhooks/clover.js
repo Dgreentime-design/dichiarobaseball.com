@@ -22,6 +22,17 @@ import { json } from "../_lib/http.js";
 export async function POST(request) {
   const rawBody = await request.text();
 
+  /* TEMPORARY, round 05: capture the real payload shape. Header names only,
+     never values, so the signature never reaches the logs. Remove in task 7. */
+  let parsed;
+  try { parsed = JSON.parse(rawBody); } catch { parsed = "(not JSON)"; }
+  console.log("webhook diagnostic", JSON.stringify({
+    method: request.method,
+    headerNames: [...request.headers.keys()],
+    bodyBytes: Buffer.byteLength(rawBody),
+    body: parsed
+  }));
+
   let event;
   try {
     event = provider().verifyWebhook({ rawBody, headers: request.headers });
