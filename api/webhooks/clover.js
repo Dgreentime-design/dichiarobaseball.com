@@ -19,20 +19,42 @@ import { store } from "../_lib/store.js";
 import { provider } from "../_lib/providers/index.js";
 import { json } from "../_lib/http.js";
 
+/* TEMPORARY, round 05: capture the real payload shape. The last few
+   requests are kept in this instance's memory and readable with GET on a
+   preview deployment only. Header names, never values, so the signature is
+   never kept. Remove in task 7. */
+const CAPTURE = [];
+const INSTANCE = Math.random().toString(36).slice(2, 8);
+
+export async function GET() {
+  if (process.env.VERCEL_ENV !== "preview") return new Response("Not found", { status: 404 });
+  return json({ instance: INSTANCE, captured: CAPTURE });
+}
+
 export async function POST(request) {
   const rawBody = await request.text();
-
-  /* TEMPORARY, round 05: capture the real payload shape. Header names only,
-     never values, so the signature never reaches the logs. Remove in task 7. */
   let parsed;
   try { parsed = JSON.parse(rawBody); } catch { parsed = "(not JSON)"; }
-  console.log("webhook diagnostic", JSON.stringify({
+  const entry = {
+    at: new Date().toISOString(),
     method: request.method,
     headerNames: [...request.headers.keys()],
     bodyBytes: Buffer.byteLength(rawBody),
-    body: parsed
-  }));
+    body: parsed,
+    status: null,
+    response: null
+  };
+  CAPTURE.unshift(entry);
+  CAPTURE.length = Math.min(CAPTURE.length, 10);
 
+  const response = await handle(request, rawBody);
+  entry.status = response.status;
+  entry.response = await response.clone().json().catch(() => null);
+  console.log("webhook diagnostic", JSON.stringify(entry));
+  return response;
+}
+
+async function handle(request, rawBody) {
   let event;
   try {
     event = provider().verifyWebhook({ rawBody, headers: request.headers });
