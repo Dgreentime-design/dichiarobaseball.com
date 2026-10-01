@@ -25,67 +25,38 @@ import "../_lib/guard.js";
 import { store } from "../_lib/store.js";
 import { provider } from "../_lib/providers/index.js";
 import { json } from "../_lib/http.js";
-import { explain } from "../_lib/providers/signature.js";
 import { leaves, idCandidates, outcome, amount, orderId, merchantMismatch } from "../_lib/match.js";
 import { createHash } from "node:crypto";
 
 /* A note for the webhook_note field: the reason, then what was found. */
 const note = (reason, detail) => `${reason}\n\n${JSON.stringify(detail, null, 2)}`.slice(0, 90000);
 
-/* TEMPORARY, round 05: capture the real payload shape. The last few
-   requests are kept in this instance's memory and readable with GET on a
-   preview deployment only. Header names, never values, so the signature is
-   never kept. Remove in task 7. */
-const CAPTURE = [];
-const INSTANCE = Math.random().toString(36).slice(2, 8);
-
-export async function GET() {
-  if (process.env.VERCEL_ENV !== "preview") return new Response("Not found", { status: 404 });
-  return json({ instance: INSTANCE, captured: CAPTURE });
-}
-
 export async function POST(request) {
   const rawBody = await request.text();
-  let parsed;
-  try { parsed = JSON.parse(rawBody); } catch { parsed = "(not JSON)"; }
-  const entry = {
-    at: new Date().toISOString(),
-    method: request.method,
-    headerNames: [...request.headers.keys()],
-    bodyBytes: Buffer.byteLength(rawBody),
-    body: parsed,
-    signature: explain(rawBody, request.headers.get("clover-signature"), process.env.CLOVER_WEBHOOK_SECRET),
-    status: null,
-    response: null
-  };
-  CAPTURE.unshift(entry);
-  CAPTURE.length = Math.min(CAPTURE.length, 10);
-
-  const response = await handle(request, rawBody, entry);
-  entry.status = response.status;
-  entry.response = await response.clone().json().catch(() => null);
-  console.log("webhook diagnostic", JSON.stringify(entry));
-  return response;
-}
-
-async function handle(request, rawBody, entry) {
   let event;
   try {
     event = provider().verifyWebhook({ rawBody, headers: request.headers });
   } catch (e) {
-    console.error("webhook verify", e);
+    /* The error type only: a JSON parse error quotes the body. */
+    console.error("webhook verify failed", e.name);
     event = { valid: false };
   }
-  if (!event.valid) return json({ error: "Invalid signature" }, 401);
+  if (!event.valid) {
+    /* Logged so a changed signing secret shows up as a run of these
+       instead of payments quietly staying pending. Nothing from the
+       request is logged. */
+    console.log("webhook", JSON.stringify({ result: "invalid signature" }));
+    return json({ error: "Invalid signature" }, 401);
+  }
 
   /* Signed by the provider from here on. Everything below reads the
      payload by value; see api/_lib/match.js. */
   const ls = leaves(event.payload);
+  /* One line per webhook: how it was handled, the registration, the reason
+     and the key paths where things were found. Key names only, never the
+     payload's values. */
   const report = (result, extra = {}) => {
-    const m = { result, ...extra };
-    if (entry) entry.match = m;
-    console.log("webhook", JSON.stringify(m));
-    return m;
+    console.log("webhook", JSON.stringify({ result, ...extra }));
   };
 
   try {

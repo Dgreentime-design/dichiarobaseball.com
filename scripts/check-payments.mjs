@@ -22,6 +22,7 @@
 import { chromium } from "playwright";
 import { readFileSync } from "node:fs";
 import { sign } from "../api/_lib/providers/signature.js";
+import { randomBytes } from "node:crypto";
 
 const BASE = (process.argv[2] || "http://localhost:8080").replace(/\/+$/, "");
 const SECRET = process.env.MOCK_WEBHOOK_SECRET;
@@ -202,8 +203,10 @@ await check("8. No outcome: a signed webhook with no approved or declined value 
 
 await check("9. Unmatched: a signed webhook for no known session leaves one UNMATCHED row, and a redelivery adds none", async () => {
   const before = rows().length;
-  const ghost = "mock_" + "f".repeat(24);
-  const body = JSON.stringify({ type: "PAYMENT", status: "APPROVED", id: "mockpay_ghost", data: ghost, amount: 32000, createdTime: 1 });
+  /* Unique per run: the UNMATCHED row is named by a hash of the body, so a
+     fixed body would already exist from the last run. */
+  const ghost = "mock_" + randomBytes(12).toString("hex");
+  const body = JSON.stringify({ type: "PAYMENT", status: "APPROVED", id: "mockpay_ghost", data: ghost, amount: 32000, createdTime: Date.now() });
   const send = () => fetch(`${BASE}/api/webhooks/clover`, {
     method: "POST", body, headers: { "Content-Type": "application/json", "mock-signature": sign(body, SECRET) }
   });
