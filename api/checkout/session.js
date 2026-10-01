@@ -86,6 +86,7 @@ export async function POST(request) {
     photo_consent: body.photoConsent === true
   };
 
+  let stage = "store.create";
   try {
     const db = store();
     await db.create(record);
@@ -94,6 +95,7 @@ export async function POST(request) {
       return json({ registrationId, status: record.status, amountCents: cart.amountCents });
     }
 
+    stage = "provider";
     const origin = new URL(request.url).origin;
     const { redirectUrl, sessionId } = await provider().createCheckoutSession({
       registrationId,
@@ -102,12 +104,25 @@ export async function POST(request) {
       returnUrl: `${origin}/register.html?registration=${registrationId}`,
       customer: parent
     });
+    stage = "store.update";
     await db.update(registrationId, { checkout_session_id: sessionId });
 
     return json({ registrationId, status: "pending", amountCents: cart.amountCents, redirectUrl });
   } catch (e) {
     console.error("checkout/session", registrationId, e);
     const status = e instanceof StoreUnavailable ? 503 : 502;
-    return json({ error: "Registration could not be started. Nothing has been charged." }, status);
+    const body = { error: "Registration could not be started. Nothing has been charged." };
+    /* On a preview only, say which step failed and the upstream status and
+       error type, so a failure can be read without logs. No values. */
+    if (process.env.VERCEL_ENV === "preview") {
+      const m = String(e.message).match(/^(Airtable|Clover checkout) (\d+): (.*)$/s);
+      const type = m && (m[3].match(/"(?:type|code|errorCode)"\s*:\s*"([A-Za-z_]+)"/) || [])[1];
+      body.diagnostic = {
+        stage,
+        registrationId,
+        upstream: m ? { service: m[1], status: Number(m[2]), type: type || null } : { kind: e.name, message: m ? null : String(e.message).slice(0, 80) }
+      };
+    }
+    return json(body, status);
   }
 }
