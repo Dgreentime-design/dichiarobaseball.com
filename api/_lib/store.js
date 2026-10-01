@@ -65,6 +65,15 @@ function airtable() {
       const r = await findOne("checkout_session_id", sessionId);
       return r ? r.fields : null;
     },
+    /* One query for several candidate values: the first registration whose
+       session ID is any of them. */
+    async findBySessionAmong(values) {
+      if (!values.length) return null;
+      const formula = `OR(${values.slice(0, 20).map((v) => `{checkout_session_id}=${quote(v)}`).join(",")})`;
+      const q = new URLSearchParams({ filterByFormula: formula, maxRecords: "1" });
+      const { records } = await call(`?${q}`);
+      return records[0] ? records[0].fields : null;
+    },
     async update(id, fields) {
       const r = await findOne("registration_id", id);
       if (!r) throw new Error(`No registration ${id}`);
@@ -86,6 +95,7 @@ function localFile() {
     async get(id) { return read().find((r) => r.registration_id === id) || null; },
     async all(id) { return read().filter((r) => r.registration_id === id); },
     async findBySession(sessionId) { return read().find((r) => r.checkout_session_id === sessionId) || null; },
+    async findBySessionAmong(values) { return read().find((r) => r.checkout_session_id && values.includes(r.checkout_session_id)) || null; },
     async update(id, fields) {
       const rows = read();
       const row = rows.find((r) => r.registration_id === id);

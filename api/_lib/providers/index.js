@@ -3,11 +3,11 @@
      createCheckoutSession({ registrationId, lineItems, amountCents, returnUrl, customer })
        -> { redirectUrl, sessionId }
      verifyWebhook({ rawBody, headers })
-       -> { valid, orderId, sessionId, status, amountCents }
+       -> { valid, payload }
 
-   status is normalised to "succeeded", "failed" or "other". sessionId is
-   how a webhook finds its registration: Clover's webhook carries the
-   checkout session, not anything of ours. */
+   verifyWebhook checks the signature and nothing else. The payload is
+   read by value in api/_lib/match.js: the session, outcome, amount and
+   order ID are found wherever they are, not at an assumed key. */
 
 import { assertSafeConfig } from "../guard.js";
 import { MockProvider } from "./mock.js";

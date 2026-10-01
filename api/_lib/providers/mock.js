@@ -50,13 +50,6 @@ export const MockProvider = {
 
   verifyWebhook({ rawBody, headers }) {
     if (!verify(rawBody, headers.get(SIGNATURE_HEADER), process.env.MOCK_WEBHOOK_SECRET)) return { valid: false };
-    const e = JSON.parse(rawBody);
-    return {
-      valid: true,
-      orderId: e.id,
-      sessionId: e.data,
-      status: e.status === "APPROVED" ? "succeeded" : e.status === "DECLINED" ? "failed" : "other",
-      amountCents: Number.isInteger(e.amount) ? e.amount : null
-    };
+    return { valid: true, payload: JSON.parse(rawBody) };
   }
 };

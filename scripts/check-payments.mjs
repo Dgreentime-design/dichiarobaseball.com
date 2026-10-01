@@ -14,6 +14,8 @@
    4. Duplicate webhook   same signed webhook twice, one confirmation
    5. Bad signature       401 and nothing written
    6. Tampered amount     a lower amount in the request is ignored
+   7. Wrong amount        an approved webhook for the wrong amount confirms nothing
+   8. No outcome          a webhook with no approved or declined value confirms nothing
    ========================================================================== */
 
 import { chromium } from "playwright";
@@ -57,10 +59,10 @@ async function startSession(extra = {}) {
   return data;
 }
 
-function webhook(sessionId, { status = "APPROVED", secret = SECRET, header = "mock-signature", tamper } = {}) {
+function webhook(sessionId, { status = "APPROVED", amount = 32000, secret = SECRET, header = "mock-signature", tamper } = {}) {
   const body = JSON.stringify({
     type: "PAYMENT", status, id: "mockpay_" + sessionId.replace(/^mock_/, ""),
-    data: sessionId, amount: 32000, createdTime: Date.now()
+    data: sessionId, amount, createdTime: Date.now()
   });
   const headers = { "Content-Type": "application/json" };
   if (secret) headers[header] = sign(body, secret);
@@ -176,6 +178,22 @@ await check("6. Tampered amount: the server recomputes and ignores the submitted
   assert(data.amountCents === 32000, `response amount ${data.amountCents}`);
   assert(new URL(data.redirectUrl, BASE).searchParams.get("amount") === "32000", "provider asked for the wrong amount");
   assert(row(data.registrationId).amount === 320, `row amount ${row(data.registrationId).amount}`);
+});
+
+await check("7. Wrong amount: an approved webhook for less than the server price confirms nothing", async () => {
+  const { registrationId: id } = await startSession();
+  const res = await webhook(row(id).checkout_session_id, { amount: 100 });
+  assert(res.status === 200, `response ${res.status}`);
+  assert((await res.json()).ignored === "unmatched", "not reported as unmatched");
+  assert(row(id).status === "pending", `row is ${row(id).status}`);
+});
+
+await check("8. No outcome: a signed webhook with no approved or declined value confirms nothing", async () => {
+  const { registrationId: id } = await startSession();
+  const res = await webhook(row(id).checkout_session_id, { status: "PENDING" });
+  assert(res.status === 200, `response ${res.status}`);
+  assert((await res.json()).ignored === "unmatched", "not reported as unmatched");
+  assert(row(id).status === "pending", `row is ${row(id).status}`);
 });
 
 await browser.close();

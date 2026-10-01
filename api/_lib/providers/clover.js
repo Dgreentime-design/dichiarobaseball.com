@@ -4,10 +4,11 @@
    Checkout: POST {base}/invoicingcheckoutservice/v1/checkouts, which
    returns { href, checkoutSessionId }. The parent is sent to href.
 
-   Webhook: Clover posts { type, status, id, merchantId, data, message }
-   where id is the payment ID and data is the checkout session ID, signed
-   in the Clover-Signature header as t=<ts>,v1=<hex HMAC-SHA256 of
-   "<ts>.<raw body>"> with the webhook's signing secret.
+   Webhook: signed in the Clover-Signature header as t=<ts>,v1=<hex
+   HMAC-SHA256 of "<ts>.<raw body>"> with the webhook's signing secret.
+   Clover documents the payload by label only (Status, Id, MerchantId,
+   Data: Checkout Session UUID), and the first real payment carried no
+   "data" key, so the payload is read by value, not by key.
 
    returnUrl is sent as redirectUrls.success, .failure and .cancel, so the
    parent comes back to the registration that was just started. Clover's
@@ -38,10 +39,6 @@ function config() {
   }
   return { base, merchantId, token };
 }
-
-/* Clover's docs show the webhook fields capitalised in places and
-   camelCase in others. Read either. */
-const field = (obj, name) => obj[name] ?? obj[name[0].toUpperCase() + name.slice(1)];
 
 export const CloverProvider = {
   name: "clover",
@@ -83,23 +80,10 @@ export const CloverProvider = {
     return { redirectUrl: href, sessionId: checkoutSessionId };
   },
 
+  /* Signature only. What the payload means is read by value in
+     api/_lib/match.js, because Clover's key names are not documented. */
   verifyWebhook({ rawBody, headers }) {
     if (!verify(rawBody, headers.get("clover-signature"), process.env.CLOVER_WEBHOOK_SECRET)) return { valid: false };
-    const e = JSON.parse(rawBody);
-
-    /* A correctly signed message for another merchant is not ours. */
-    const merchant = field(e, "merchantId");
-    if (merchant && merchant !== process.env.CLOVER_MERCHANT_ID) return { valid: false };
-
-    const status = field(e, "status");
-    return {
-      valid: true,
-      orderId: field(e, "id"),
-      sessionId: field(e, "data"),
-      status: status === "APPROVED" ? "succeeded" : status === "DECLINED" ? "failed" : "other",
-      /* The payload has no amount field, only a message like "Approved for
-         100". Its unit is not documented, so it is not relied on. */
-      amountCents: null
-    };
+    return { valid: true, payload: JSON.parse(rawBody) };
   }
 };

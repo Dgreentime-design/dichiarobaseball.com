@@ -5,9 +5,11 @@
    The signature is checked against the raw body before anything is parsed,
    and an unverified request gets 401 with nothing written.
 
-   Idempotent on the provider's payment ID: a retry or a duplicate delivery
-   of the same payment finds the row already confirmed with that ID and
-   changes nothing. The handler never creates a row, so a webhook cannot add
+   The payload is read by value: the registration is the one whose stored
+   checkout session ID appears anywhere in it, and it is confirmed only on
+   a recognisable approved value, with any amount present equal to the
+   server-priced amount. Idempotent: a retry or a duplicate delivery finds
+   the row already confirmed and changes nothing. The handler never creates a row, so a webhook cannot add
    a second registration, only move an existing one.
 
    It answers as soon as the one row is written. If storage fails it returns
@@ -19,6 +21,7 @@ import { store } from "../_lib/store.js";
 import { provider } from "../_lib/providers/index.js";
 import { json } from "../_lib/http.js";
 import { explain } from "../_lib/providers/signature.js";
+import { leaves, idCandidates, outcome, amount, orderId, merchantMismatch } from "../_lib/match.js";
 
 /* TEMPORARY, round 05: capture the real payload shape. The last few
    requests are kept in this instance's memory and readable with GET on a
@@ -49,14 +52,14 @@ export async function POST(request) {
   CAPTURE.unshift(entry);
   CAPTURE.length = Math.min(CAPTURE.length, 10);
 
-  const response = await handle(request, rawBody);
+  const response = await handle(request, rawBody, entry);
   entry.status = response.status;
   entry.response = await response.clone().json().catch(() => null);
   console.log("webhook diagnostic", JSON.stringify(entry));
   return response;
 }
 
-async function handle(request, rawBody) {
+async function handle(request, rawBody, entry) {
   let event;
   try {
     event = provider().verifyWebhook({ rawBody, headers: request.headers });
@@ -66,40 +69,77 @@ async function handle(request, rawBody) {
   }
   if (!event.valid) return json({ error: "Invalid signature" }, 401);
 
+  /* Signed by the provider from here on. Everything below reads the
+     payload by value; see api/_lib/match.js. */
+  const ls = leaves(event.payload);
+  const report = (result, extra = {}) => {
+    const m = { result, ...extra };
+    if (entry) entry.match = m;
+    console.log("webhook", JSON.stringify(m));
+    return m;
+  };
+
   try {
     const db = store();
-    const reg = event.sessionId ? await db.findBySession(event.sessionId) : null;
+    const candidates = idCandidates(ls);
+    const reg = await db.findBySessionAmong(candidates.map((c) => c.value));
     if (!reg) {
-      console.warn("webhook for unknown session", event.sessionId);
-      return json({ ok: true, ignored: "unknown session" });
+      report("unmatched", { reason: "no value equals a stored checkout session", candidatePaths: candidates.map((c) => c.path) });
+      return json({ ok: true, ignored: "unmatched" });
+    }
+    const sessionPaths = ls.filter((l) => l.value === reg.checkout_session_id).map((l) => l.path);
+    const base = { registration: reg.registration_id, sessionPaths };
+
+    const wrongMerchant = merchantMismatch(ls, process.env.CLOVER_MERCHANT_ID);
+    if (wrongMerchant.length) {
+      report("unmatched", { ...base, reason: "merchant ID differs", paths: wrongMerchant });
+      return json({ ok: true, ignored: "unmatched" });
     }
 
-    if (event.status === "succeeded") {
+    const out = outcome(ls);
+    const expected = Math.round(reg.amount * 100);
+    const amt = amount(ls, expected);
+    const order = orderId(ls, reg.checkout_session_id);
+    const seen = {
+      ...base,
+      outcomePaths: out.paths,
+      amount: { result: amt.result, unit: amt.unit || null, paths: amt.found.map((f) => f.path) },
+      orderPath: order ? order.path : null
+    };
+
+    if (out.result === "approved") {
+      if (amt.result === "mismatch") {
+        report("unmatched", { ...seen, reason: "amount differs from the server-priced amount" });
+        return json({ ok: true, ignored: "unmatched" });
+      }
       if (reg.status === "confirmed") {
-        if (reg.provider_order_id !== event.orderId) {
+        if (order && reg.provider_order_id && reg.provider_order_id !== order.value) {
           /* A second, different payment for a registration already paid.
              Nothing to change here, but a person needs to refund it. */
-          console.error("second payment for confirmed registration", reg.registration_id, event.orderId);
+          report("second payment", seen);
+        } else {
+          report("duplicate", seen);
         }
         return json({ ok: true, duplicate: true });
       }
-      const expected = Math.round(reg.amount * 100);
-      if (event.amountCents !== null && event.amountCents !== expected) {
-        console.error("amount mismatch", reg.registration_id, event.amountCents, expected);
-        return json({ ok: true, ignored: "amount mismatch" });
-      }
-      await db.update(reg.registration_id, { status: "confirmed", provider_order_id: event.orderId });
+      /* With no amount anywhere in the payload, the charge is the cart this
+         server priced and sent when it created the session. That is what is
+         relied on, and the log says so. */
+      await db.update(reg.registration_id, { status: "confirmed", provider_order_id: order ? order.value : null });
+      report("confirmed", seen);
       return json({ ok: true, status: "confirmed" });
     }
 
     /* A decline never undoes a confirmation, and a failed registration can
        still be confirmed by a later successful payment on the same session. */
-    if (event.status === "failed" && reg.status === "pending") {
-      await db.update(reg.registration_id, { status: "failed" });
+    if (out.result === "declined") {
+      if (reg.status === "pending") await db.update(reg.registration_id, { status: "failed" });
+      report("declined", seen);
       return json({ ok: true, status: "failed" });
     }
 
-    return json({ ok: true, ignored: event.status });
+    report("unmatched", { ...seen, reason: `no recognisable outcome (${out.result})` });
+    return json({ ok: true, ignored: "unmatched" });
   } catch (e) {
     console.error("webhook store", e);
     return json({ error: "Temporarily unavailable" }, 500);
