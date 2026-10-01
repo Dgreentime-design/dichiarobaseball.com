@@ -16,6 +16,7 @@
    6. Tampered amount     a lower amount in the request is ignored
    7. Wrong amount        an approved webhook for the wrong amount confirms nothing
    8. No outcome          a webhook with no approved or declined value confirms nothing
+   9. Unmatched           a signed webhook for no known session leaves one UNMATCHED row
    ========================================================================== */
 
 import { chromium } from "playwright";
@@ -180,12 +181,14 @@ await check("6. Tampered amount: the server recomputes and ignores the submitted
   assert(row(data.registrationId).amount === 320, `row amount ${row(data.registrationId).amount}`);
 });
 
-await check("7. Wrong amount: an approved webhook for less than the server price confirms nothing", async () => {
+await check("7. Wrong amount: an approved webhook for less than the server price confirms nothing, flags the row", async () => {
   const { registrationId: id } = await startSession();
   const res = await webhook(row(id).checkout_session_id, { amount: 100 });
   assert(res.status === 200, `response ${res.status}`);
-  assert((await res.json()).ignored === "unmatched", "not reported as unmatched");
-  assert(row(id).status === "pending", `row is ${row(id).status}`);
+  assert((await res.json()).ignored === "needs review", "not reported as needs review");
+  assert(row(id).status === "needs_review", `row is ${row(id).status}`);
+  assert(/amount differs/.test(row(id).webhook_note || ""), "no webhook_note saying why");
+  assert(!row(id).provider_order_id, "an order ID was recorded as if paid");
 });
 
 await check("8. No outcome: a signed webhook with no approved or declined value confirms nothing", async () => {
@@ -194,6 +197,25 @@ await check("8. No outcome: a signed webhook with no approved or declined value 
   assert(res.status === 200, `response ${res.status}`);
   assert((await res.json()).ignored === "unmatched", "not reported as unmatched");
   assert(row(id).status === "pending", `row is ${row(id).status}`);
+  assert(/no recognisable outcome/.test(row(id).webhook_note || ""), "no webhook_note saying why");
+});
+
+await check("9. Unmatched: a signed webhook for no known session leaves one UNMATCHED row, and a redelivery adds none", async () => {
+  const before = rows().length;
+  const ghost = "mock_" + "f".repeat(24);
+  const body = JSON.stringify({ type: "PAYMENT", status: "APPROVED", id: "mockpay_ghost", data: ghost, amount: 32000, createdTime: 1 });
+  const send = () => fetch(`${BASE}/api/webhooks/clover`, {
+    method: "POST", body, headers: { "Content-Type": "application/json", "mock-signature": sign(body, SECRET) }
+  });
+  const a = await send(), b = await send();
+  assert(a.status === 200 && b.status === 200, `responses ${a.status}, ${b.status}`);
+  const recorded = (await a.json()).recorded;
+  const matches = rows().filter((r) => r.registration_id === recorded);
+  assert(/^UNMATCHED-/.test(recorded || ""), `recorded as ${recorded}`);
+  assert(matches.length === 1, `${matches.length} rows for ${recorded}`);
+  assert(rows().length === before + 1, `row count went ${before} -> ${rows().length}`);
+  assert(matches[0].status === "unmatched" && matches[0].provider_order_id === "mockpay_ghost", "row does not say unmatched with the order ID");
+  assert(/matched no registration/.test(matches[0].webhook_note || ""), "no webhook_note saying why");
 });
 
 await browser.close();

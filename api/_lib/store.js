@@ -6,7 +6,10 @@
 
      registration_id, status, program, option, players, parent_name,
      parent_email, parent_phone, amount, payment_method, provider_order_id,
-     checkout_session_id, waiver_accepted, photo_consent
+     checkout_session_id, waiver_accepted, photo_consent, webhook_note
+
+   webhook_note is optional: where the table lacks it, writes go ahead
+   without it.
 
    created_at is Airtable's own created-time field and is never written.
 
@@ -50,9 +53,22 @@ function airtable() {
   }
   const findOne = async (field, value) => (await findAll(field, value))[0] || null;
 
+  /* webhook_note is optional in the table. If Airtable says it does not
+     exist, write the same fields without it rather than lose the row. */
+  async function write(path, method, fields, wrap) {
+    try {
+      return await call(path, { method, body: JSON.stringify(wrap(fields)) });
+    } catch (e) {
+      if (!("webhook_note" in fields) || !/UNKNOWN_FIELD_NAME/.test(e.message) || !/webhook_note/.test(e.message)) throw e;
+      const { webhook_note, ...rest } = fields;
+      console.warn("Airtable has no webhook_note field; the note was not stored");
+      return call(path, { method, body: JSON.stringify(wrap(rest)) });
+    }
+  }
+
   return {
     async create(fields) {
-      await call("", { method: "POST", body: JSON.stringify({ records: [{ fields }], typecast: true }) });
+      await write("", "POST", fields, (f) => ({ records: [{ fields: f }], typecast: true }));
     },
     async get(id) {
       const r = await findOne("registration_id", id);
@@ -77,7 +93,7 @@ function airtable() {
     async update(id, fields) {
       const r = await findOne("registration_id", id);
       if (!r) throw new Error(`No registration ${id}`);
-      await call(`/${r.id}`, { method: "PATCH", body: JSON.stringify({ fields, typecast: true }) });
+      await write(`/${r.id}`, "PATCH", fields, (f) => ({ fields: f, typecast: true }));
     }
   };
 }
