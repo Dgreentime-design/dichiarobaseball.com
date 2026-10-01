@@ -6,7 +6,7 @@
    payment path reads, whether it is set. 404 everywhere except a Vercel
    preview deployment, so it cannot run in production or locally.
 
-   ?registration=<id> also reads that registration's rows from storage and
+   ?registration=<id>, or ?session=<checkout session ID>, also reads that registration's rows from storage and
    returns what a payment test needs as evidence: how many rows carry the
    ID, and each row's status, amount and provider order ID. Never a name,
    email or phone number.
@@ -32,7 +32,15 @@ const NAMES = [
 export async function GET(request) {
   if (process.env.VERCEL_ENV !== "preview") return new Response("Not found", { status: 404 });
 
-  const id = new URL(request.url).searchParams.get("registration");
+  const params = new URL(request.url).searchParams;
+  let id = params.get("registration");
+  const session = params.get("session");
+  if (!id && session) {
+    if (!/^[\w-]{6,128}$/.test(session)) return json({ error: "Not a session ID" }, 400);
+    const reg = await store().findBySession(session);
+    if (!reg) return json({ session, rows: 0, records: [] });
+    id = reg.registration_id;
+  }
   if (id) {
     if (!REGISTRATION_ID.test(id)) return json({ error: "Not a registration ID" }, 400);
     let rows;
