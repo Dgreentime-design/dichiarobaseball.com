@@ -167,11 +167,12 @@ test registrations stay out of the handover table (`Registrations`).
 | 05 | 1 Oct | Webhook payload captured, by-value matching, unmatched tracking |
 | 06 | 1 Oct | Playbook revision, docs added |
 | 07 | 3 to 5 Oct | Copy overhaul across every page. Finished, B10 reported. `prompts/2026-10-03-round07-copy-overhaul.md` |
+| 08 | 5 Oct | Sticky header, eyebrow icon and colors, one image hero, one stat strip, responsive sweep. **Part B reported, at the final checkpoint.** `prompts/2026-10-05-round08-responsive-and-global.md` |
 
 Every round is a committed prompt file in `prompts/`. Read the round in flight
 before doing anything.
 
-## 8. Where things stand, 3 October 2026
+## 8. Where things stand, 5 October 2026
 
 **Done**
 
@@ -186,17 +187,39 @@ before doing anything.
 
 **In flight**
 
-- Round 07, the copy overhaul, is finished on `review` and reported. Every
-  page has one commit; the B10 register commit is `4819f24`.
-  - Held: the two program-page lines stating the academy and Superdome split
-    (11 and 4 on the page, 12 and 3 in `programs.json`). Waiting on the Feb 6
-    answer.
-  - Applied in B5 and B6: Hall of Fame claim out of marketing copy (stays in
-    Fran's bio), "Owner" chip and role off Lou, "25 years teaching here"
-    became "Since 2000", About's "15+" stays. Lou's bio line "Owner and
-    instructor since 2000" is unchanged, bios stay word for word.
-  - Next: round 08, `prompts/2026-10-05-round08-responsive-and-global.md`,
-    once Daniel says "start round 08".
+- Round 07, the copy overhaul, is finished and reported. Three TEST
+  registrations on the preview prove each payment path, references
+  `DBSA-6Y5A4MQ36H` (card, mock), `DBSA-N9CHAWZKHY` (facility) and
+  `DBSA-64J2UYNXAJ` (check), all in Registrations Review. Do not delete them.
+  - Still held: the two program-page lines stating the academy and Superdome
+    split (11 and 4 on the page, 12 and 3 in `programs.json`). Waiting on
+    the Feb 6 answer.
+- Round 08, responsive system, heroes and global navigation. Part A accepted
+  on 5 October. **Part B is done and reported, at the final checkpoint.**
+  - Sticky header with a hiding announcement bar. Motion tokens
+    `--dur-reveal` and `--ease-reveal` in `tokens.css`.
+  - Eyebrow: Daniel's baseball icon, color set only by background through
+    `--eyebrow-color`. verify.mjs checks it.
+  - One image hero (`.hero` in `home.css`) on Home, Camps, Lessons,
+    Instructors and the program page, sharing one copy-anchored scrim rule
+    with the homepage HitTrax band. One stat strip component. verify.mjs
+    checks the strips.
+  - The responsive rule and every deliberate exception live in
+    `docs/responsive-decisions.md`. Read it before any layout work.
+  - Proof images for the round are in `docs/reference/round08/proof/`.
+  - Next: Daniel's review of Part B on the preview.
+
+**Decisions taken on 5 October, already answered, do not re-ask**
+
+- The hero overlay follows the copy: left to right on wide screens, bottom up
+  on phones. Accepted as an adaptation.
+- Card kickers stay red. Only `.eyebrow` takes the icon and the two colors.
+- The green confirmation band keeps its light green eyebrow until there is a
+  third approved color.
+- The net texture stays off photographs and only on plain dark surfaces.
+- The HitTrax links go to `facility-and-rentals.html#hittrax`. The empty
+  `#hittrax` marker at the end of Lessons stays.
+- Lou's bio reads "Founder and head instructor since 2000."
 
 **Decisions taken on 3 October, already answered, do not re-ask**
 
