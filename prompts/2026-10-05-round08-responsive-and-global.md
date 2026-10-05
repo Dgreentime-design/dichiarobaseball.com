@@ -18,7 +18,7 @@ the descriptions alone:
 - `docs/reference/round08/eyebrow-with-icon.png` and
   `eyebrow-icon-closeup.png` - the eyebrow with the baseball icon replacing
   the line. Layout and icon reference only, the copy in it is old.
-- `docs/reference/round08/lou-alignment-desktop.png` - the bug in A5.
+- `docs/reference/round08/lou-alignment-desktop.png` - the bug in B1.
 - `docs/reference/round08/program-schedule.png` - context only, nothing to
   change this round.
 
