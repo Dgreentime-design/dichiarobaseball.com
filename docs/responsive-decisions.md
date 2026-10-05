@@ -9,7 +9,9 @@ open question. Each entry says where it is, what changes between widths, why
 the adaptation is the better experience, and what a design change could do to
 remove it. Daniel reads it to decide what to solve in design.
 
-Started in round 08, Part A. Part B adds the full sweep.
+Started in round 08 Part A, completed by the Part B sweep: every page plus
+the three legal pages, at 390, 768 and 1440, and every breakpoint rule in
+the stylesheets read against the rule.
 
 ---
 
@@ -54,11 +56,57 @@ Started in round 08, Part A. Part B adds the full sweep.
 ### 3. Mobile menu
 
 - **Where:** `partials/menu.html`, `.nav__toggle` in `components.css`.
-- **What changes:** below 1024px the nav links and the header button move
-  into the full-screen menu behind the toggle.
+- **What changes:** below 1024px the nav links, the two social icons and the
+  header button are hidden and the toggle opens a full-screen menu. The menu
+  is a second set of markup: the same five links plus Contact, Open camps,
+  Call (201) 773-6858, the social icons and the address.
 - **Why:** five links, two social icons and a button do not fit across a
-  phone. The menu carries the same links, plus Contact and the phone number.
+  phone, and the menu is where a phone user expects to find them.
 - **To remove it in design:** not recommended. This is the standard pattern.
+
+### 4. Filter pills scroll sideways
+
+- **Where:** `.filters__pills` in `camps.css`, on Camps and Instructors.
+- **What changes:** below 768px the pills sit on one row that scrolls
+  sideways, with the scrollbar hidden, instead of wrapping.
+- **Why:** seven pills wrapped onto three rows push the programs below the
+  fold, and the bar is sticky, so three rows of it would cover a third of a
+  phone screen.
+- **To remove it in design:** fewer filters, or a single "Filter" control
+  that opens the choices.
+
+### 5. Semi-private rate table stacks
+
+- **Where:** `.rate-table` in `pages.css`, on Lessons.
+- **What changes:** below 768px each row becomes a card, the column heads
+  are visually hidden (still read by screen readers) and each cell carries
+  its column name as a label.
+- **Why:** five columns of prices cannot be read at 390. The labels keep
+  every number tied to what it means.
+- **To remove it in design:** show fewer columns (group size, per player,
+  ten pack), which fit a phone as a table.
+
+---
+
+## Checked and left as layout reflow, not a breach
+
+- Sticky elements become static once their layout stacks: the homepage Lou
+  image, the register summary, the legal contents. Sticking only makes sense
+  beside the content it follows.
+- The register progress rule between steps becomes a short connector when
+  the steps stack. It is decoration with no content.
+- The footer spacer, a layout element with no content, is dropped when the
+  footer stacks.
+
+## Fixed in the sweep
+
+- Footer: the legal links jumped above the copyright below 1024px. They now
+  keep their order.
+- Homepage HitTrax band: the photograph was a full-bleed background from
+  900px up and a card above the copy below. It is now a background at every
+  width, on the image hero's scrim rule.
+- Homepage Why DiChiaro: the photograph jumped above the eyebrow and heading
+  below 640px. It now keeps its place after the stat strip.
 
 ---
 
@@ -71,3 +119,17 @@ Started in round 08, Part A. Part B adds the full sweep.
   (`#E15C57` is 2.99:1, `#5A524C` is 1.4:1). It keeps the light green it
   had, `#9FD6B4` at 6.51:1, set through `--eyebrow-color`. It needs a
   decision: a third approved value, or a different background.
+
+### 2. Register progress labels shrink on a phone
+
+- **Where:** `.progress__label` in `register.css`, the three step labels
+  above the registration form.
+- **What changes:** below 768px the labels drop from the eyebrow size to a
+  fixed 9px with tighter letter spacing, and the steps stack label under
+  marker.
+- **The question:** this is a type style changing by width, which breaks
+  the rule, and 9px is below a comfortable reading size. But at the eyebrow
+  size the three labels do not fit across a phone. Options: shorter labels
+  (one word each), the step number only with the current step's label
+  written out, or the labels hidden visually and announced. Left unchanged
+  until there is a decision.
