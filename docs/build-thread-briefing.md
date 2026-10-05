@@ -167,7 +167,7 @@ test registrations stay out of the handover table (`Registrations`).
 | 05 | 1 Oct | Webhook payload captured, by-value matching, unmatched tracking |
 | 06 | 1 Oct | Playbook revision, docs added |
 | 07 | 3 to 5 Oct | Copy overhaul across every page. Finished, B10 reported. `prompts/2026-10-03-round07-copy-overhaul.md` |
-| 08 | 5 Oct | Sticky header, eyebrow icon and colors, one image hero, one stat strip, responsive sweep. **Part B reported, at the final checkpoint.** `prompts/2026-10-05-round08-responsive-and-global.md` |
+| 08 | 5 Oct | Sticky header, eyebrow icon and colors, one image hero, one stat strip, responsive sweep. Parts A and B accepted, closing fixes done. `prompts/2026-10-05-round08-responsive-and-global.md` |
 
 Every round is a committed prompt file in `prompts/`. Read the round in flight
 before doing anything.
@@ -194,8 +194,12 @@ before doing anything.
   - Still held: the two program-page lines stating the academy and Superdome
     split (11 and 4 on the page, 12 and 3 in `programs.json`). Waiting on
     the Feb 6 answer.
-- Round 08, responsive system, heroes and global navigation. Part A accepted
-  on 5 October. **Part B is done and reported, at the final checkpoint.**
+- Round 08, responsive system, heroes and global navigation. Parts A and B
+  accepted on 5 October, including the rule that every image band keeps at
+  least 200px of photograph above its copy on a phone. Closing fixes done:
+  internal files no longer deployed, proof images untracked into `_proof/`,
+  register progress labels 12px at every width. **The round is closed
+  pending Daniel's sign-off on the closing report.**
   - Sticky header with a hiding announcement bar. Motion tokens
     `--dur-reveal` and `--ease-reveal` in `tokens.css`.
   - Eyebrow: Daniel's baseball icon, color set only by background through
@@ -206,8 +210,9 @@ before doing anything.
     checks the strips.
   - The responsive rule and every deliberate exception live in
     `docs/responsive-decisions.md`. Read it before any layout work.
-  - Proof images for the round are in `docs/reference/round08/proof/`.
-  - Next: Daniel's review of Part B on the preview.
+  - Proof images for the round are in `_proof/`, local only. From now on
+    every round's proof images go there and nowhere else.
+  - Next: the next round, once Daniel writes it.
 
 **Decisions taken on 5 October, already answered, do not re-ask**
 
@@ -220,6 +225,10 @@ before doing anything.
 - The HitTrax links go to `facility-and-rentals.html#hittrax`. The empty
   `#hittrax` marker at the end of Lessons stays.
 - Lou's bio reads "Founder and head instructor since 2000."
+- Every image band keeps at least 200px of photograph above its copy on a
+  phone.
+- Register progress labels are one size at every width, 12px, never smaller.
+- Internal files are not deployed and proof images are not tracked by git.
 
 **Decisions taken on 3 October, already answered, do not re-ask**
 
@@ -295,6 +304,12 @@ under "Before go-live". The two that bite silently:
   Answers from CC's read-only check on 3 October: the domain is not attached
   to it, it is connected to the repo and builds every push, and it holds no
   environment variables at all.
+- **Internal docs are no longer deployed.** `.vercelignore` excludes `docs/`,
+  `prompts/`, `CLAUDE.md` and `README.md`, so they return 404 on every
+  deployment. Anything else at the repo root is still publicly served.
+- **`_proof/` is local only.** Proof images live there, ignored by git and by
+  Vercel. The 41 MB of round 08 proof images committed earlier stays in git
+  history, accepted, and is not served.
 
 ## 10. Where the truth lives
 
