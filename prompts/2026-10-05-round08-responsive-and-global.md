@@ -2,7 +2,7 @@
 
 DiChiaro Baseball & Softball Academy. Written 5 October 2026.
 Scope: layout, components and global behaviour. No copy changes beyond the
-two CTA labels named in A2. No backend.
+three named in A2. No backend.
 
 Precondition: round 07 is finished (B10 reported) and Daniel has said
 "start round 08". If round 07 is not finished, stop and report.
@@ -49,7 +49,7 @@ Any mismatch: stop and report. Do not fix it yourself.
    `node build.mjs`. `legal.json` is off limits.
 3. Do not touch `api/`, `assets/js/register.js` logic, payment code,
    Airtable code or anything in the money path.
-4. No copy changes except the two CTA labels in A2. Facts, prices, dates
+4. No copy changes except the three in A2. Facts, prices, dates
    and review notes stay exactly as they are. Every amber review or
    prototype note stays on the page.
 5. Content parity: the same words at 390 and 1440. `npm run verify` must
@@ -131,7 +131,7 @@ visible. Scroll up 20px and the bar is back. Scroll the camps page and the
 filter bar sits flush under the nav. Click "Have a town or league code?" on
 the program page and the target is not hidden. Report each one pass or fail.
 
-## A2. CTA labels
+## A2. Copy changes, the only three
 
 1. Header button (`partials/header.html`): label **Open camps**, href
    `camps-and-clinics.html`. Sentence case, per the copy rules.
@@ -139,6 +139,10 @@ the program page and the target is not hidden. Report each one pass or fail.
 3. Announcement bar link: **unchanged**. It stays "Register" and goes to
    the fall Little League registration. Daniel approved that link on
    3 October.
+4. Lou's bio on `pages/instructors.html`: "Owner and instructor since
+   2000." becomes "Founder and head instructor since 2000." Decided
+   5 October, to match the role line. The rest of the bio stays word for
+   word. This is the only bio change.
 
 ## A3. Eyebrow: baseball icon and two colors
 
@@ -203,8 +207,21 @@ team camps, Lou's journey, contact, rentals).
    the responsive rule: same order and treatment at every width, image
    handling consistent with the rule above. Report what you changed.
 
+5. **Stat strips, one component.** Round 07 changed the item counts and
+   both strips now break at desktop: the Instructors hero strip has two
+   items in a four-column grid, so "Since 2000" wraps onto two lines, and
+   the About numbers strip has four items in a five-column grid, leaving an
+   empty slot. Today there are at least two strip components
+   (`.stat-strip` and `.numbers` in `pages.css`), plus the stat rows in
+   the Rentals hero and the homepage "Why DiChiaro" band. Make one stat
+   component whose columns follow its item count, so it never leaves an
+   empty slot or wraps a figure. Keep the figure on one line at every
+   width. Use it everywhere a stat strip appears. Report any that could not
+   move to it.
+
 Proof: screenshots of the hero on home, instructors, camps, lessons and
 program at 390 and 1440, side by side per page.
+Add the Instructors and About strips at 390 and 1440.
 
 ## A5. Report Part A, then stop
 
