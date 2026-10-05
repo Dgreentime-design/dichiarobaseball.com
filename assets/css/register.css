@@ -151,8 +151,10 @@
   background: var(--c-white); box-shadow: inset 0 0 0 1px var(--c-line);
   font-family: var(--f-mono); font-size: var(--t-eyebrow); color: var(--c-muted);
 }
+/* One size at every width, 12px, never smaller. On a phone the labels wrap
+   under their markers rather than shrinking. */
 .progress__label {
-  font-family: var(--f-mono); font-size: var(--t-eyebrow);
+  font-family: var(--f-mono); font-size: 0.75rem;
   letter-spacing: var(--ls-meta); text-transform: uppercase; color: var(--c-muted);
   white-space: nowrap;
 }
@@ -166,7 +168,7 @@
      shows all three. */
   .progress__inner { align-items: flex-start; gap: 8px; }
   .progress__step { flex-direction: column; align-items: center; gap: 8px; text-align: center; }
-  .progress__label { font-size: 9px; letter-spacing: .06em; white-space: normal; }
+  .progress__label { white-space: normal; }
   .progress__rule { display: none; }
   .progress__step:not(:last-child) { position: relative; }
   .progress__step:not(:last-child)::after {

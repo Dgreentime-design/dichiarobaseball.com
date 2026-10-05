@@ -107,6 +107,10 @@ the stylesheets read against the rule.
   width, on the image hero's scrim rule.
 - Homepage Why DiChiaro: the photograph jumped above the eyebrow and heading
   below 640px. It now keeps its place after the stat strip.
+- Register progress labels: they dropped to a fixed 9px with tighter
+  letter spacing below 768px. They are now 12px with the same spacing at
+  every width, and wrap under their markers on a phone instead of shrinking.
+  Decided by Daniel, 5 October.
 
 ---
 
@@ -119,17 +123,3 @@ the stylesheets read against the rule.
   (`#E15C57` is 2.99:1, `#5A524C` is 1.4:1). It keeps the light green it
   had, `#9FD6B4` at 6.51:1, set through `--eyebrow-color`. It needs a
   decision: a third approved value, or a different background.
-
-### 2. Register progress labels shrink on a phone
-
-- **Where:** `.progress__label` in `register.css`, the three step labels
-  above the registration form.
-- **What changes:** below 768px the labels drop from the eyebrow size to a
-  fixed 9px with tighter letter spacing, and the steps stack label under
-  marker.
-- **The question:** this is a type style changing by width, which breaks
-  the rule, and 9px is below a comfortable reading size. But at the eyebrow
-  size the three labels do not fit across a phone. Options: shorter labels
-  (one word each), the step number only with the current step's label
-  written out, or the labels hidden visually and announced. Left unchanged
-  until there is a decision.
