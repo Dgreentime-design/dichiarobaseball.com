@@ -279,6 +279,10 @@ under "Before go-live". The two that bite silently:
   It needs a third state.
 - Clover sandbox access was never granted. It needs their support team.
 - `netlify.toml` is dead. Clean URLs are off. `verify.mjs` has gaps.
+- **"Have a town or league code?" on the program page links to a code field
+  that no longer exists.** The link goes to `register.html?program=...#code`,
+  and the field was removed when codes were taken out, so it opens the top of
+  the register page. Parked for the program template round.
 - **There is a second Vercel project called plain `dichiarobaseball.com`**,
   separate from `dichiarobaseball.com-rgr6`, last touched 1 October. Two
   projects and one domain is a cutover hazard: the domain can only point at
@@ -288,6 +292,9 @@ under "Before go-live". The two that bite silently:
   hold environment variables `-rgr6` does not. **Record the answers in the
   cutover checklist, then decide delete or deliberately keep.** Do not delete
   it before those answers exist.
+  Answers from CC's read-only check on 3 October: the domain is not attached
+  to it, it is connected to the repo and builds every push, and it holds no
+  environment variables at all.
 
 ## 10. Where the truth lives
 
