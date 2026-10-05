@@ -5,3 +5,6 @@ docs/
 prompts/
 CLAUDE.md
 README.md
+
+# Proof images, local only. Not tracked by git either.
+_proof/
