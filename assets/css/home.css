@@ -28,10 +28,12 @@
    fading out above it (see .hero__inner below). Both hold the sub text at
    4.5:1 or better over the brightest part of every hero image. Recorded in
    docs/responsive-decisions.md. */
-.hero {
-  --hero-copy-end: calc(max(0px, (100% - var(--container)) / 2) + var(--gutter) + 820px);
+.hero, .hittrax {
+  --scrim-copy: 820px;
+  --hero-copy-end: calc(max(0px, (100% - var(--container)) / 2) + var(--gutter) + var(--scrim-copy));
 }
-.hero__media::before {
+.hittrax { --scrim-copy: 700px; }
+.hero__media::before, .hittrax__media::before {
   content: ""; position: absolute; inset: 0; z-index: 1;
   background: linear-gradient(90deg,
     rgba(23,18,15,.94) 0,
@@ -69,9 +71,12 @@
 
 @media (max-width: 899px) {
   .hero { min-height: 620px; }
-  .hero__media::before { background: rgba(23,18,15,.32); }
-  .hero__inner {
+  .hero__media::before, .hittrax__media::before { background: rgba(23,18,15,.32); }
+  .hero__inner, .hittrax__inner {
     align-self: end;
+    /* At least 200px of photograph shows above the copy, however tall the
+       copy is, so a long hero never hides its image entirely. */
+    margin-top: 200px;
     background: linear-gradient(0deg,
       rgba(23,18,15,.92) 0,
       rgba(23,18,15,.90) calc(100% - var(--s-13)),
@@ -126,9 +131,19 @@
 
 /* --- HitTrax ------------------------------------------------------------ */
 
-.hittrax { position: relative; background: var(--c-ink); color: var(--c-bone); overflow: hidden; }
-.hittrax__media { position: relative; }
-.hittrax__inner { position: relative; z-index: 2; max-width: var(--container); margin-inline: auto; padding: 0 var(--gutter); }
+/* Same treatment as the image hero, and the same scrim rule above, with a
+   700px copy column: the photograph is a full-bleed background at every
+   width, dark behind the copy, left to right on a wide screen and bottom up
+   on a phone. */
+.hittrax {
+  position: relative; display: grid; min-height: 609px;
+  background: var(--c-ink); color: var(--c-bone); overflow: hidden;
+}
+.hittrax__media { position: absolute; inset: 0; border-radius: 0; aspect-ratio: auto; }
+.hittrax__inner {
+  position: relative; z-index: 2; align-self: center; width: 100%;
+  max-width: var(--container); margin-inline: auto; padding: 0 var(--gutter);
+}
 .hittrax__copy { max-width: 700px; display: grid; gap: var(--s-5); padding: var(--band-y) 0; }
 .hittrax__logo { height: 17px; width: auto; }
 .hittrax__lede { color: var(--c-dim); }
@@ -145,18 +160,10 @@
 .hittrax__action { margin-top: var(--s-4); }
 .hittrax__action .btn { width: fit-content; }
 
-@media (min-width: 900px) {
-  .hittrax { min-height: 609px; display: grid; }
-  .hittrax__media { position: absolute; inset: 0; }
-  .hittrax__media::before {
-    content: ""; position: absolute; inset: 0; z-index: 1;
-    background: linear-gradient(90deg, rgba(23,18,15,.95) 0%, rgba(23,18,15,.86) 52%, rgba(23,18,15,.38) 100%);
-  }
-  .hittrax__inner { align-self: center; width: 100%; }
-}
 @media (max-width: 899px) {
-  .hittrax__media { margin: var(--band-y) var(--gutter) 0; }
-  .hittrax__copy { padding: var(--s-6) 0 var(--band-y); }
+  .hittrax { min-height: 620px; }
+  .hittrax__inner { align-self: end; }
+  .hittrax__copy { padding: var(--s-13) 0 var(--band-y); }
   .hittrax__metrics { grid-template-columns: 1fr; gap: 0; }
   .hittrax__metric {
     grid-template-columns: 1fr auto; grid-auto-flow: column; align-items: baseline;
@@ -203,8 +210,7 @@
   .why__facts { grid-template-columns: 1fr; gap: 0; }
   .why__fact { padding: var(--s-5) 0; border-bottom: 1px solid var(--c-line); }
   .why__fact:first-child { border-top: 1px solid var(--c-line); }
-  .why__media { margin-top: var(--s-8); order: -1; margin-bottom: var(--s-8); }
-  .why__inner { display: flex; flex-direction: column; }
+  .why__media { margin-top: var(--s-8); }
 }
 
 /* --- Lou ---------------------------------------------------------------- */
@@ -212,6 +218,9 @@
 .lou__inner {
   display: grid; grid-template-columns: 440px 1fr; gap: var(--s-7) var(--s-12);
   align-items: start;
+  /* The image spans both rows. Any height it has over the copy goes below
+     the copy, not between the heading and the credits. */
+  grid-template-rows: auto 1fr;
 }
 /* Placement is scoped to the homepage section. The program page reuses
    .lou__copy and .lou__credits inside its own two-column split, and an
@@ -232,7 +241,7 @@
 .lou__credit dd { margin: 0; font-size: var(--t-body-s); color: var(--c-muted); }
 
 @media (max-width: 1023px) {
-  .lou__inner { grid-template-columns: 1fr; gap: var(--s-7); }
+  .lou__inner { grid-template-columns: 1fr; grid-template-rows: none; gap: var(--s-7); }
   /* Reset the desktop placement so the DOM order stands: head, image, copy. */
   .lou__inner .lou__head, .lou__inner .lou__media, .lou__inner .lou__copy { grid-column: auto; grid-row: auto; }
   .lou__inner .lou__media { position: static; }

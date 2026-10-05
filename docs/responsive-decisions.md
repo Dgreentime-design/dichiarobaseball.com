@@ -17,14 +17,17 @@ Started in round 08, Part A. Part B adds the full sweep.
 
 ### 1. Image hero overlay follows the copy
 
-- **Where:** `.hero` in `assets/css/home.css`. Homepage, Camps, Lessons,
-  Instructors, program page.
+- **Where:** `.hero` and `.hittrax` in `assets/css/home.css`, one shared
+  scrim rule. The image hero on the homepage, Camps, Lessons, Instructors
+  and the program page, and the homepage HitTrax band.
 - **What changes:** the image is a full-bleed background under a dark ink
   scrim at every width. On a wide screen the copy is a column on the left,
   so the scrim runs left to right and holds its darkest value to the end of
   the 820px copy column. Below 900px the copy runs the full width at the
   bottom of the frame, so the image takes a light dim and the scrim rises
-  from the bottom behind the copy block, fading out above it.
+  from the bottom behind the copy block, fading out above it. On a phone
+  at least 200px of photograph always shows above the copy, so a tall
+  block of copy (the program page, HitTrax) never hides the image.
 - **Why:** one fixed overlay cannot do both. Measured on all five pages, the
   desktop gradient alone left the sub text at 1.35 to 2.66:1 on a phone,
   because the copy runs into the light side of the gradient. Darkening the
