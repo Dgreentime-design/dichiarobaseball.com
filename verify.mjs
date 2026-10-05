@@ -4,13 +4,16 @@
      node verify.mjs                 # against http://localhost:8080
      node verify.mjs http://host/    # against something else
 
-   Four checks:
+   Five checks:
      1. Content parity, 1440 vs 390. Every leaf text node must match. This
         is the standing rule: layout changes between breakpoints, content
         does not.
      2. Horizontal overflow at 390, 768 and 1440.
      3. Tap targets under 24px that are not inline links in a sentence.
      4. Every internal link resolves. No dead ends in the prototype.
+     5. Eyebrow color. Every visible .eyebrow is one of the two approved
+        colors, and the same color at 390 as at 1440. The color is set by
+        the background, never by the breakpoint.
    ========================================================================== */
 
 import { chromium } from "playwright";
@@ -67,6 +70,9 @@ async function inspect(url, width) {
       });
       return out;
     })(),
+    eyebrows: Array.from(document.querySelectorAll(".eyebrow"))
+      .filter(el => el.checkVisibility())
+      .map(el => ({ text: el.textContent.replace(/\s+/g, " ").trim().slice(0, 40), color: getComputedStyle(el).color })),
     overflow: document.documentElement.scrollWidth > window.innerWidth,
     small: Array.from(document.querySelectorAll("a, button")).filter(el => {
       const r = el.getBoundingClientRect();
@@ -112,6 +118,23 @@ while (queue.length) {
 
   const over = [["1440", d], ["768", t], ["390", m]].filter(([, x]) => x.overflow).map(([w]) => w);
   if (over.length) fail("horizontal overflow at " + over.join(", ")); else pass("no horizontal overflow");
+
+  /* #5A524C on light backgrounds, #E15C57 on dark and image ones. */
+  const EYEBROW = ["rgb(90, 82, 76)", "rgb(225, 92, 87)"];
+  const badEyebrow = [];
+  if (d.eyebrows.length !== m.eyebrows.length) {
+    badEyebrow.push(`${d.eyebrows.length} at 1440, ${m.eyebrows.length} at 390`);
+  }
+  d.eyebrows.forEach((e, i) => {
+    const mob = m.eyebrows[i];
+    if (!EYEBROW.includes(e.color)) badEyebrow.push(`"${e.text}" is ${e.color} at 1440`);
+    if (mob && !EYEBROW.includes(mob.color)) badEyebrow.push(`"${mob.text}" is ${mob.color} at 390`);
+    if (mob && mob.color !== e.color) badEyebrow.push(`"${e.text}" is ${e.color} at 1440, ${mob.color} at 390`);
+  });
+  if (badEyebrow.length) {
+    fail(`eyebrow color: ${badEyebrow.length} problem(s)`);
+    badEyebrow.slice(0, 4).forEach(s => console.log("          " + s));
+  } else pass(`eyebrow color, ${d.eyebrows.length} eyebrows, same approved color at both widths`);
 
   const small = Array.from(new Set([...d.small, ...m.small]));
   if (small.length) fail("tap targets under 24px: " + small.join(", ")); else pass("tap targets");

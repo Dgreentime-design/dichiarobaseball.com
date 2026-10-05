@@ -322,8 +322,10 @@
 .confirm-band__copy { display: grid; gap: var(--s-4); max-width: 820px; }
 .confirm-band h2 { color: var(--c-white); }
 .confirm-band p { color: rgba(255,255,255,.86); }
-.confirm-band .eyebrow { color: var(--c-turf-light); }
-.confirm-band .eyebrow::before { background: var(--c-turf-light); }
+/* Open question for Daniel: neither eyebrow color reads on the green band
+   (bright red 2.99:1, muted 1.4:1), so it keeps the light green it had, set
+   through the same custom property as every other background. */
+.confirm-band { --eyebrow-color: var(--c-turf-light); }
 .confirm-ref {
   font-family: var(--f-mono); font-size: var(--t-data-m);
   background: rgba(0,0,0,.25); border-radius: var(--r-1); padding: 12px 18px; color: var(--c-white);

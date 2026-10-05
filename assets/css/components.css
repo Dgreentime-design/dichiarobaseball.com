@@ -9,12 +9,30 @@
   font-family: var(--f-mono); font-weight: 500;
   font-size: var(--t-eyebrow); line-height: 1.3;
   letter-spacing: var(--ls-eyebrow); text-transform: uppercase;
-  color: var(--c-red);
 }
-.eyebrow::before { content: ""; width: 34px; height: 2px; background: currentColor; flex: none; }
+
+/* The color is decided by the background behind the eyebrow, never by the
+   breakpoint, and only here. Light backgrounds take the muted grey, dark
+   and image backgrounds set --eyebrow-color to the bright red, which holds
+   4.5:1 on ink where the brand red does not. :root lifts this above the
+   generic "p inside a band" color rules elsewhere, so nothing else can
+   recolor an eyebrow by accident. */
+:root { --eyebrow-color: var(--c-muted); }
+.band--ink, .band--ink-deep, .hero, .page-hero, .split-band, .hittrax {
+  --eyebrow-color: var(--c-red-bright);
+}
+:root .eyebrow { color: var(--eyebrow-color); }
+
+/* The baseball, Daniel's Figma export used as it is, so it keeps its own
+   two colors whatever the text color. Decorative, so it is a background
+   rather than an image with alt text. Fixed size at every width, roughly
+   the cap height of the eyebrow type. */
+.eyebrow::before {
+  content: ""; flex: none;
+  width: 12px; height: 12px;
+  background: url("../img/icon-baseball.svg") center / contain no-repeat;
+}
 .eyebrow--bare::before { display: none; }
-.eyebrow--dim { color: var(--c-dim); }
-.eyebrow--dim::before { background: var(--c-red); }
 
 /* --- Buttons ------------------------------------------------------------ */
 

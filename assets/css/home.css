@@ -21,7 +21,6 @@
   padding: 0 var(--gutter);
 }
 .hero__copy { max-width: 820px; display: grid; gap: var(--s-6); padding: var(--band-y) 0; }
-.hero__copy .eyebrow { color: var(--c-red-bright); }
 .hero h1 { color: var(--c-bone); }
 .hero__lede { color: var(--c-dim); max-width: 62ch; }
 .hero__actions { display: flex; flex-wrap: wrap; gap: 14px; margin-top: var(--s-3); }
