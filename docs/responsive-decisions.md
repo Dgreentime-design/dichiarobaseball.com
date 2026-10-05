@@ -29,9 +29,10 @@ Started in round 08, Part A. Part B adds the full sweep.
   desktop gradient alone left the sub text at 1.35 to 2.66:1 on a phone,
   because the copy runs into the light side of the gradient. Darkening the
   whole image to compensate hid the photograph at both widths. Anchoring the
-  scrim to the copy keeps the sub text at 4.86:1 or better at the brightest
-  pixel at both widths, and keeps the photograph visible where there is no
-  copy.
+  scrim to the copy keeps the sub text at 5.57:1 or better at the brightest
+  pixel (measured at 390, 1024, 1440 and 1600 on all five pages), and keeps
+  the photograph visible where there is no copy. On wide screens the scrim
+  eases out over 720px on a smoothstep curve, so it has no visible edge.
 - **To remove it in design:** give the sub text a lighter color than
   `#A8A099` (bone, for example), which needs far less scrim, or give the
   copy its own solid panel on the image at every width.
