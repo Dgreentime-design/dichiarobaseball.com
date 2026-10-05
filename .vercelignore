@@ -1,0 +1,7 @@
+# Internal files. The repo root is the output directory, so anything not
+# listed here is publicly served. None of these is read by build.mjs, the
+# api/ functions or vercel.json.
+docs/
+prompts/
+CLAUDE.md
+README.md
