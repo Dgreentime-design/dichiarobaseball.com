@@ -115,9 +115,9 @@ Button vocabulary, used everywhere:
 | --- | --- | --- |
 | Browse programs | See camps and clinics | camps-and-clinics.html |
 | Sign up for one program | Register for this camp (Hit Night: Register for Hit Night) | register.html?program=<slug> |
-| Header and menu button | Register | camps-and-clinics.html |
+| Header and menu button | Open camps (changed 5 Oct, applied in round 08, do not change it in round 07) | camps-and-clinics.html |
 | Lesson | Book a lesson | Same target the lesson buttons use today |
-| Lesson with a coach | Book with <first name> | Same, coach preselected if supported today |
+| Lesson with a coach | Not used. Instructor cards carry no booking button (amended 5 Oct) | - |
 | Rental | Request a rental (or Request a cage / Request the full facility / Request a HitTrax session) | Same target the rental buttons use today |
 | Team block | Plan your team's block | team-camps.html form |
 | Program page | See dates and details | program.html?p=<slug> for that program |
@@ -351,6 +351,8 @@ Continue only when told "continue to B5".
 
 ## B5. Instructors (pages/instructors.html)
 
+Amended 5 October: no instructor card carries a booking button. Lou's "See Lou's camps" link stays, it is not a booking button. The booking band at the foot of the page stays as specified below.
+
 | Band | Element | New copy |
 | --- | --- | --- |
 | Hero | H1 | Coaches who played the game first. |
@@ -359,13 +361,13 @@ Continue only when told "continue to B5".
 | Filters | First pill | All instructors |
 | Cards | Bios | Word for word, except "Honours" becomes "Honors" |
 | Cards | Bio toggle | Read full bio |
-| Cards | Booking button | Book with <first name> |
+| Cards | Booking button | Remove the booking button from every instructor card (amended 5 Oct). Report each one removed |
 | Lou's card | Second link | See Lou's camps |
 | Gianna Sarlo card | Role | Instructor |
 | Gianna Sarlo card | Disciplines line | Remove "Disciplines to confirm" |
 | Gianna Sarlo card | Summary | One line: Bio coming soon. Replaces the three lines about a missing bio sheet |
 | Gianna Sarlo card | Full bio | Heading and two lines replaced by: Bio coming soon. |
-| Gianna Sarlo card | Button | Ask about lessons with Gianna (contact.html) |
+| Gianna Sarlo card | Button | Remove, same as every other card (amended 5 Oct) |
 | Empty filter state | Text / link | No instructor listed for that yet. · Ask us who fits |
 | Booking band | Body | Remove. H2, buttons and small print unchanged except "See camps and clinics" |
 
