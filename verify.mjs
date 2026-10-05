@@ -4,7 +4,7 @@
      node verify.mjs                 # against http://localhost:8080
      node verify.mjs http://host/    # against something else
 
-   Five checks:
+   Six checks:
      1. Content parity, 1440 vs 390. Every leaf text node must match. This
         is the standing rule: layout changes between breakpoints, content
         does not.
@@ -14,6 +14,8 @@
      5. Eyebrow color. Every visible .eyebrow is one of the two approved
         colors, and the same color at 390 as at 1440. The color is set by
         the background, never by the breakpoint.
+     6. Stat strips. No figure is clipped or wrapped, and no strip leaves an
+        empty slot, at 390, 768 and 1440.
    ========================================================================== */
 
 import { chromium } from "playwright";
@@ -73,6 +75,16 @@ async function inspect(url, width) {
     eyebrows: Array.from(document.querySelectorAll(".eyebrow"))
       .filter(el => el.checkVisibility())
       .map(el => ({ text: el.textContent.replace(/\s+/g, " ").trim().slice(0, 40), color: getComputedStyle(el).color })),
+    stats: Array.from(document.querySelectorAll(".stat-strip")).flatMap(s => {
+      const cols = getComputedStyle(s).gridTemplateColumns.split(" ").length;
+      const out = [];
+      if (s.children.length % cols) out.push(`${s.children.length} items in ${cols} columns`);
+      s.querySelectorAll(".stat dt").forEach(d => {
+        if (d.scrollWidth > d.clientWidth + 1) out.push(`"${d.textContent.trim()}" clipped`);
+        if (d.getClientRects().length > 1 || d.offsetHeight > parseFloat(getComputedStyle(d).fontSize) * 2) out.push(`"${d.textContent.trim()}" wraps`);
+      });
+      return out;
+    }),
     overflow: document.documentElement.scrollWidth > window.innerWidth,
     small: Array.from(document.querySelectorAll("a, button")).filter(el => {
       const r = el.getBoundingClientRect();
@@ -135,6 +147,10 @@ while (queue.length) {
     fail(`eyebrow color: ${badEyebrow.length} problem(s)`);
     badEyebrow.slice(0, 4).forEach(s => console.log("          " + s));
   } else pass(`eyebrow color, ${d.eyebrows.length} eyebrows, same approved color at both widths`);
+
+  const stats = Array.from(new Set([...d.stats.map(s => s + " at 1440"), ...t.stats.map(s => s + " at 768"), ...m.stats.map(s => s + " at 390")]));
+  if (stats.length) { fail(`stat strip: ${stats.length} problem(s)`); stats.slice(0, 4).forEach(s => console.log("          " + s)); }
+  else pass("stat strips, no clipped figure, no empty slot");
 
   const small = Array.from(new Set([...d.small, ...m.small]));
   if (small.length) fail("tap targets under 24px: " + small.join(", ")); else pass("tap targets");
