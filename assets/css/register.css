@@ -306,6 +306,14 @@
 .handoff__step:first-of-type { border-top: 0; }
 .handoff__step dt { font-family: var(--f-mono); font-size: var(--t-data-m); color: var(--c-red); }
 .handoff__step dd { margin: 0; font-size: var(--t-body-s); color: var(--c-muted); }
+
+/* The confirmation timeline reuses the steps with words for labels (Today,
+   Week before, Day one) instead of 01 to 03, which overflowed the 34px
+   column. The label column takes the width of the widest label, shared by
+   every row through subgrid, so the rows still line up. */
+.handoff__steps--labels { grid-template-columns: max-content 1fr; column-gap: var(--s-4); }
+.handoff__steps--labels .handoff__step { grid-column: 1 / -1; grid-template-columns: subgrid; }
+.handoff__steps--labels dt { white-space: nowrap; }
 .hold-note {
   background: var(--c-turf-bg); color: var(--c-turf);
   border-radius: var(--r-2); padding: var(--s-5) var(--s-6);
