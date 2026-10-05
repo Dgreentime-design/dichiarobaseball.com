@@ -62,7 +62,11 @@ is committed.
 3. Delete nothing that a round did not ask you to delete. If something looks
    wrong and is not in scope, report it as a finding.
 4. Out-of-scope work becomes a finding, not a commit.
-5. Stop at the checkpoint a round defines. Do not run past it.
+5. One stop per round by default. Run the whole round, push, check the
+   preview yourself, then report once and stop. Stop early only for: anything
+   that would break production, touching the money path when the round is
+   not about it, deleting content, or a fact conflict. Extra checkpoints only
+   when a round names them.
 6. Never use an em dash anywhere, including commit messages. Use a hyphen or a
    comma. This is a hard rule of Daniel's across every deliverable.
 
@@ -101,6 +105,16 @@ broken. "It should work" is not a report.
 
 Diagnostics return booleans, key names, lengths and error types. Never a
 secret, never a header value.
+
+## Speed
+
+- At the start of a round, if prompt files are committed but not pushed,
+  push them. Daniel does not run git commands.
+- Evidence matches risk. Copy and layout rounds: verify output, the preview
+  URL and a short list of what changed. Screenshots only when the round asks,
+  saved to `_proof/` (never committed). The money path keeps full evidence.
+- Pick the sensible option for small open choices, list them under
+  Assumptions, and keep going. Do not stop to ask.
 
 ## Reporting
 
