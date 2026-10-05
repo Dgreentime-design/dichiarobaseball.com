@@ -29,6 +29,9 @@ body {
 
 body.is-locked { overflow: hidden; }
 
+/* In-page links land below the sticky header, not under it. */
+[id] { scroll-margin-top: calc(var(--header-h) + 16px); }
+
 /* A class that sets display (grid, flex) outclasses the browser's own
    [hidden] rule, which silently breaks anything toggled with el.hidden.
    This puts it back. */

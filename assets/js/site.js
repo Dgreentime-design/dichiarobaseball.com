@@ -35,6 +35,7 @@
     menu.setAttribute("aria-hidden", String(!open));
     openBtn.setAttribute("aria-expanded", String(open));
     document.body.classList.toggle("is-locked", open);
+    if (open) document.documentElement.classList.remove("header-condensed");
     if (open) {
       lastFocused = document.activeElement;
       var first = menu.querySelector("a, button");
@@ -42,6 +43,66 @@
     } else if (lastFocused) {
       lastFocused.focus();
     }
+  }
+
+  /* --- Sticky header -------------------------------------------------------
+     The header sticks once it has been measured. Scrolling down past its
+     own height slides it up by the announcement bar's height, so the bar
+     leaves and the nav stays. Scrolling up by any amount brings the bar
+     back, and at the top of the page it is always shown.
+
+     Heights are measured, never hardcoded: the bar wraps to two lines on a
+     phone. A ResizeObserver keeps --announce-h and --header-full current,
+     and the CSS works out --header-h, the height actually on screen, which
+     everything else that sticks and every anchor target sits below.
+
+     The scroll listener is passive and runs at most once a frame. A 6px dead
+     zone stops trackpad jitter flickering the bar. It never hides while the
+     mobile menu is open, or while keyboard focus is inside the bar. */
+
+  var root = document.documentElement;
+  var header = document.querySelector(".site-header");
+  var bar = header && header.querySelector(".announce");
+  var DEAD_ZONE = 6;
+  var lastY = window.scrollY;
+  var ticking = false;
+
+  function setCondensed(on) {
+    root.classList.toggle("header-condensed", on);
+  }
+
+  function menuOpen() {
+    return !!menu && menu.getAttribute("data-open") === "true";
+  }
+
+  function measureHeader() {
+    root.style.setProperty("--announce-h", bar.offsetHeight + "px");
+    root.style.setProperty("--header-full", header.offsetHeight + "px");
+  }
+
+  function onScroll() {
+    ticking = false;
+    var y = window.scrollY;
+    var delta = y - lastY;
+    if (y <= header.offsetHeight || menuOpen() || bar.contains(document.activeElement)) {
+      setCondensed(false);
+      lastY = y;
+      return;
+    }
+    if (Math.abs(delta) < DEAD_ZONE) return;
+    setCondensed(delta > 0);
+    lastY = y;
+  }
+
+  if (header && bar) {
+    measureHeader();
+    if (window.ResizeObserver) new ResizeObserver(measureHeader).observe(header);
+    else window.addEventListener("resize", measureHeader);
+    root.classList.add("has-sticky-header");
+    window.addEventListener("scroll", function () {
+      if (!ticking) { ticking = true; window.requestAnimationFrame(onScroll); }
+    }, { passive: true });
+    bar.addEventListener("focusin", function () { setCondensed(false); });
   }
 
   if (openBtn) openBtn.addEventListener("click", function () { setMenu(true); });

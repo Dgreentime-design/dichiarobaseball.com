@@ -215,7 +215,8 @@
 /* --- Sticky summary ------------------------------------------------------ */
 
 .summary {
-  position: sticky; top: var(--s-6);
+  position: sticky; top: calc(var(--header-h) + var(--s-6));
+  transition: top var(--dur-reveal) var(--ease-reveal);
   background: var(--c-white); border: 1px solid var(--c-line);
   border-radius: var(--r-2); padding: var(--s-7);
   display: grid; gap: var(--s-6);

@@ -183,7 +183,7 @@
   align-items: start;
 }
 .lou__head   { grid-column: 2; grid-row: 1; display: grid; gap: var(--s-5); }
-.lou__media  { grid-column: 1; grid-row: 1 / span 2; position: sticky; top: var(--s-8); }
+.lou__media  { grid-column: 1; grid-row: 1 / span 2; position: sticky; top: calc(var(--header-h) + var(--s-8)); transition: top var(--dur-reveal) var(--ease-reveal); }
 .lou__copy   { grid-column: 2; grid-row: 2; }
 .lou__copy { display: grid; gap: var(--s-5); }
 .lou__quote { font-size: var(--t-body-l); line-height: 1.55; }

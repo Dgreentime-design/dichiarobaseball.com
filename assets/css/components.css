@@ -125,6 +125,24 @@
 
 .site-header { background: var(--c-bone); border-bottom: 1px solid var(--c-line); }
 
+/* Sticky once site.js has measured it. Scrolling down slides the whole
+   header up by the announcement bar's measured height, so the bar leaves
+   and the nav stays pinned. transform only, never height or margin, so
+   nothing below it moves. */
+.has-sticky-header .site-header {
+  position: sticky; top: 0; z-index: 100;
+  transition: transform var(--dur-reveal) var(--ease-reveal);
+}
+.header-condensed .site-header { transform: translateY(calc(-1 * var(--announce-h))); }
+
+/* Reduced motion: no travel. The global rule in base.css already cuts the
+   slide to nothing, so the header jumps. The bar fades over 150ms instead,
+   which needs !important to win over that same global rule. */
+@media (prefers-reduced-motion: reduce) {
+  .has-sticky-header .announce { transition: opacity 150ms linear !important; }
+  .header-condensed .announce { opacity: 0; }
+}
+
 .announce {
   background: var(--c-red); color: var(--c-white);
   text-align: center; padding: 10px var(--gutter);

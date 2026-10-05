@@ -102,4 +102,21 @@
   --net: repeating-linear-gradient(90deg,
           rgba(255,255,255,.055) 0 1px, transparent 1px 16px);
   --ease: cubic-bezier(.2,.6,.2,1);
+
+  /* --- Motion, reveals ---------------------------------------------------
+     Daniel's motion system: reveals at 600 to 800ms, ease-out, a gentle
+     settle. Swap the curve here for ease-in-out and every reveal follows. */
+  --dur-reveal: 600ms;
+  --ease-reveal: cubic-bezier(0.16, 1, 0.3, 1);
+
+  /* --- Sticky header -----------------------------------------------------
+     Measured by site.js into these three, never hardcoded. --header-h is
+     the height of the header as it is currently showing, so anything else
+     that sticks, and every anchor target, sits below it. 0 until measured,
+     which is also the no JavaScript case, where the header does not stick. */
+  --announce-h: 0px;
+  --header-full: 0px;
+  --header-h: var(--header-full);
 }
+
+:root.header-condensed { --header-h: calc(var(--header-full) - var(--announce-h)); }
