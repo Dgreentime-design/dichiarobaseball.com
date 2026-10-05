@@ -277,7 +277,7 @@
      that needs it is left out rather than guessed. */
   var COPY = {
     online: {
-      eyebrow: "You are in",
+      eyebrow: "You\u2019re in",
       title: " is registered.",
       lede: "Your card has been charged and the receipt is on its way.",
       status: "Paid",
@@ -287,9 +287,9 @@
       state: "Paid in full",
       statePart: "First payment made",
       note: "A receipt is in your inbox. Questions about the payment go to (201) 773-6858.",
-      next: [["Today", "A confirmation email with the full schedule and your receipt."],
-             ["A week before", "A reminder with what to bring."],
-             ["First session", "Arrive ten minutes early.{first}"]]
+      next: [["Today", "Keep this page. Your reference number is your proof of registration."],
+             ["Week before", "A reminder with what to bring."],
+             ["Day one", "Arrive ten minutes early.{first}"]]
     },
     facility: {
       eyebrow: "Place held",
@@ -300,10 +300,10 @@
       when: "First session{startShort}",
       accepted: "Card, cash or check",
       state: "Registered, payment due",
-      note: "Prefer to pay online instead? Call (201) 773-6858 and we can send a payment link.",
+      note: "Rather pay online? Call (201) 773-6858 and we\u2019ll send a payment link.",
       next: [["Today", "A confirmation email with the full schedule and what you owe."],
-             ["A week before", "A reminder with what to bring, including payment."],
-             ["First session", "Arrive ten minutes early and pay at the desk. Card, cash or check."]]
+             ["Week before", "A reminder with what to bring, including payment."],
+             ["Day one", "Arrive ten minutes early and pay at the desk. Card, cash or check."]]
     },
     check: {
       eyebrow: "Place held",
@@ -316,15 +316,15 @@
       state: "Registered, payment due",
       note: "Posting it? {mailTo}. Write reference {ref} on the memo line.",
       next: [["Today", "A confirmation email with the full schedule, the amount and where to send the check."],
-             ["A week before", "A reminder with what to bring, and a note if the check has not reached us yet."],
-             ["First session", "Arrive ten minutes early. If the check is still in the post, bring it with you."]]
+             ["Week before", "A reminder with what to bring, and a note if the check has not reached us yet."],
+             ["Day one", "Arrive ten minutes early. If the check is still in the post, bring it with you."]]
     },
     /* Back from the payment page, before the server has heard from Clover.
        Claims nothing: the payment may not have happened at all. */
     confirming: {
       eyebrow: "One moment",
       fullTitle: "Confirming your payment.",
-      lede: "We are waiting for Clover to confirm the payment. This usually takes a few seconds. Please keep this page open.",
+      lede: "This usually takes a few seconds.",
       status: "Confirming payment",
       paid: false,
       when: "Today",
