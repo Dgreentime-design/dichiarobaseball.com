@@ -166,7 +166,7 @@ test registrations stay out of the handover table (`Registrations`).
 | 04 | 30 Sep to 1 Oct | Clover live test. First real payment, adversarial checks |
 | 05 | 1 Oct | Webhook payload captured, by-value matching, unmatched tracking |
 | 06 | 1 Oct | Playbook revision, docs added |
-| 07 | 3 Oct | Copy overhaul. **In flight, Part A approved, B1 to B4 done, at the B4 checkpoint.** `prompts/2026-10-03-round07-copy-overhaul.md` |
+| 07 | 3 to 5 Oct | Copy overhaul across every page. Finished, B10 reported. `prompts/2026-10-03-round07-copy-overhaul.md` |
 
 Every round is a committed prompt file in `prompts/`. Read the round in flight
 before doing anything.
@@ -186,25 +186,17 @@ before doing anything.
 
 **In flight**
 
-- Round 07, the copy overhaul, is part way through.
-  - A1, global copy in the header, menu, marquee and footer: committed
-    (`b91ff83`).
-  - A2, homepage copy: committed (`c584744`).
-  - Part A approved by Daniel, 3 October.
-  - B1 to B4 committed and pushed, one commit per page: camps (`2e7135b`),
-    program detail (`9289e58`), lessons (`d482357`), facility and rentals
-    (`b8e82bc`).
-  - **At the B4 checkpoint.** Daniel reviews those four pages on the preview
-    before B5 to B10 start.
-  - Held in B2: the two lines stating the academy and Superdome split
-    (11 and 4 on the page, 12 and 3 in `programs.json`). Waiting on the
-    Feb 6 answer.
-  - Decided for B5 and B6: Hall of Fame claim out of marketing copy (stays in
-    Fran's bio), "Owner" tag off Lou, "25 years teaching here" becomes
-    "Since 2000", About's "15+" stays.
-  - Next: B5 to B10, on "continue to B5".
-  - The round prompt is `prompts/2026-10-03-round07-copy-overhaul.md`. Read it
-    in full before continuing. Do not restart Part A.
+- Round 07, the copy overhaul, is finished on `review` and reported. Every
+  page has one commit; the B10 register commit is `4819f24`.
+  - Held: the two program-page lines stating the academy and Superdome split
+    (11 and 4 on the page, 12 and 3 in `programs.json`). Waiting on the Feb 6
+    answer.
+  - Applied in B5 and B6: Hall of Fame claim out of marketing copy (stays in
+    Fran's bio), "Owner" chip and role off Lou, "25 years teaching here"
+    became "Since 2000", About's "15+" stays. Lou's bio line "Owner and
+    instructor since 2000" is unchanged, bios stay word for word.
+  - Next: round 08, `prompts/2026-10-05-round08-responsive-and-global.md`,
+    once Daniel says "start round 08".
 
 **Decisions taken on 3 October, already answered, do not re-ask**
 
