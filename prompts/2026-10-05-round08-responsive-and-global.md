@@ -146,13 +146,14 @@ The eyebrow is one component, `.eyebrow` in `components.css`, used about
 60 times. Change the component, not the pages.
 
 1. **Icon.** Replace the 34px line drawn by `.eyebrow::before` with the
-   baseball icon, matched to the reference: light grey ball, red stitched
-   seams, roughly the eyebrow's cap height, the same gap as today. Use
-   `assets/img/icon-baseball.svg` if Daniel has added it. If it is not
-   there, draw a clean SVG to match the reference, save it at that path and
-   say in the report that it is a stand-in to replace with the Figma
-   export. It is decorative: no alt text, `aria-hidden` if inline.
-   `.eyebrow--bare` stays iconless.
+   baseball icon at `assets/img/icon-baseball.svg`. It is Daniel's Figma
+   export, committed with this prompt: 18 by 18 viewBox, light grey ball
+   (`#E6E6E6`) with red seams (`#E86C60`). Use the file as it is, as an
+   image (for example `background-image` on the `::before`), so its two
+   colors are kept and it does not inherit the eyebrow text color. Do not
+   redraw or recolor it. Size it to roughly the eyebrow's cap height, with
+   the same gap as today, and keep it the same size at every width. It is
+   decorative, so it carries no alt text. `.eyebrow--bare` stays iconless.
 2. **Color, two values, set by background, never by breakpoint.**
    - Light backgrounds (bone, surface, white): `#5A524C`, the existing
      `--c-muted` token.
@@ -210,8 +211,7 @@ program at 390 and 1440, side by side per page.
 1. Step 0 output.
 2. Commits, one line each.
 3. The A1 proof list, pass or fail per item.
-4. A3: the icon source (Daniel's file or your stand-in), the overrides you
-   removed, and every eyebrow-like element converted or left, and why.
+4. A3: the icon size you set, the overrides you removed, and every eyebrow-like element converted or left, and why.
 5. A4: the hero screenshots, the overlay contrast numbers, and what
    happened to `.page-hero`.
 6. Verify output, including the new eyebrow check, and the preview URL.
