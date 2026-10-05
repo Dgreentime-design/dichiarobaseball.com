@@ -292,6 +292,9 @@ under "Before go-live". The two that bite silently:
   that no longer exists.** The link goes to `register.html?program=...#code`,
   and the field was removed when codes were taken out, so it opens the top of
   the register page. Parked for the program template round.
+- **Register progress connector at 360px.** The line between steps 2 and 3
+  runs through the 03 marker on the narrowest phones. Parked for the final
+  copy sweep.
 - **There is a second Vercel project called plain `dichiarobaseball.com`**,
   separate from `dichiarobaseball.com-rgr6`, last touched 1 October. Two
   projects and one domain is a cutover hazard: the domain can only point at
