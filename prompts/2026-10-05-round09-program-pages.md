@@ -3,7 +3,7 @@
 DiChiaro Baseball & Softball Academy. Written 5 October 2026.
 One run, one stop. Follow CLAUDE.md rule 5 and the Speed section.
 
-Scope: every "See dates and details" link opens its own program, built from
+Scope: a mobile hero hotfix first, then every "See dates and details" link opens its own program, built from
 `data/programs.json`, plus a short list of fixes. No layout redesign. No
 backend changes.
 
@@ -26,6 +26,22 @@ pushed, push them first, then run Step 0 again. Expect 0 0 and a clean tree.
 5. Review notes stay on the page.
 6. Stay unindexed. Do not set `SITE_ORIGIN`.
 7. Delete nothing beyond what an item names. Never use an em dash.
+
+## 0. Hero hotfix, first
+
+Daniel's top priority for this round. Do it before item 1 and commit it on
+its own. Reference: `docs/reference/round08/hero-dark-mobile.png`.
+
+1. At phone widths, lighten the overlay over the top half of the shared
+   image hero so the photo reads clearly. The sub text must still pass 4.5:1
+   at its brightest pixel. Report the number.
+2. At phone widths, hero buttons sit at their natural width, stacked and
+   left aligned, as in the reference. Keep the current button colors.
+3. Homepage hero image: use `dbsa-07-little-league.jpg`, as in the
+   reference. Choose an object-position that keeps the players in frame
+   at 390.
+
+Check home, instructors, camps, lessons and program at 390 and 1440.
 
 ## 1. One page per program, generated at build time
 
