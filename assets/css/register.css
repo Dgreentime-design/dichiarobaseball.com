@@ -332,6 +332,9 @@
   display: flex; align-items: flex-end; justify-content: space-between; gap: var(--s-8); flex-wrap: wrap;
 }
 .confirm-band__copy { display: grid; gap: var(--s-4); max-width: 820px; }
+/* Shown only while a payment is taking longer than a minute to confirm. */
+.confirm-band__call { margin-top: var(--s-3); }
+.confirm-band__call[hidden] { display: none; }
 .confirm-band h2 { color: var(--c-white); }
 .confirm-band p { color: rgba(255,255,255,.86); }
 /* Open question for Daniel: neither eyebrow color reads on the green band

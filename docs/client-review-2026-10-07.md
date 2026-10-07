@@ -383,8 +383,8 @@ Steps:
 2. **Redeploy.** A changed variable does nothing until a new deployment. On
    Deployments, open the latest `review` deployment, menu, **Redeploy**. Or ask
    Claude Code for an empty commit to `review`. Allow 1 to 2 minutes.
-3. Check `B/api/config-check` shows provider `clover` and every Clover variable
-   present. While on `clover`, the mock page returns "Not found".
+3. Check every Clover variable is set on Preview in the Vercel dashboard.
+   While on `clover`, `B/api/mock-checkout` returns "Not found".
 4. In Clover's Hosted Checkout settings, click **TEST URL**. It must say
    "verification succeeded". If not, stop; do not take a card.
 5. Register as in 4a. "Pay online" now opens Clover's real hosted page.
@@ -399,8 +399,7 @@ Steps:
 Switch back, the same day, before the link goes to anyone else:
 1. `PAYMENT_PROVIDER` on Preview back to `mock`.
 2. Redeploy as in step 2.
-3. Check `B/api/config-check` shows `mock`, and run one mock registration
-   (4a) to see the mock page again.
+3. Run one mock registration (4a) to see the mock page again.
 
 Risk while it is on `clover`: anyone with the preview link who pays is charged
 for real.

@@ -234,10 +234,10 @@ Every variable is read from `process.env` and never written to a file.
 - **`outputDirectory` is the repo root**, so every file in the repo is publicly
   readable, including function source and `data/programs.json`. Nothing secret
   or private may be committed.
-- **`/api/config-check`** is a preview-only diagnostic: provider name, which
-  variables are set (booleans), and a registration's status, amount and order ID
-  by registration or session ID. It returns 404 outside a preview. It is still
-  publicly readable on any preview, which is a launch blocker below.
+- **`/api/config-check` was removed in round 12.** It was publicly readable
+  on any preview. Which provider is active shows from `/api/mock-checkout`,
+  which answers "Not found" unless `PAYMENT_PROVIDER=mock`. Which variables
+  are set is read in the Vercel dashboard.
 
 ## Live payment test protocol
 
@@ -246,7 +246,8 @@ pays on their own card; the agent writes code and reads results, and never
 enters card details.
 
 1. Set the Clover variables on Preview, `PAYMENT_PROVIDER=clover`, and redeploy.
-2. Check `/api/config-check`: provider `clover`, every variable present.
+2. Check every Clover variable is set on Preview in the Vercel dashboard, and
+   that `/api/mock-checkout` answers "Not found" (the mock is off).
 3. Check Airtable reads and writes work before any money moves: a lookup returns
    rows, and a checkout session creates a `pending` row.
 4. Click **TEST URL** in Clover's Hosted Checkout settings. It must say
@@ -298,8 +299,7 @@ order; these are the open items Phase 1 left.
       become indexable and the sitemap fills
 - [ ] Merge `review` into `main` (Daniel)
 - [ ] One live payment on production by the protocol above, then void it
-- [ ] Remove `/api/config-check`, or lock it: it is publicly readable on any
-      preview and returns registration status and order IDs
+- [x] Remove `/api/config-check` (round 12, 7 October)
 - [ ] **Surface repeated signature failures somewhere a person sees.** A run of
       401s on the webhook endpoint currently only reaches the Vercel log, which
       nobody reads unprompted. This is the safeguard against silent failure two

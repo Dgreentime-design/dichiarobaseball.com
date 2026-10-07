@@ -3,7 +3,10 @@
 
    The one place a registration becomes confirmed after an online payment.
    The signature is checked against the raw body before anything is parsed,
-   and an unverified request gets 401 with nothing written.
+   and an unverified request gets 401. It moves no registration: the only
+   thing written is a signature_failed row, at most one a minute, with the
+   time and the request's length and nothing from the request itself, so a
+   changed signing secret shows up in Airtable instead of only in a log.
 
    The payload is read by value: the registration is the one whose stored
    checkout session ID appears anywhere in it, and it is confirmed only on
@@ -46,7 +49,12 @@ export async function POST(request) {
        instead of payments quietly staying pending. Nothing from the
        request is logged. */
     console.log("webhook", JSON.stringify({ result: "invalid signature" }));
-    return json({ error: "Invalid signature" }, 401);
+    const alert = await recordSignatureFailure(Buffer.byteLength(rawBody, "utf8"));
+    const body = { error: "Invalid signature" };
+    /* On a preview only, say whether the alert row is in the table, read
+       back from it. The row's ID, its status and the note's length. */
+    if (process.env.VERCEL_ENV === "preview") body.diagnostic = alert;
+    return json(body, 401);
   }
 
   /* Signed by the provider from here on. Everything below reads the
@@ -155,6 +163,47 @@ export async function POST(request) {
     console.error("webhook store", e);
     return json({ error: "Temporarily unavailable" }, 500);
   }
+}
+
+/* --- Signature failure alert -----------------------------------------------
+
+   One row per minute at most, named for the minute, so a flood of bad
+   requests cannot fill the table: the ID is checked before writing, and
+   this instance remembers the last minute it recorded so a flood costs one
+   lookup a minute, not one per request. Never the body, the headers or the
+   secret: the time and the byte length only. A failure to record is logged
+   by type and never changes the 401. */
+let lastAlertMinute = null;
+
+async function recordSignatureFailure(bytes) {
+  const now = new Date();
+  const minute = now.toISOString().slice(0, 16);
+  const id = "SIGFAIL-" + minute.replace(/[-:]/g, "").replace("T", "-");
+  if (lastAlertMinute === minute) return { recorded: id, written: false, reason: "already recorded this minute" };
+  lastAlertMinute = minute;
+  try {
+    const db = store();
+    if (await db.get(id)) return { recorded: id, written: false, reason: "already recorded this minute", readBack: await readBack(db, id) };
+    await db.create({
+      registration_id: id,
+      status: "signature_failed",
+      webhook_note: `Webhook signature failed verification at ${now.toISOString()}. The request was ${bytes} bytes. ` +
+        "At most one of these rows is written a minute, so a run of failures shows as one row per minute. " +
+        "A run of them usually means the signing secret in Clover and in Vercel no longer match, and payments are being taken without being confirmed."
+    });
+    console.log("webhook", JSON.stringify({ result: "signature failure recorded", recorded: id }));
+    return { recorded: id, written: true, readBack: await readBack(db, id) };
+  } catch (e) {
+    lastAlertMinute = null;
+    console.error("webhook signature alert not recorded", e.name);
+    return { recorded: null, written: false, reason: e.name };
+  }
+}
+
+/* What the table now holds for the alert, without its contents. */
+async function readBack(db, id) {
+  const row = await db.get(id);
+  return row ? { status: row.status, noteLength: (row.webhook_note || "").length } : null;
 }
 
 /* A registration a person must look at. A confirmed one stays confirmed. */

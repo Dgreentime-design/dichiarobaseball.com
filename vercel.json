@@ -2,17 +2,128 @@
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "buildCommand": "node build.mjs",
   "outputDirectory": ".",
+  "redirects": [
+    {
+      "source": "/about-us",
+      "destination": "/about.html",
+      "statusCode": 301
+    },
+    {
+      "source": "/template-pages/our-mission",
+      "destination": "/about.html",
+      "statusCode": 301
+    },
+    {
+      "source": "/our-instructors",
+      "destination": "/instructors.html",
+      "statusCode": 301
+    },
+    {
+      "source": "/camps-and-clinics",
+      "destination": "/camps-and-clinics.html",
+      "statusCode": 301
+    },
+    {
+      "source": "/camps-and-clinics/little-league-training-camp-winter",
+      "destination": "/programs/little-league-winter-2027.html",
+      "statusCode": 301
+    },
+    {
+      "source": "/camps-and-clinics/little-league-camp",
+      "destination": "/programs/little-league-fall-2026.html",
+      "statusCode": 301
+    },
+    {
+      "source": "/camps-and-clinics/infield-camp",
+      "destination": "/programs/infield-camp-2026-27.html",
+      "statusCode": 301
+    },
+    {
+      "source": "/camps-and-clinics/monday-hit-nights",
+      "destination": "/programs/hit-night-fall-2026.html",
+      "statusCode": 301
+    },
+    {
+      "source": "/lessons-and-rentals",
+      "destination": "/lessons.html",
+      "statusCode": 301
+    },
+    {
+      "source": "/contact-us",
+      "destination": "/contact.html",
+      "statusCode": 301
+    },
+    {
+      "source": "/template-pages/faq",
+      "destination": "/contact.html",
+      "statusCode": 301
+    },
+    {
+      "source": "/general-registration",
+      "destination": "/camps-and-clinics.html",
+      "statusCode": 301
+    },
+    {
+      "source": "/template-pages/gallery",
+      "destination": "/facility-and-rentals.html",
+      "statusCode": 301
+    },
+    {
+      "source": "/template-pages/facilities",
+      "destination": "/facility-and-rentals.html",
+      "statusCode": 301
+    },
+    {
+      "source": "/template-pages/facilities/:path*",
+      "destination": "/facility-and-rentals.html",
+      "statusCode": 301
+    },
+    {
+      "source": "/template-pages/events",
+      "destination": "/camps-and-clinics.html",
+      "statusCode": 301
+    },
+    {
+      "source": "/template-pages/events/:path*",
+      "destination": "/camps-and-clinics.html",
+      "statusCode": 301
+    },
+    {
+      "source": "/template-pages/blog",
+      "destination": "/",
+      "statusCode": 301
+    },
+    {
+      "source": "/template-pages/blog/:path*",
+      "destination": "/",
+      "statusCode": 301
+    }
+  ],
   "headers": [
     {
       "source": "/assets/(.*)",
-      "headers": [{ "key": "Cache-Control", "value": "public, max-age=604800" }]
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=604800"
+        }
+      ]
     },
     {
       "source": "/(.*)",
       "headers": [
-        { "key": "X-Content-Type-Options", "value": "nosniff" },
-        { "key": "Referrer-Policy", "value": "strict-origin-when-cross-origin" },
-        { "key": "X-Frame-Options", "value": "SAMEORIGIN" }
+        {
+          "key": "X-Content-Type-Options",
+          "value": "nosniff"
+        },
+        {
+          "key": "Referrer-Policy",
+          "value": "strict-origin-when-cross-origin"
+        },
+        {
+          "key": "X-Frame-Options",
+          "value": "SAMEORIGIN"
+        }
       ]
     }
   ]

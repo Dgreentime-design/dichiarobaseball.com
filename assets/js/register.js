@@ -279,16 +279,15 @@
     online: {
       eyebrow: "You\u2019re in",
       title: " is registered.",
-      lede: "Your card has been charged and the receipt is on its way.",
+      lede: "Your card has been charged.",
       status: "Paid",
       paid: true,
       when: "Paid " + "today",
       accepted: "Card, through Clover",
       state: "Paid in full",
       statePart: "First payment made",
-      note: "A receipt is in your inbox. Questions about the payment go to (201) 773-6858.",
+      note: "Questions about the payment go to (201) 773-6858.",
       next: [["Today", "Keep this page. Your reference number is your proof of registration."],
-             ["Week before", "A reminder with what to bring."],
              ["Day one", "Arrive ten minutes early.{first}"]]
     },
     facility: {
@@ -301,8 +300,7 @@
       accepted: "Card, cash or check",
       state: "Registered, payment due",
       note: "Rather pay online? Call (201) 773-6858 and we\u2019ll send a payment link.",
-      next: [["Today", "A confirmation email with the full schedule and what you owe."],
-             ["Week before", "A reminder with what to bring, including payment."],
+      next: [["Today", "Keep this page. Your reference number is your proof of registration."],
              ["Day one", "Arrive ten minutes early and pay at the desk. Card, cash or check."]]
     },
     check: {
@@ -315,8 +313,7 @@
       accepted: "Check, payable to {payableTo}",
       state: "Registered, payment due",
       note: "Posting it? {mailTo}. Write reference {ref} on the memo line.",
-      next: [["Today", "A confirmation email with the full schedule, the amount and where to send the check."],
-             ["Week before", "A reminder with what to bring, and a note if the check has not reached us yet."],
+      next: [["Today", "Keep this page. Your reference number is your proof of registration."],
              ["Day one", "Arrive ten minutes early. If the check is still in the post, bring it with you."]]
     },
     /* Back from the payment page, before the server has heard from Clover.
@@ -332,6 +329,22 @@
       state: "Not yet confirmed",
       note: "If this does not change within a minute, call (201) 773-6858 and quote your reference. Please do not pay again.",
       next: [["Now", "This page updates on its own as soon as the payment is confirmed."]]
+    },
+    /* Still no answer from the payment provider a minute after the payer
+       came back. The page keeps checking and moves on by itself if the
+       payment confirms. Claims nothing beyond what is known. */
+    delayed: {
+      eyebrow: "Taking longer than usual",
+      fullTitle: "Still confirming your payment.",
+      lede: "This can take a few minutes. If your card was charged, your place is held. Keep your reference number and we\u2019ll confirm by phone or email.",
+      status: "Confirming payment",
+      paid: false,
+      when: "Today",
+      accepted: "Card, through Clover",
+      state: "Not yet confirmed",
+      note: "Please do not pay again.",
+      call: true,
+      next: [["Now", "This page keeps checking and updates on its own as soon as the payment is confirmed."]]
     },
     failed: {
       eyebrow: "Not registered",
@@ -393,6 +406,8 @@
     set("[data-due-state]", key === "online" && o && o.later.length ? c.statePart : key === "online" && !o ? c.status : c.state);
     set("[data-due-note]", fill(c.note, values));
     set(".confirm-ref", ctx.id ? "Reference " + ctx.id : "");
+    var call = document.querySelector("[data-confirm-call]");
+    if (call) call.hidden = !c.call;
 
     var status = document.querySelector("[data-due-status]");
     if (status) {
@@ -551,10 +566,24 @@
       : Promise.resolve();
 
     ready.then(function () {
-      var tries = 0;
+      /* Every 2 seconds for the first minute. After a minute with no answer
+         the screen says so, and checking carries on every 5 seconds for as
+         long as the page is open, so a late webhook still lands here. */
+      var started = Date.now();
+      var DELAY_MS = 60000;
+      var delayed = false;
+      var again = function () {
+        var waited = Date.now() - started;
+        if (!delayed && waited >= DELAY_MS) {
+          delayed = true;
+          finish("delayed", { id: id, amountCents: lastAmount });
+        }
+        setTimeout(poll, waited < DELAY_MS ? Math.min(2000, DELAY_MS - waited) : 5000);
+      };
+      var lastAmount;
       finish("confirming", { id: id });
 
-      (function poll() {
+      function poll() {
         fetch("/api/registration/" + encodeURIComponent(id) + "/status", { cache: "no-store" })
           .then(function (res) {
             return res.json().catch(function () { return null; }).then(function (data) {
@@ -571,12 +600,14 @@
             } else if (data.status === "failed" || data.status === "unknown") {
               finish(data.status, ctx);
             } else {
+              lastAmount = data.amountCents;
               set("[data-due-amount]", moneyExact(data.amountCents));
-              if (++tries < 30) setTimeout(poll, 2000);
+              again();
             }
           })
-          .catch(function () { if (++tries < 30) setTimeout(poll, 2000); });
-      })();
+          .catch(again);
+      }
+      poll();
     });
     return true;
   }

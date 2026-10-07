@@ -12,13 +12,16 @@
    2. Decline             never shows success, row pending or failed
    3. Redirect, no pay    the return URL alone shows nothing confirmed
    4. Duplicate webhook   same signed webhook twice, one confirmation
-   5. Bad signature       401 and nothing written
+   5. Bad signature       401, nothing moved, one signature_failed row a minute
    6. Tampered amount     a lower amount in the request is ignored
    7. Wrong amount        an approved webhook for the wrong amount confirms nothing
    8. No outcome          a webhook with no approved or declined value confirms nothing
    9. Unmatched           a signed webhook for no known session leaves one UNMATCHED row
   10. Past option         an option whose sessions have all passed is refused
                           like an unknown one, and is not offered
+  11. Slow webhook        after 60 seconds unconfirmed the page says it is still
+                          confirming, with the reference and a call button, and
+                          moves to confirmed when the webhook arrives
    ========================================================================== */
 
 import { chromium } from "playwright";
@@ -162,10 +165,10 @@ await check("4. Duplicate webhook: one confirmed registration, one order, no sec
   assert(matching[0].provider_order_id === "mockpay_" + session.replace(/^mock_/, ""), "wrong order ID");
 });
 
-await check("5. Bad signature: 401 and nothing written", async () => {
+await check("5. Bad signature: 401, the registration untouched, one signature_failed row a minute with nothing from the request", async () => {
   const { registrationId: id } = await startSession();
   const session = row(id).checkout_session_id;
-  const snapshot = rawStore();
+  const before = rows();
   const attempts = {
     unsigned: await webhook(session, { secret: null }),
     "wrong secret": await webhook(session, { secret: "not-the-secret" }),
@@ -173,8 +176,22 @@ await check("5. Bad signature: 401 and nothing written", async () => {
     "signature in the Clover header": await webhook(session, { header: "clover-signature" })
   };
   for (const [name, res] of Object.entries(attempts)) assert(res.status === 401, `${name}: ${res.status}`);
-  assert(rawStore() === snapshot, "the store changed");
   assert(row(id).status === "pending", `row is ${row(id).status}`);
+
+  /* Everything that was there is unchanged, and anything new is an alert. */
+  const after = rows();
+  const added = after.filter((r) => !before.some((b) => b.registration_id === r.registration_id));
+  assert(JSON.stringify(after.filter((r) => before.some((b) => b.registration_id === r.registration_id))) === JSON.stringify(before), "an existing row changed");
+  assert(added.length <= 1, `${added.length} rows added for four bad requests`);
+  assert(added.every((r) => /^SIGFAIL-\d{8}-\d{4}$/.test(r.registration_id) && r.status === "signature_failed"), "an added row is not a signature_failed alert");
+
+  /* This minute's alert exists, written now or earlier in the same minute,
+     and holds the time and the length, not the request. */
+  const minute = new Date().toISOString().slice(0, 16).replace(/[-:]/g, "").replace("T", "-");
+  const alert = after.find((r) => r.registration_id === `SIGFAIL-${minute}`) || added[0];
+  assert(alert, "no signature_failed row for this minute");
+  assert(/bytes/.test(alert.webhook_note || "") && /verification at \d{4}-/.test(alert.webhook_note || ""), "the alert does not give the time and the length");
+  assert(!JSON.stringify(alert).includes(session) && !/APPROVED|mockpay_|signature=|v1=/.test(JSON.stringify(alert)), "the alert holds part of the request");
 });
 
 await check("6. Tampered amount: the server recomputes and ignores the submitted value", async () => {
@@ -240,6 +257,28 @@ await check("10. Past option: the September Hit Night package is refused at chec
   const offered = (await (await fetch(`${BASE}/api/programs/hit-night-fall-2026`)).json()).options.map((o) => o.id);
   assert(!offered.includes("sept"), `register options include sept: ${offered.join(",")}`);
   assert(offered.includes("oct") || offered.includes("dec"), `no later package offered: ${offered.join(",")}`);
+});
+
+await check("11. Slow webhook: still confirming after 60 seconds, then confirmed when the webhook lands", async () => {
+  const { registrationId: id } = await startSession();
+  const session = row(id).checkout_session_id;
+  const page = await browser.newPage();
+  await page.goto(`${BASE}/register.html?registration=${id}`);
+  await wait(5000);
+  assert((await title(page)) === "Confirming your payment.", `at 5s: ${await title(page)}`);
+  assert(await page.isHidden("[data-confirm-call]"), "call button shown before a minute");
+  await page.waitForFunction(() => document.querySelector("[data-confirm-title]").textContent === "Still confirming your payment.", null, { timeout: 70000 });
+  const lede = await page.textContent("[data-confirm-lede]");
+  assert(/If your card was charged, your place is held\./.test(lede), `lede: ${lede}`);
+  assert((await page.textContent(".confirm-ref")) === `Reference ${id}`, "reference not shown");
+  assert(await page.isVisible('[data-confirm-call] a[href="tel:+12017736858"]'), "no call button");
+  assert(row(id).status === "pending", `row is ${row(id).status}`);
+  const res = await webhook(session);
+  assert(res.status === 200, `webhook ${res.status}`);
+  await page.waitForFunction(() => /is registered/.test(document.querySelector("[data-confirm-title]").textContent), null, { timeout: 15000 });
+  assert(await page.isHidden("[data-confirm-call]"), "call button still shown once confirmed");
+  assert(row(id).status === "confirmed", `row is ${row(id).status}`);
+  await page.close();
 });
 
 await browser.close();

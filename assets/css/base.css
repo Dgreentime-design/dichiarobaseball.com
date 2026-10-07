@@ -48,6 +48,9 @@ a { color: inherit; text-decoration: none; }
   outline-offset: 3px;
   border-radius: var(--r-1);
 }
+/* A heading focused by script, so a screen reader lands on the new step, is
+   not a control and is never tabbed to: no ring. */
+[tabindex="-1"]:focus { outline: none; }
 
 .skip-link {
   position: absolute; left: 12px; top: -80px; z-index: 200;

@@ -88,7 +88,6 @@ it. The site is deliberately unindexed until cutover.
       webhooks/clover.js          the only writer of a confirmed registration
       registration/[id]/status.js polled by the confirming screen
       programs/[slug].js          public program data for the register page
-      config-check.js             PREVIEW ONLY diagnostic. Publicly readable.
       health.js
       mock-checkout.js            the mock provider's fake payment page
       _lib/
@@ -315,8 +314,6 @@ under "Before go-live". The two that bite silently:
 
 ## 9. Known issues not yet fixed
 
-- `/api/config-check` is publicly readable on any preview and returns
-  registration status, amount and order ID. Remove or lock before launch.
 - A voided or refunded payment leaves the registration `confirmed`, because
   Clover sends no webhook for it. Manual for now.
 - Repeated signature failures only reach the Vercel log. Nobody reads logs
