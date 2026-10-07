@@ -1,4 +1,4 @@
-# Round 12 - Launch hardening and small fixes
+# Round 12 - Flyer re-baseline, camps page, launch hardening and small fixes
 
 DiChiaro Baseball & Softball Academy. Written 7 October 2026. Go-live
 target: Tuesday 13 October. One run, one report. Follow CLAUDE.md.
@@ -25,6 +25,16 @@ pushed. Expect a clean tree and 0 0.
    `Registrations Review`.
 5. Facts come from `data/programs.json`. Never use an em dash.
 
+## Order of work
+
+Do the parts in this order and commit each on its own:
+
+1. Section 0: the data re-baseline from the flyers. Every later fact
+   depends on it.
+2. Section 0b: the camps page.
+3. Section 1: the small fixes.
+4. Section 2: launch hardening.
+
 ## Round 11 verdict
 
 Accepted:
@@ -42,21 +52,83 @@ and states, and the risk is wrong for this week.
   Log 44px as a post-launch item.
 - Edges: fix the one real defect, item 1 below.
 
+## 0. Re-baseline the program data from Michael's 9 flyers
+
+Michael's 9 PDFs are now the source of truth for every camp, date, time,
+age and price. Daniel has added them to the repo, renamed to the program
+slugs:
+
+    assets/flyers/little-league-fall-2026.pdf
+    assets/flyers/little-league-winter-2027.pdf
+    assets/flyers/little-league-march-2027.pdf
+    assets/flyers/infield-camp-2026-27.pdf
+    assets/flyers/hit-night-fall-2026.pdf
+    assets/flyers/hit-night-winter-2027.pdf
+    assets/flyers/iha-softball-winter-2027.pdf
+    assets/flyers/fair-lawn-hs-softball-2027.pdf
+    assets/flyers/old-tappan-hs-2026-27.pdf
+
+Commit them first, on their own, unchanged.
+
+1. Read every PDF in full. Compare each one with its entry in
+   `data/programs.json`, field by field:
+   - name, season, ages, sport, day
+   - every date, every group and its time, the venue split
+   - every option and its price, the payment schedule
+   - what is taught
+2. Where a flyer and the data disagree, **the flyer wins**, with one
+   exception. Where a flyer contradicts itself (the known case is the Hit
+   Night Fall registration box printing November $25 and December $125
+   against its own schedule), keep the value the schedule supports and flag
+   it for Michael. Never guess. If a flyer is unreadable or ambiguous,
+   leave the data value, flag it, and keep going.
+3. **Prices are money.** `/api/checkout/session` charges from this file.
+   For every price change, list the slug, the option, the old price and
+   the new price in the report.
+4. Update each program's `flyer` field to its new file name above. The
+   flyer button from round 09 then appears on every program page that has
+   a file.
+5. Clear each `needs_confirming` note that a flyer now answers, and
+   record the answer. The open one that matters most is the Infield
+   Superdome split, Feb 6 at the academy or the Superdome.
+6. Rebuild. Every program page, card and price on the site must now match
+   the data. Check the homepage and camps cards too: they are hand-built,
+   so update their dates, prices and session counts to match. The Spring
+   Little League card (`little-league-march-2027`) included.
+7. Run `npm run check:payments` after the change, and show that a mock
+   checkout for one program charges the new price.
+
+## 0b. Camps page: Teams filter and the three team programs
+
+From the 7 October review: add "Teams" to the camps filter, and show the
+three team programs on the camps page:
+
+- IHA Softball Winter 2027
+- Fair Lawn HS Softball 2027
+- Old Tappan HS 2026-27
+
+1. Each gets a card in the existing card pattern, tagged so the "Teams"
+   filter shows only these three. Each card links to its generated program
+   page. Generate pages for these three now, even though they are gated.
+2. They are `gated` in the data. Do not change `gated`. On a gated card
+   and page, replace the register button with "Ask about joining", linking
+   to `contact.html?about=<slug>`. Register stays available only where
+   `gated` is false. Report this so Daniel can confirm with Michael
+   whether these teams register online.
+3. The empty-state and filter count keep working with the new filter.
+4. Do not add cards for Winter Little League or Winter Hit Night. Daniel
+   decides that separately.
+
 ## 1. Small fixes
 
 1. **Header gutter at 1440.** The header sits at 59.8 to 1380.2 while the
    content container sits at 80 to 1360. Align the header to the
    container's gutter at every width, in the shared header rule.
-2. **Infield Superdome text.** The page now contradicts itself: the copy
+2. **Infield Superdome text.** The page contradicts itself: the copy
    says 11 and 4, and the date chips, built from the data, show 3
-   Superdome dates. The data wins. Michael's PDFs become the baseline in
-   round 13 and will confirm it. Change these to match the data:
-   - "four Superdome sessions" becomes "three".
-   - "11 of 15 / 4 of 15" becomes "12 of 15 / 3 of 15".
-   - The schedule line becomes "Twelve at Pollitt Drive, then three
-     combined mornings at the Superdome in February."
-   Generate these from the data if the template allows it, so they cannot
-   drift again. Report the exact lines changed.
+   Superdome dates. After section 0, generate the venue counts and the
+   schedule sentence from the re-baselined data, so they always match the
+   flyer and cannot drift again. Report the exact lines changed.
 3. **Lou photo alt text.** `dbsa-09` shows Lou posing with a player. Use
    the accurate alt text you wrote for About, on Home and on the Infield
    page too.
@@ -119,20 +191,19 @@ Report:
 
 1. The preview link, and the commit it serves.
 2. Commits, one line each.
-3. The proof for every item in section 2, and for item 1.4, pass or fail.
-4. The lines changed for 1.2 and 2.4.
-5. What Daniel has to do in the Vercel dashboard.
+3. Section 0: a table of every change, as slug, field, old value, new
+   value and flyer page. Every flagged contradiction, for Michael.
+4. Section 0b: the three team cards, and how registration works on each.
+5. The proof for every item in section 2, and for item 1.4, pass or fail.
+6. The lines changed for 1.2 and 2.4.
+7. What Daniel has to do in the Vercel dashboard.
 
 Then update sections 8 and 9 of `docs/build-thread-briefing.md` and stop.
 
 ## Out of scope
 
-Round 13, after Michael's 9 PDFs:
+Round 13:
 
-- Re-baseline the data.
-- The Teams filter and the three extra camps.
-- Flyers.
-- The Spring Little League card.
 - Winter cards, if Daniel wants them.
 - Removing the review notes.
 - The final copy sweep.
