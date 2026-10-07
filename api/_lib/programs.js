@@ -22,6 +22,19 @@ export class CartError extends Error {}
 
 export const findProgram = (slug) => DATA.programs.find((p) => p.slug === slug) || null;
 
+/* Today's date in Fair Lawn, as YYYY-MM-DD. A session on today's date is
+   still to come. */
+export const todayEastern = (now = new Date()) =>
+  new Intl.DateTimeFormat("en-CA", { timeZone: "America/New_York" }).format(now);
+
+/* An option can be bought while any session it covers is still to come. A
+   monthly package covers its own dates; anything else covers the
+   program's. */
+export function optionOpen(program, option, today = todayEastern()) {
+  const dates = option.dates || (program.schedule && program.schedule.dates) || [];
+  return dates.some((d) => d >= today);
+}
+
 /* Returns { program, option, amountCents, lineItems } or throws CartError.
 
    Gated programs are refused: they are priced by town and league codes,
@@ -33,8 +46,9 @@ export function priceCart({ programSlug, optionId, rateId, playerCount }) {
   if (!program || program.status !== "live") throw new CartError("Unknown program");
   if (program.gated) throw new CartError("This program needs a code, and codes are not available yet");
 
+  /* A past option gets the same answer as one that never existed. */
   const option = program.options.find((o) => o.id === optionId);
-  if (!option) throw new CartError("Unknown option");
+  if (!option || !optionOpen(program, option)) throw new CartError("Unknown option");
   if (rateId) throw new CartError("Rates are not available yet");
 
   if (!Number.isInteger(playerCount) || playerCount < 1 || playerCount > MAX_PLAYERS) {

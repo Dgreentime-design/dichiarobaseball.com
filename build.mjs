@@ -221,7 +221,7 @@ function eventsFor(program, file) {
   const combinedDates = new Set((combined && combined.dates) || []);
   const facility = VENUES.facility || {};
   const other = VENUES[s.venue === "split" ? "superdome" : s.venue] || VENUES.superdome || {};
-  const offers = (program.options || []).map((o) => ({
+  const offers = openOptions(program).map((o) => ({
     "@type": "Offer",
     name: plain(o.label),
     price: String(o.price),
@@ -472,11 +472,45 @@ function daySpan(s) {
   return `${first}-${last}`;
 }
 
+/* The options a family can still buy, by the same rule the checkout uses
+   (api/_lib/programs.js): one with a session still to come. The page is
+   built at deploy time, so the checkout's own check is the one that holds
+   between deploys. */
+const easternToday = new Intl.DateTimeFormat("en-CA", { timeZone: "America/New_York" }).format(new Date());
+const openOptions = (p) => p.options.filter((o) =>
+  (o.dates || p.schedule.dates || []).some((d) => d >= easternToday));
+
+/* Words the copy can use in place of facts, from the schedule: how many
+   sessions, how many at each venue, which months the away sessions fall in,
+   the day and the times. */
+function factsFor(p) {
+  const s = p.schedule;
+  const away = (s.combined && s.combined.dates) || [];
+  const months = [...new Set(away.map((iso) => MONTH[ymd(iso).m]))];
+  const lower = (n) => word(n).toLowerCase();
+  const spaced = (t) => String(t).replace(/\s*-\s*/, " - ");
+  return {
+    sessions: lower(s.dates.length),
+    home: lower(s.dates.length - away.length),
+    Home: word(s.dates.length - away.length),
+    away: lower(away.length),
+    away_months: months.length > 1 ? months.slice(0, -1).join(", ") + " and " + months.at(-1) : (months[0] || ""),
+    day: s.day.toLowerCase(),
+    Day: s.day,
+    home_time: spaced(daySpan(s)),
+    away_time: s.combined ? spaced(s.combined.time) : "",
+    home_count: s.dates.length - away.length,
+    away_count: away.length,
+    total: s.dates.length,
+  };
+}
+
 function heroBlock(p, c, f) {
   const s = p.schedule;
-  const prices = [...new Set(p.options.map((o) => o.price))];
-  const min = Math.min(...p.options.map((o) => o.price));
-  const instalments = Math.max(0, ...p.options.map((o) => (o.schedule || []).length));
+  const opts = openOptions(p).length ? openOptions(p) : p.options;
+  const prices = [...new Set(opts.map((o) => o.price))];
+  const min = Math.min(...opts.map((o) => o.price));
+  const instalments = Math.max(0, ...opts.map((o) => (o.schedule || []).length));
   const from = money(min) + (instalments > 1 ? `, ${instalments}-payment plan` : "");
   const ages = /^\d/.test(p.ages) ? `Ages ${p.ages}` : p.ages;
   const sports = p.sport.map((x) => x[0].toUpperCase() + x.slice(1)).join(" &amp; ");
@@ -515,7 +549,7 @@ function heroBlock(p, c, f) {
         <div class="stat stat--label"><dt>Who</dt><dd>${esc(ages)}</dd></div>
         <div class="stat stat--label"><dt>When</dt><dd>${dates.length} ${s.day}s, ${daySpan(s)}${s.time_change ? `, ${compact(s.time_change.time)} from ${MON[ymd(s.time_change.from).m]} ${ymd(s.time_change.from).d}` : ""}</dd></div>
         <div class="stat stat--label"><dt>Runs</dt><dd>${usDate(dates[0])} to ${usDate(dates[dates.length - 1])}</dd></div>
-        <div class="stat stat--label"><dt>${p.options.length > 1 ? "From" : "Price"}</dt><dd>${from}</dd></div>
+        <div class="stat stat--label"><dt>${opts.length > 1 ? "From" : "Price"}</dt><dd>${from}</dd></div>
       </dl>
 
       <div class="prog-actions">
@@ -548,7 +582,7 @@ function groupsBlock(p, c, f) {
         <a class="btn ${cta.class || "btn--primary"}" href="${cta.href}">${cta.label}</a>
       </article>`;
   }).join("\n");
-  const lede = g.lede ? `\n      <p class="sec-head__lede body-l">\n        ${g.lede}\n      </p>` : "";
+  const lede = g.lede ? `\n      <p class="sec-head__lede body-l">\n        ${fill(g.lede, factsFor(p))}\n      </p>` : "";
   return `
 <!-- ===================================================================== -->
 <!-- Block 03 · Groups · optional, two or more groups only                 -->
@@ -615,7 +649,7 @@ function scheduleBlock(p, c, f) {
     : [`      <li>${esc(shortPlace(facility.address))} &nbsp;·&nbsp; ${compact(s.time)}${s.time_change ? `, then ${compact(s.time_change.time)} from ${usDate(s.time_change.from)}` : ""}</li>`];
   if (s.combined) key.push(`      <li class="is-away">${esc(s.combined.label)} &nbsp;·&nbsp; ${compact(s.combined.time)}</li>`);
   const lede = (c.schedule && c.schedule.lede)
-    ? `\n    <p class="sec-head__lede body-l schedule__lede">\n      ${c.schedule.lede}\n    </p>` : "";
+    ? `\n    <p class="sec-head__lede body-l schedule__lede">\n      ${fill(c.schedule.lede, factsFor(p))}\n    </p>` : "";
   return `
 <!-- ===================================================================== -->
 <!-- Block 05 · Schedule · required                                        -->
@@ -644,7 +678,7 @@ ${key.join("\n")}
 }
 
 function pricingBlock(p, c, f) {
-  const opts = p.options;
+  const opts = openOptions(p);
   if (opts.length < 2) return "";
   const k = c.pricing || {};
   const plans = k.plans || {};
@@ -747,9 +781,11 @@ function venuesBlock(p, c) {
   const s = p.schedule;
   const k = c.venues;
   if (s.venue !== "split" || !k) return "";
+  const facts = factsFor(p);
   const card = (id) => {
     const v = VENUES[id] || {};
     const vc = (k.cards || {})[id] || {};
+    const n = id === "facility" ? facts.home_count : facts.away_count;
     const parts = String(v.address).split(",").map((x) => x.trim());
     const q = encodeURIComponent(v.address).replace(/%20/g, "+").replace(/%2C/g, "");
     return `
@@ -760,9 +796,10 @@ function venuesBlock(p, c) {
         </div>
         <div class="venue__body">
           <div class="venue__head">
-            <h3 class="heading-m">${vc.title || esc(v.name)}</h3>${vc.count ? `\n            <span class="venue__count">${vc.count}</span>` : ""}
+            <h3 class="heading-m">${vc.title || esc(v.name)}</h3>
+            <span class="venue__count">${n} of ${facts.total} sessions</span>
           </div>
-          <address>${esc(parts[0])}<br>${esc(parts.slice(1).join(", ").replace(/, (\d{5})$/, " $1"))}</address>${vc.when ? `\n          <p class="venue__when">${vc.when}</p>` : ""}
+          <address>${esc(parts[0])}<br>${esc(parts.slice(1).join(", ").replace(/, (\d{5})$/, " $1"))}</address>${vc.when ? `\n          <p class="venue__when">${fill(vc.when, facts)}</p>` : ""}
           <a class="btn btn--outline btn--compact" href="https://maps.google.com/?q=${q}" rel="noopener">Get directions</a>
         </div>
       </article>`;
@@ -812,8 +849,9 @@ ${c.faq.map(([q, a]) => `      <details>
 
 function registerBlock(p, c, f) {
   const k = c.register_band || {};
-  const prices = [...new Set(p.options.map((o) => o.price))];
-  const min = Math.min(...p.options.map((o) => o.price));
+  const opts = openOptions(p).length ? openOptions(p) : p.options;
+  const prices = [...new Set(opts.map((o) => o.price))];
+  const min = Math.min(...opts.map((o) => o.price));
   const cta = (!f.gated && k.cta) || { label: f.gated ? "Ask about joining" : `Register &nbsp;·&nbsp; ${prices.length > 1 ? "from " : ""}${money(min)}`, href: f.register };
   return `
 <!-- ===================================================================== -->

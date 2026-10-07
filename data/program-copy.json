@@ -3,7 +3,8 @@
     "what": "Written copy for the generated program pages, keyed by program slug. Facts (dates, times, prices, ages, options, skills) come from data/programs.json and never from here.",
     "rule": "A key that is missing leaves its section or line out of the page. Nothing is filled in. Strings are HTML.",
     "skills": "Descriptions are keyed by the skill name exactly as it appears in the program's teaches list. A skill with no description shows its name only.",
-    "image": "The hero image is an asset choice, not copy. The five programs without copy use the photo their homepage or camps card already uses."
+    "image": "The hero image is an asset choice, not copy. The five programs without copy use the photo their homepage or camps card already uses.",
+    "tokens": "Copy may use tokens filled from the data at build time, so a count or a month can never drift from the schedule: {sessions} {home} {away} (counts as words, {Home} capitalised), {away_months}, {day}, {Day}, {home_time}, {away_time}. Venue session counts are generated, never written."
   },
   "infield-camp-2026-27": {
     "description": "Fifteen Saturdays of infield work for grades 4 to 8 and high school. Ground ball approach, footwork, double plays and relays, taught by Lou DiChiaro in Fair Lawn, New Jersey.",
@@ -21,7 +22,7 @@
     "groups": {
       "eyebrow": "Two groups",
       "title": "Split by age, same coach.",
-      "lede": "Same fifteen Saturdays, same instructor, split by age so the drills land at the right level. Both groups combine for the four Superdome sessions in February.",
+      "lede": "Same {sessions} {Day}s, same instructor, split by age so the drills land at the right level. Both groups combine for the {away} Superdome sessions in {away_months}.",
       "cards": {
         "grades-4-8": {
           "chip": "Six places left",
@@ -58,7 +59,7 @@
       }
     },
     "schedule": {
-      "lede": "No session is a surprise. Eleven at Pollitt Drive, then four combined mornings at the Superdome in February and March."
+      "lede": "No session is a surprise. {Home} at Pollitt Drive, then {away} combined mornings at the Superdome in {away_months}."
     },
     "pricing": {
       "title": "{price} for the winter.",
@@ -88,7 +89,7 @@
     "instructor": {
       "image": {
         "src": "assets/img/dbsa-09-lou-coaching.jpg",
-        "alt": "Lou DiChiaro mid instruction with a player",
+        "alt": "Lou DiChiaro standing with a softball player in front of the academy logo",
         "width": 2000,
         "height": 2000,
         "label": "dbsa-09 · Lou mid-instruction"
@@ -125,8 +126,7 @@
       "cards": {
         "facility": {
           "title": "The academy",
-          "count": "11 of 15 sessions",
-          "when": "Saturdays 9:00am - 12:00pm",
+          "when": "{Day}s {home_time}",
           "map": {
             "src": "assets/img/dbsa-18-map-fair-lawn.png",
             "alt": "Map showing the academy on Pollitt Drive in Fair Lawn",
@@ -135,8 +135,7 @@
         },
         "superdome": {
           "title": "Superdome Sports Center",
-          "count": "4 of 15 sessions",
-          "when": "Saturdays 8:00 - 10:00am, both groups",
+          "when": "{Day}s {away_time}, both groups",
           "map": {
             "src": "assets/img/dbsa-18-map-fair-lawn.png",
             "alt": "Map showing the Superdome Sports Center in Waldwick",

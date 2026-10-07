@@ -26,7 +26,8 @@
     "structure": {
       "shape": "program -> options[] -> rates[]",
       "why": "A program does not have a price. Its purchasable options do. Hit Night Winter has seven options because the package price changes with the number of Mondays in the month, and the old program-level price could not express that.",
-      "rule": "The standard price on an option is the only price the site ever renders. A rate is revealed by a code, server side, and never appears in any public payload."
+      "rule": "The standard price on an option is the only price the site ever renders. A rate is revealed by a code, server side, and never appears in any public payload.",
+      "dates": "An option with its own dates (a monthly package) covers only those sessions. It can be bought while any of them is still to come, on the page, in the register flow and at checkout. An option without dates covers the program's dates."
     },
     "codes": {
       "shape": {
@@ -359,24 +360,48 @@
           "id": "sept",
           "label": "September package, 3 sessions",
           "price": 75,
+          "dates": [
+            "2026-09-14",
+            "2026-09-21",
+            "2026-09-28"
+          ],
           "rates": []
         },
         {
           "id": "oct",
           "label": "October package, 4 sessions",
           "price": 100,
+          "dates": [
+            "2026-10-05",
+            "2026-10-12",
+            "2026-10-19",
+            "2026-10-26"
+          ],
           "rates": []
         },
         {
           "id": "nov",
           "label": "November package, 5 sessions",
           "price": 125,
+          "dates": [
+            "2026-11-02",
+            "2026-11-09",
+            "2026-11-16",
+            "2026-11-23",
+            "2026-11-30"
+          ],
           "rates": []
         },
         {
           "id": "dec",
           "label": "December package, 4 sessions",
           "price": 100,
+          "dates": [
+            "2026-12-07",
+            "2026-12-14",
+            "2026-12-21",
+            "2026-12-28"
+          ],
           "rates": []
         }
       ],
@@ -460,36 +485,73 @@
           "id": "jan",
           "label": "January package, 4 sessions",
           "price": 100,
+          "dates": [
+            "2027-01-04",
+            "2027-01-11",
+            "2027-01-18",
+            "2027-01-25"
+          ],
           "rates": []
         },
         {
           "id": "feb",
           "label": "February package, 4 sessions",
           "price": 100,
+          "dates": [
+            "2027-02-01",
+            "2027-02-08",
+            "2027-02-15",
+            "2027-02-22"
+          ],
           "rates": []
         },
         {
           "id": "mar",
           "label": "March package, 5 sessions",
           "price": 125,
+          "dates": [
+            "2027-03-01",
+            "2027-03-08",
+            "2027-03-15",
+            "2027-03-22",
+            "2027-03-29"
+          ],
           "rates": []
         },
         {
           "id": "apr",
           "label": "April package, 4 sessions",
           "price": 100,
+          "dates": [
+            "2027-04-05",
+            "2027-04-12",
+            "2027-04-19",
+            "2027-04-26"
+          ],
           "rates": []
         },
         {
           "id": "may",
           "label": "May package, 4 sessions",
           "price": 100,
+          "dates": [
+            "2027-05-03",
+            "2027-05-10",
+            "2027-05-17",
+            "2027-05-24"
+          ],
           "rates": []
         },
         {
           "id": "jun",
           "label": "June package, 4 sessions",
           "price": 100,
+          "dates": [
+            "2027-06-07",
+            "2027-06-14",
+            "2027-06-21",
+            "2027-06-28"
+          ],
           "rates": []
         }
       ],

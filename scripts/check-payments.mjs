@@ -17,6 +17,8 @@
    7. Wrong amount        an approved webhook for the wrong amount confirms nothing
    8. No outcome          a webhook with no approved or declined value confirms nothing
    9. Unmatched           a signed webhook for no known session leaves one UNMATCHED row
+  10. Past option         an option whose sessions have all passed is refused
+                          like an unknown one, and is not offered
    ========================================================================== */
 
 import { chromium } from "playwright";
@@ -219,6 +221,25 @@ await check("9. Unmatched: a signed webhook for no known session leaves one UNMA
   assert(rows().length === before + 1, `row count went ${before} -> ${rows().length}`);
   assert(matches[0].status === "unmatched" && matches[0].provider_order_id === "mockpay_ghost", "row does not say unmatched with the order ID");
   assert(/matched no registration/.test(matches[0].webhook_note || ""), "no webhook_note saying why");
+});
+
+await check("10. Past option: the September Hit Night package is refused at checkout and not offered", async () => {
+  const before = rows().length;
+  const res = await fetch(`${BASE}/api/checkout/session`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      programSlug: "hit-night-fall-2026", optionId: "sept", paymentMethod: "facility",
+      players: [PLAYER], parent: PARENT, waiverAccepted: true
+    })
+  });
+  const data = await res.json();
+  assert(res.status === 400, `checkout answered ${res.status}`);
+  assert(data.error === "Unknown option", `error was ${JSON.stringify(data.error)}`);
+  assert(rows().length === before, "a row was written");
+  const offered = (await (await fetch(`${BASE}/api/programs/hit-night-fall-2026`)).json()).options.map((o) => o.id);
+  assert(!offered.includes("sept"), `register options include sept: ${offered.join(",")}`);
+  assert(offered.includes("oct") || offered.includes("dec"), `no later package offered: ${offered.join(",")}`);
 });
 
 await browser.close();
