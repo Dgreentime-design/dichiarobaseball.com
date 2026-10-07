@@ -30,6 +30,11 @@ the stylesheets read against the rule.
   from the bottom behind the copy block, fading out above it. On a phone
   at least 200px of photograph always shows above the copy, so a tall
   block of copy (the program page, HitTrax) never hides the image.
+  Round 10: on a phone the image hero's dim is lighter over its top half
+  (8% to 35% height, rising to 32% by 60%), so the photograph reads clearly,
+  and the hero buttons sit at their natural width, stacked and left
+  aligned. Sub text measured at 5.88:1 or better at the brightest pixel at
+  390 on all five pages.
 - **Why:** one fixed overlay cannot do both. Measured on all five pages, the
   desktop gradient alone left the sub text at 1.35 to 2.66:1 on a phone,
   because the copy runs into the light side of the gradient. Darkening the

@@ -71,7 +71,15 @@
 
 @media (max-width: 899px) {
   .hero { min-height: 620px; }
-  .hero__media::before, .hittrax__media::before { background: rgba(23,18,15,.32); }
+  /* The top half of the hero is the photograph, so it gets only a light
+     dim; the copy block below carries its own scrim. */
+  .hero__media::before {
+    background: linear-gradient(180deg,
+      rgba(23,18,15,.08) 0,
+      rgba(23,18,15,.08) 35%,
+      rgba(23,18,15,.32) 60%);
+  }
+  .hittrax__media::before { background: rgba(23,18,15,.32); }
   .hero__inner, .hittrax__inner {
     align-self: end;
     /* At least 200px of photograph shows above the copy, however tall the
@@ -83,8 +91,7 @@
       rgba(23,18,15,0) 100%);
   }
   .hero__copy { padding: var(--s-13) 0 var(--band-y); }
-  .hero__actions { display: grid; gap: 12px; }
-  .hero__actions .btn { width: 100%; }
+  .hero__actions { display: grid; justify-items: start; gap: 12px; }
   .hero__scroll { display: none; }
 }
 
