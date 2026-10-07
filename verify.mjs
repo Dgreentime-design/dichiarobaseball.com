@@ -110,7 +110,7 @@ const seen = new Set();
    starts from them as well as the homepage: a program with no card linking
    to it is still checked. */
 const programPages = JSON.parse(readFileSync("data/programs.json", "utf8")).programs
-  .filter(p => p.status === "live" && !p.gated)
+  .filter(p => p.status === "live")
   .map(p => `programs/${p.slug}.html`);
 const queue = ["index.html", ...programPages];
 const allLinks = new Set();

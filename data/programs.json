@@ -646,8 +646,10 @@
       "flyer": "old-tappan-hs-2026-27.pdf",
       "zip": "live",
       "needs_confirming": [
-        "This flyer has no photo and video consent paragraph.",
-        "Session time changes from 4:00pm to 7:00pm starting 3 January. The site needs to show both."
+        "This flyer has no photo and video consent paragraph."
+      ],
+      "resolved": [
+        "7 Oct 2026, from the flyer: 4:00pm-5:30pm, then 7:00pm-8:30pm from 3 January. The program page shows both."
       ]
     }
   ]

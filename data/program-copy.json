@@ -218,5 +218,29 @@
       "height": 1080,
       "label": "dbsa-03 · Hit Night, the cage"
     }
+  },
+  "iha-softball-winter-2027": {
+    "image": {
+      "src": "assets/img/dbsa-01-facility-in-use.jpg",
+      "width": 2000,
+      "height": 1130,
+      "label": "dbsa-01 · A team at fielding drills on the turf"
+    }
+  },
+  "fair-lawn-hs-softball-2027": {
+    "image": {
+      "src": "assets/img/dbsa-06-group-semi-private.jpg",
+      "width": 2000,
+      "height": 1115,
+      "label": "dbsa-06 · Coach kneeling in front of the group"
+    }
+  },
+  "old-tappan-hs-2026-27": {
+    "image": {
+      "src": "assets/img/dbsa-03-hitting-cage.jpg",
+      "width": 1920,
+      "height": 1080,
+      "label": "dbsa-03 · Hitter mid swing in the cage"
+    }
   }
 }

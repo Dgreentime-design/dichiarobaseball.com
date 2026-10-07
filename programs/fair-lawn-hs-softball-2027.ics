@@ -1,0 +1,79 @@
+BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//DiChiaro Baseball & Softball Academy//Program calendar//EN
+CALSCALE:GREGORIAN
+METHOD:PUBLISH
+X-WR-CALNAME:Fair Lawn HS Softball Training Program\, Winter 2027
+BEGIN:VEVENT
+UID:fair-lawn-hs-softball-2027-2027-01-06@dichiarobaseball.com
+DTSTAMP:20261007T000000Z
+DTSTART:20270107T013000Z
+DTEND:20270107T030000Z
+SUMMARY:Fair Lawn HS Softball Training Program
+LOCATION:DiChiaro Baseball & Softball Academy\, 18-01 Pollitt Drive\, Fair 
+ Lawn\, NJ 07410
+END:VEVENT
+BEGIN:VEVENT
+UID:fair-lawn-hs-softball-2027-2027-01-13@dichiarobaseball.com
+DTSTAMP:20261007T000000Z
+DTSTART:20270114T013000Z
+DTEND:20270114T030000Z
+SUMMARY:Fair Lawn HS Softball Training Program
+LOCATION:DiChiaro Baseball & Softball Academy\, 18-01 Pollitt Drive\, Fair 
+ Lawn\, NJ 07410
+END:VEVENT
+BEGIN:VEVENT
+UID:fair-lawn-hs-softball-2027-2027-01-20@dichiarobaseball.com
+DTSTAMP:20261007T000000Z
+DTSTART:20270121T013000Z
+DTEND:20270121T030000Z
+SUMMARY:Fair Lawn HS Softball Training Program
+LOCATION:DiChiaro Baseball & Softball Academy\, 18-01 Pollitt Drive\, Fair 
+ Lawn\, NJ 07410
+END:VEVENT
+BEGIN:VEVENT
+UID:fair-lawn-hs-softball-2027-2027-01-27@dichiarobaseball.com
+DTSTAMP:20261007T000000Z
+DTSTART:20270128T013000Z
+DTEND:20270128T030000Z
+SUMMARY:Fair Lawn HS Softball Training Program
+LOCATION:DiChiaro Baseball & Softball Academy\, 18-01 Pollitt Drive\, Fair 
+ Lawn\, NJ 07410
+END:VEVENT
+BEGIN:VEVENT
+UID:fair-lawn-hs-softball-2027-2027-02-03@dichiarobaseball.com
+DTSTAMP:20261007T000000Z
+DTSTART:20270204T013000Z
+DTEND:20270204T030000Z
+SUMMARY:Fair Lawn HS Softball Training Program
+LOCATION:DiChiaro Baseball & Softball Academy\, 18-01 Pollitt Drive\, Fair 
+ Lawn\, NJ 07410
+END:VEVENT
+BEGIN:VEVENT
+UID:fair-lawn-hs-softball-2027-2027-02-10@dichiarobaseball.com
+DTSTAMP:20261007T000000Z
+DTSTART:20270211T013000Z
+DTEND:20270211T030000Z
+SUMMARY:Fair Lawn HS Softball Training Program
+LOCATION:DiChiaro Baseball & Softball Academy\, 18-01 Pollitt Drive\, Fair 
+ Lawn\, NJ 07410
+END:VEVENT
+BEGIN:VEVENT
+UID:fair-lawn-hs-softball-2027-2027-02-17@dichiarobaseball.com
+DTSTAMP:20261007T000000Z
+DTSTART:20270218T013000Z
+DTEND:20270218T030000Z
+SUMMARY:Fair Lawn HS Softball Training Program
+LOCATION:DiChiaro Baseball & Softball Academy\, 18-01 Pollitt Drive\, Fair 
+ Lawn\, NJ 07410
+END:VEVENT
+BEGIN:VEVENT
+UID:fair-lawn-hs-softball-2027-2027-02-24@dichiarobaseball.com
+DTSTAMP:20261007T000000Z
+DTSTART:20270225T013000Z
+DTEND:20270225T030000Z
+SUMMARY:Fair Lawn HS Softball Training Program
+LOCATION:DiChiaro Baseball & Softball Academy\, 18-01 Pollitt Drive\, Fair 
+ Lawn\, NJ 07410
+END:VEVENT
+END:VCALENDAR

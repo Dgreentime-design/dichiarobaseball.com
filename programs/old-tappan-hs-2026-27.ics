@@ -1,0 +1,142 @@
+BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//DiChiaro Baseball & Softball Academy//Program calendar//EN
+CALSCALE:GREGORIAN
+METHOD:PUBLISH
+X-WR-CALNAME:Old Tappan HS Hitting and Fielding\, 2026-27
+BEGIN:VEVENT
+UID:old-tappan-hs-2026-27-2026-11-22@dichiarobaseball.com
+DTSTAMP:20261007T000000Z
+DTSTART:20261122T210000Z
+DTEND:20261122T223000Z
+SUMMARY:Old Tappan HS Hitting and Fielding
+LOCATION:DiChiaro Baseball & Softball Academy\, 18-01 Pollitt Drive\, Fair 
+ Lawn\, NJ 07410
+END:VEVENT
+BEGIN:VEVENT
+UID:old-tappan-hs-2026-27-2026-11-29@dichiarobaseball.com
+DTSTAMP:20261007T000000Z
+DTSTART:20261129T210000Z
+DTEND:20261129T223000Z
+SUMMARY:Old Tappan HS Hitting and Fielding
+LOCATION:DiChiaro Baseball & Softball Academy\, 18-01 Pollitt Drive\, Fair 
+ Lawn\, NJ 07410
+END:VEVENT
+BEGIN:VEVENT
+UID:old-tappan-hs-2026-27-2026-12-06@dichiarobaseball.com
+DTSTAMP:20261007T000000Z
+DTSTART:20261206T210000Z
+DTEND:20261206T223000Z
+SUMMARY:Old Tappan HS Hitting and Fielding
+LOCATION:DiChiaro Baseball & Softball Academy\, 18-01 Pollitt Drive\, Fair 
+ Lawn\, NJ 07410
+END:VEVENT
+BEGIN:VEVENT
+UID:old-tappan-hs-2026-27-2026-12-13@dichiarobaseball.com
+DTSTAMP:20261007T000000Z
+DTSTART:20261213T210000Z
+DTEND:20261213T223000Z
+SUMMARY:Old Tappan HS Hitting and Fielding
+LOCATION:DiChiaro Baseball & Softball Academy\, 18-01 Pollitt Drive\, Fair 
+ Lawn\, NJ 07410
+END:VEVENT
+BEGIN:VEVENT
+UID:old-tappan-hs-2026-27-2026-12-20@dichiarobaseball.com
+DTSTAMP:20261007T000000Z
+DTSTART:20261220T210000Z
+DTEND:20261220T223000Z
+SUMMARY:Old Tappan HS Hitting and Fielding
+LOCATION:DiChiaro Baseball & Softball Academy\, 18-01 Pollitt Drive\, Fair 
+ Lawn\, NJ 07410
+END:VEVENT
+BEGIN:VEVENT
+UID:old-tappan-hs-2026-27-2027-01-03@dichiarobaseball.com
+DTSTAMP:20261007T000000Z
+DTSTART:20270104T000000Z
+DTEND:20270104T013000Z
+SUMMARY:Old Tappan HS Hitting and Fielding
+LOCATION:DiChiaro Baseball & Softball Academy\, 18-01 Pollitt Drive\, Fair 
+ Lawn\, NJ 07410
+END:VEVENT
+BEGIN:VEVENT
+UID:old-tappan-hs-2026-27-2027-01-10@dichiarobaseball.com
+DTSTAMP:20261007T000000Z
+DTSTART:20270111T000000Z
+DTEND:20270111T013000Z
+SUMMARY:Old Tappan HS Hitting and Fielding
+LOCATION:DiChiaro Baseball & Softball Academy\, 18-01 Pollitt Drive\, Fair 
+ Lawn\, NJ 07410
+END:VEVENT
+BEGIN:VEVENT
+UID:old-tappan-hs-2026-27-2027-01-17@dichiarobaseball.com
+DTSTAMP:20261007T000000Z
+DTSTART:20270118T000000Z
+DTEND:20270118T013000Z
+SUMMARY:Old Tappan HS Hitting and Fielding
+LOCATION:DiChiaro Baseball & Softball Academy\, 18-01 Pollitt Drive\, Fair 
+ Lawn\, NJ 07410
+END:VEVENT
+BEGIN:VEVENT
+UID:old-tappan-hs-2026-27-2027-01-24@dichiarobaseball.com
+DTSTAMP:20261007T000000Z
+DTSTART:20270125T000000Z
+DTEND:20270125T013000Z
+SUMMARY:Old Tappan HS Hitting and Fielding
+LOCATION:DiChiaro Baseball & Softball Academy\, 18-01 Pollitt Drive\, Fair 
+ Lawn\, NJ 07410
+END:VEVENT
+BEGIN:VEVENT
+UID:old-tappan-hs-2026-27-2027-01-31@dichiarobaseball.com
+DTSTAMP:20261007T000000Z
+DTSTART:20270201T000000Z
+DTEND:20270201T013000Z
+SUMMARY:Old Tappan HS Hitting and Fielding
+LOCATION:DiChiaro Baseball & Softball Academy\, 18-01 Pollitt Drive\, Fair 
+ Lawn\, NJ 07410
+END:VEVENT
+BEGIN:VEVENT
+UID:old-tappan-hs-2026-27-2027-02-07@dichiarobaseball.com
+DTSTAMP:20261007T000000Z
+DTSTART:20270208T000000Z
+DTEND:20270208T013000Z
+SUMMARY:Old Tappan HS Hitting and Fielding
+LOCATION:DiChiaro Baseball & Softball Academy\, 18-01 Pollitt Drive\, Fair 
+ Lawn\, NJ 07410
+END:VEVENT
+BEGIN:VEVENT
+UID:old-tappan-hs-2026-27-2027-02-14@dichiarobaseball.com
+DTSTAMP:20261007T000000Z
+DTSTART:20270215T000000Z
+DTEND:20270215T013000Z
+SUMMARY:Old Tappan HS Hitting and Fielding
+LOCATION:DiChiaro Baseball & Softball Academy\, 18-01 Pollitt Drive\, Fair 
+ Lawn\, NJ 07410
+END:VEVENT
+BEGIN:VEVENT
+UID:old-tappan-hs-2026-27-2027-02-21@dichiarobaseball.com
+DTSTAMP:20261007T000000Z
+DTSTART:20270222T000000Z
+DTEND:20270222T013000Z
+SUMMARY:Old Tappan HS Hitting and Fielding
+LOCATION:DiChiaro Baseball & Softball Academy\, 18-01 Pollitt Drive\, Fair 
+ Lawn\, NJ 07410
+END:VEVENT
+BEGIN:VEVENT
+UID:old-tappan-hs-2026-27-2027-02-28@dichiarobaseball.com
+DTSTAMP:20261007T000000Z
+DTSTART:20270301T000000Z
+DTEND:20270301T013000Z
+SUMMARY:Old Tappan HS Hitting and Fielding
+LOCATION:DiChiaro Baseball & Softball Academy\, 18-01 Pollitt Drive\, Fair 
+ Lawn\, NJ 07410
+END:VEVENT
+BEGIN:VEVENT
+UID:old-tappan-hs-2026-27-2027-03-07@dichiarobaseball.com
+DTSTAMP:20261007T000000Z
+DTSTART:20270308T000000Z
+DTEND:20270308T013000Z
+SUMMARY:Old Tappan HS Hitting and Fielding
+LOCATION:DiChiaro Baseball & Softball Academy\, 18-01 Pollitt Drive\, Fair 
+ Lawn\, NJ 07410
+END:VEVENT
+END:VCALENDAR

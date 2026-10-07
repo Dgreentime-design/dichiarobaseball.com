@@ -202,6 +202,19 @@ function facilityNode() {
    Where a program splits into groups, the group carries the time, so each
    group is its own series. Where it has combined sessions at the other
    venue, those dates take that venue and that time. */
+/* The time a single-slot program runs on a date. A program can change its
+   time part way through (Old Tappan moves from 4:00pm to 7:00pm on 3
+   January), recorded in the data as schedule.time_change. */
+function timeOn(s, date) {
+  return s.time_change && date >= s.time_change.from ? s.time_change.time : s.time;
+}
+
+/* Where a family goes to sign up. A gated program is not sold on the site:
+   it is a team's own block, so the page asks the family to get in touch. */
+const signUpUrl = (program) => program.gated
+  ? `contact.html?about=${encodeURIComponent(program.slug)}`
+  : `register.html?program=${encodeURIComponent(program.slug)}`;
+
 function eventsFor(program, file) {
   const s = program.schedule || {};
   const combined = s.combined || null;
@@ -214,17 +227,17 @@ function eventsFor(program, file) {
     price: String(o.price),
     priceCurrency: "USD",
     availability: "https://schema.org/InStock",
-    url: `${ORIGIN}/register.html?program=${encodeURIComponent(program.slug)}`,
+    url: `${ORIGIN}/${signUpUrl(program)}`,
   }));
 
-  const times = (s.groups && s.groups.length)
+  const times = (date) => (s.groups && s.groups.length)
     ? s.groups.map((g) => ({ label: g.label, time: g.time }))
-    : [{ label: null, time: s.time }];
+    : [{ label: null, time: timeOn(s, date) }];
 
   const out = [];
   for (const date of s.dates || []) {
     const isCombined = combinedDates.has(date);
-    const slots = isCombined ? [{ label: combined.label, time: combined.time }] : times;
+    const slots = isCombined ? [{ label: combined.label, time: combined.time }] : times(date);
     for (const slot of slots) {
       const range = parseRange(date, slot.time);
       if (!range) continue;
@@ -410,7 +423,7 @@ if (existsSync("legal.json") && existsSync(join(PAGES, "_legal.html"))) {
 
 /* --- Program pages -------------------------------------------------------
 
-   One static page per program that is live and not gated, at
+   One static page per live program, gated team programs included, at
    programs/<slug>.html, plus a calendar file beside it. Facts come from
    data/programs.json and words from data/program-copy.json, and nothing
    else: change either file and every page rebuilds, with no edit here.
@@ -423,7 +436,9 @@ console.log("Programs");
 const COPY = existsSync(join("data", "program-copy.json"))
   ? JSON.parse(readFileSync(join("data", "program-copy.json"), "utf8"))
   : {};
-const PUBLIC = programs.programs.filter((p) => p.status === "live" && !p.gated);
+/* Every live program gets a page, gated ones included: a team program is
+   shown on the site, it just is not sold here. */
+const PUBLIC = programs.programs.filter((p) => p.status === "live");
 const MON = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 const MONTH = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
 const DOW = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
@@ -470,7 +485,8 @@ function heroBlock(p, c, f) {
   const flyer = p.flyer && existsSync(join("assets", "flyers", p.flyer))
     ? `\n        <a class="btn btn--ghost" href="assets/flyers/${encodeURI(p.flyer)}" download>Download the flyer (PDF)</a>` : "";
   const starts = dates.length && dates[0] > today ? `\n        <p class="status">Starts ${MON[ymd(dates[0]).m]} ${ymd(dates[0]).d}</p>` : "";
-  const cta = `${c.register_label || "Register"} &nbsp;·&nbsp; ${prices.length > 1 ? "from " : ""}${money(min)}`;
+  const cta = f.gated ? "Ask about joining"
+    : `${c.register_label || "Register"} &nbsp;·&nbsp; ${prices.length > 1 ? "from " : ""}${money(min)}`;
   return `
 <!-- ===================================================================== -->
 <!-- Block 01 · Hero · required                                            -->
@@ -497,7 +513,7 @@ function heroBlock(p, c, f) {
 
       <dl class="prog-facts">
         <div class="stat stat--label"><dt>Who</dt><dd>${esc(ages)}</dd></div>
-        <div class="stat stat--label"><dt>When</dt><dd>${dates.length} ${s.day}s, ${daySpan(s)}</dd></div>
+        <div class="stat stat--label"><dt>When</dt><dd>${dates.length} ${s.day}s, ${daySpan(s)}${s.time_change ? `, ${compact(s.time_change.time)} from ${MON[ymd(s.time_change.from).m]} ${ymd(s.time_change.from).d}` : ""}</dd></div>
         <div class="stat stat--label"><dt>Runs</dt><dd>${usDate(dates[0])} to ${usDate(dates[dates.length - 1])}</dd></div>
         <div class="stat stat--label"><dt>${p.options.length > 1 ? "From" : "Price"}</dt><dd>${from}</dd></div>
       </dl>
@@ -522,7 +538,7 @@ function groupsBlock(p, c, f) {
     const gc = (g.cards || {})[grp.id] || {};
     const chip = gc.chip ? `\n          <span class="chip${gc.chip_class ? " " + gc.chip_class : ""}">${gc.chip}</span>` : "";
     const body = gc.body ? `\n        <p>${gc.body}</p>` : "";
-    const cta = gc.cta || { label: `Register for ${esc(grp.label.toLowerCase())}`, href: f.register };
+    const cta = gc.cta || { label: f.gated ? "Ask about joining" : `Register for ${esc(grp.label.toLowerCase())}`, href: f.register };
     return `
       <article class="group">
         <div class="group__head">
@@ -596,7 +612,7 @@ function scheduleBlock(p, c, f) {
   const other = VENUES.superdome || {};
   const key = (s.groups && s.groups.length)
     ? s.groups.map((g) => `      <li>${esc(g.label)} &nbsp;·&nbsp; ${compact(g.time)}</li>`)
-    : [`      <li>${esc(shortPlace(facility.address))} &nbsp;·&nbsp; ${compact(s.time)}</li>`];
+    : [`      <li>${esc(shortPlace(facility.address))} &nbsp;·&nbsp; ${compact(s.time)}${s.time_change ? `, then ${compact(s.time_change.time)} from ${usDate(s.time_change.from)}` : ""}</li>`];
   if (s.combined) key.push(`      <li class="is-away">${esc(s.combined.label)} &nbsp;·&nbsp; ${compact(s.combined.time)}</li>`);
   const lede = (c.schedule && c.schedule.lede)
     ? `\n    <p class="sec-head__lede body-l schedule__lede">\n      ${c.schedule.lede}\n    </p>` : "";
@@ -634,7 +650,7 @@ function pricingBlock(p, c, f) {
   const plans = k.plans || {};
   const min = Math.min(...opts.map((o) => o.price));
   const vars = { price: money(min), per_session: money(Math.round(min / p.schedule.dates.length)) };
-  const reg = (plan) => f.register + (plan ? `&amp;plan=${plan}` : "");
+  const reg = (plan) => f.register + (plan && !f.gated ? `&amp;plan=${plan}` : "");
   let body;
   if (opts.length === 2) {
     body = `    <div class="plans">` + opts.map((o) => {
@@ -650,7 +666,7 @@ function pricingBlock(p, c, f) {
         <div class="plan__amount">
           <strong>${amount}</strong>${note ? `\n          <span>${note}</span>` : ""}
         </div>${pc.body ? `\n        <p>${pc.body}</p>` : ""}
-        <a class="btn btn--primary" href="${reg(pc.plan)}">${pc.cta || "Register"}</a>
+        <a class="btn btn--primary" href="${reg(pc.plan)}">${f.gated ? "Ask about joining" : pc.cta || "Register"}</a>
       </article>`;
     }).join("\n") + `\n    </div>`;
   } else {
@@ -663,7 +679,7 @@ ${opts.map((o) => `          <div class="rate-row">
             <span class="rate-row__price">${money(o.price)}</span>
           </div>`).join("\n")}
         </div>
-        <a class="btn btn--primary" href="${f.register}">Register</a>
+        <a class="btn btn--primary" href="${f.register}">${f.gated ? "Ask about joining" : "Register"}</a>
       </article>
     </div>`;
   }
@@ -798,7 +814,7 @@ function registerBlock(p, c, f) {
   const k = c.register_band || {};
   const prices = [...new Set(p.options.map((o) => o.price))];
   const min = Math.min(...p.options.map((o) => o.price));
-  const cta = k.cta || { label: `Register &nbsp;·&nbsp; ${prices.length > 1 ? "from " : ""}${money(min)}`, href: f.register };
+  const cta = (!f.gated && k.cta) || { label: f.gated ? "Ask about joining" : `Register &nbsp;·&nbsp; ${prices.length > 1 ? "from " : ""}${money(min)}`, href: f.register };
   return `
 <!-- ===================================================================== -->
 <!-- Block 10 · Register band · required                                   -->
@@ -837,7 +853,8 @@ function icsFor(p) {
     "CALSCALE:GREGORIAN", "METHOD:PUBLISH", `X-WR-CALNAME:${text(`${plain(p.name)}, ${p.season}`)}`];
   for (const date of s.dates) {
     const combined = away.has(date);
-    const time = combined ? s.combined.time : daySpan(s).replace("-", " - ");
+    const time = combined ? s.combined.time
+      : (s.groups && s.groups.length ? daySpan(s).replace("-", " - ") : timeOn(s, date));
     const range = parseRange(date, time);
     if (!range) continue;
     const venue = combined ? other : facility;
@@ -890,7 +907,7 @@ if (PUBLIC.length && existsSync(join(PAGES, "_program.html"))) {
   for (const p of PUBLIC) {
     const c = COPY[p.slug] || {};
     const file = `${PROGRAM_DIR}/${p.slug}.html`;
-    const f = { register: `register.html?program=${p.slug}`, ics: `${PROGRAM_DIR}/${p.slug}.ics` };
+    const f = { register: signUpUrl(p).replace(/&/g, "&amp;"), gated: !!p.gated, ics: `${PROGRAM_DIR}/${p.slug}.ics` };
     if (!c.image) throw new Error(`build: ${p.slug} has no hero image in data/program-copy.json`);
     const blocks = [heroBlock(p, c, f), groupsBlock(p, c, f), skillsBlock(p, c), scheduleBlock(p, c, f),
       pricingBlock(p, c, f), instructorBlock(c), venuesBlock(p, c), faqBlock(c), registerBlock(p, c, f)].join("");
