@@ -190,7 +190,8 @@ await check("5. Bad signature: 401, the registration untouched, one signature_fa
   const minute = new Date().toISOString().slice(0, 16).replace(/[-:]/g, "").replace("T", "-");
   const alert = after.find((r) => r.registration_id === `SIGFAIL-${minute}`) || added[0];
   assert(alert, "no signature_failed row for this minute");
-  assert(/bytes/.test(alert.webhook_note || "") && /verification at \d{4}-/.test(alert.webhook_note || ""), "the alert does not give the time and the length");
+  assert(/bytes/.test(alert.webhook_note || "") && /verification at \d{4}-/.test(alert.webhook_note || ""), "the alert note does not give the time and the length");
+  assert(/^\d+ bytes at \d{4}-\d\d-\d\dT/.test(alert.option || ""), "the alert's option field does not give the length and the time");
   assert(!JSON.stringify(alert).includes(session) && !/APPROVED|mockpay_|signature=|v1=/.test(JSON.stringify(alert)), "the alert holds part of the request");
 });
 

@@ -184,9 +184,14 @@ async function recordSignatureFailure(bytes) {
   try {
     const db = store();
     if (await db.get(id)) return { recorded: id, written: false, reason: "already recorded this minute", readBack: await readBack(db, id) };
+    /* The time and the length go in program and option as well as the note:
+       webhook_note is optional, and a table without it would otherwise keep
+       only the status. */
     await db.create({
       registration_id: id,
       status: "signature_failed",
+      program: "Webhook signature failure",
+      option: `${bytes} bytes at ${now.toISOString()}`,
       webhook_note: `Webhook signature failed verification at ${now.toISOString()}. The request was ${bytes} bytes. ` +
         "At most one of these rows is written a minute, so a run of failures shows as one row per minute. " +
         "A run of them usually means the signing secret in Clover and in Vercel no longer match, and payments are being taken without being confirmed."
@@ -203,7 +208,7 @@ async function recordSignatureFailure(bytes) {
 /* What the table now holds for the alert, without its contents. */
 async function readBack(db, id) {
   const row = await db.get(id);
-  return row ? { status: row.status, noteLength: (row.webhook_note || "").length } : null;
+  return row ? { status: row.status, program: row.program || null, option: row.option || null, noteLength: (row.webhook_note || "").length } : null;
 }
 
 /* A registration a person must look at. A confirmed one stays confirmed. */
