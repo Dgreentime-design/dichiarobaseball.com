@@ -330,6 +330,21 @@ under "Before go-live". The two that bite silently:
 - **"Have a town or league code?" link removed** from the program template
   in round 11, because the code field no longer exists. It comes back if
   codes come back.
+- **Premium review gate, first run, round 11** (`review.config.mjs`, routes
+  touched in round 11, 1440/1024/768/390). Passing: overflow, truncation,
+  type, order, reveal. Fixed in round 11: the header overflowed by 9px at
+  1024 on every page, and the red register band body text was 4.48:1. Still
+  failing, all site-wide and older than round 11, for Daniel to decide:
+  - Edges: at 1440 the header runs to the gutter (59.8 to 1380.2) while
+    content sits in the 1280px container (80 to 1360), 20px apart.
+  - Touch targets under 44px at 390: footer links 28px, arrow links and
+    breadcrumbs 32px, compact buttons 40px, skip link 43px. `verify.mjs`
+    checks 24px.
+  - Rhythm and hover: the site's band spacing is fluid (`--band-y`) and
+    hover is per component, so the kit's one-gap, one-colour checks cannot
+    pass without a system change.
+  - Contrast: the amber "To confirm with Michael" hours placeholder on
+    Contact is 4.36:1. It comes off before launch.
 - **Register progress connector at 360px**, fixed in round 11: the steps are
   equal columns on phones and each connector stops 8px short of the next
   marker.

@@ -12,3 +12,4 @@ _proof/
 # Dev and test tooling, not part of the site.
 scripts/
 verify.mjs
+review.config.mjs

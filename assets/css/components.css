@@ -187,6 +187,11 @@
 .nav__link:hover, .nav__link[aria-current="page"] { border-bottom-color: var(--c-red); }
 
 .nav__cta { flex: none; }
+/* Between 1024 and 1199 the full nav is 9px wider than the screen at the
+   default gaps, so the gaps tighten one step there. */
+@media (min-width: 1024px) and (max-width: 1199px) {
+  .nav, .nav__links { gap: var(--s-6); }
+}
 
 .nav__toggle {
   display: none; margin-left: auto;

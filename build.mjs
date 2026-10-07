@@ -429,7 +429,10 @@ const MONTH = ["January", "February", "March", "April", "May", "June", "July", "
 const DOW = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 const WORDS = ["Zero", "One", "Two", "Three", "Four", "Five", "Six", "Seven", "Eight", "Nine", "Ten",
   "Eleven", "Twelve", "Thirteen", "Fourteen", "Fifteen", "Sixteen", "Seventeen", "Eighteen", "Nineteen", "Twenty"];
-const word = (n) => WORDS[n] || String(n);
+const TENS = ["", "", "Twenty", "Thirty", "Forty", "Fifty", "Sixty", "Seventy", "Eighty", "Ninety"];
+const word = (n) => n <= 20 ? WORDS[n]
+  : n < 100 ? TENS[Math.floor(n / 10)] + (n % 10 ? "-" + WORDS[n % 10].toLowerCase() : "")
+  : String(n);
 const ymd = (iso) => { const [y, m, d] = iso.split("-").map(Number); return { y, m: m - 1, d }; };
 /* American order, from the data: "Nov 14, 2026". */
 const usDate = (iso) => { const { y, m, d } = ymd(iso); return `${MON[m]} ${d}, ${y}`; };
