@@ -144,11 +144,10 @@ END:VEVENT
 BEGIN:VEVENT
 UID:infield-camp-2026-27-2027-03-06@dichiarobaseball.com
 DTSTAMP:20261007T000000Z
-DTSTART:20270306T140000Z
-DTEND:20270306T170000Z
+DTSTART:20270306T130000Z
+DTEND:20270306T150000Z
 SUMMARY:Lou DiChiaro's Infield Camp
-LOCATION:DiChiaro Baseball & Softball Academy\, 18-01 Pollitt Drive\, Fair 
- Lawn\, NJ 07410
-DESCRIPTION:Grades 4-8: 9:00am - 10:30am. High school: 10:30am - 12:00pm
+LOCATION:Superdome Sports Center\, 134 Hopper Avenue\, Waldwick\, NJ 07463
+DESCRIPTION:Both groups combined\, Superdome
 END:VEVENT
 END:VCALENDAR

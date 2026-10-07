@@ -1,6 +1,6 @@
 {
   "_meta": {
-    "source": "Extracted from the nine academy flyers, 29 September 2026.",
+    "source": "Re-baselined from Michael's nine flyers, assets/flyers/<slug>.pdf, 7 October 2026. Extracted first on 29 September 2026.",
     "verified": "All 116 session dates checked against the calendar. Every one falls on the stated weekday.",
     "venues": {
       "facility": {
@@ -101,7 +101,7 @@
           "rates": []
         }
       ],
-      "flyer": "Little League Fall 2026.pdf",
+      "flyer": "little-league-fall-2026.pdf",
       "zip": "camps"
     },
     {
@@ -150,7 +150,7 @@
           "rates": []
         }
       ],
-      "flyer": "Little League Winter 2027.pdf",
+      "flyer": "little-league-winter-2027.pdf",
       "zip": "live"
     },
     {
@@ -194,7 +194,7 @@
           "rates": []
         }
       ],
-      "flyer": "Little League March 2027.pdf",
+      "flyer": "little-league-march-2027.pdf",
       "zip": "live"
     },
     {
@@ -242,7 +242,8 @@
           "dates": [
             "2027-02-13",
             "2027-02-20",
-            "2027-02-27"
+            "2027-02-27",
+            "2027-03-06"
           ]
         },
         "dates": [
@@ -287,10 +288,10 @@
           "rates": []
         }
       ],
-      "flyer": "Dichiaro Infield Camp-'26-27.pdf",
+      "flyer": "infield-camp-2026-27.pdf",
       "zip": "camps",
-      "needs_confirming": [
-        "Flyer lists Feb 6 under the facility dates and Feb 13, 20, 27 as combined Superdome sessions. The site currently shows four Superdome dates including Feb 6. Confirm which."
+      "resolved": [
+        "7 Oct 2026, from the flyer: Feb 6 is at the academy. The combined Superdome sessions are Feb 13, 20, 27 and Mar 6, 8am-10am. Eleven academy sessions, four at the Superdome."
       ]
     },
     {
@@ -379,7 +380,7 @@
           "rates": []
         }
       ],
-      "flyer": "Hit Night-Fall 2026.pdf",
+      "flyer": "hit-night-fall-2026.pdf",
       "zip": "camps",
       "needs_confirming": [
         "FLYER PRICING ERROR. The registration section prints November at $25 and December at $125. The schedule and the $25-a-session package rate make those $125 and $100. Prices above follow the schedule, not the registration box. Confirm before this flyer goes out again."
@@ -492,11 +493,13 @@
           "rates": []
         }
       ],
-      "flyer": "Hit Night-Winter 2027.pdf",
+      "flyer": "hit-night-winter-2027.pdf",
       "zip": "camps",
       "needs_confirming": [
-        "Flyer has a typo in the March dates, printed as 'March 1, 8l, 15, 22, 29'.",
-        "Start times move 30 minutes later than the Fall season. Confirm that is intended."
+        "Flyer has a typo in the March dates, printed as 'March 1, 8l, 15, 22, 29'."
+      ],
+      "resolved": [
+        "7 Oct 2026, from the flyer: winter times are Softball 7:30-8:30pm and Baseball 8:30-9:30pm, 30 minutes later than fall."
       ]
     },
     {
@@ -540,7 +543,7 @@
           "rates": []
         }
       ],
-      "flyer": "Dichiaro Programs-IHA  Winter '27.pdf",
+      "flyer": "iha-softball-winter-2027.pdf",
       "zip": "live"
     },
     {
@@ -583,7 +586,7 @@
           "rates": []
         }
       ],
-      "flyer": "Fair Lawn Softball_2027.pdf",
+      "flyer": "fair-lawn-hs-softball-2027.pdf",
       "zip": "live",
       "needs_confirming": [
         "This flyer has no photo and video consent paragraph. IHA, Little League, Infield and Hit Night all do."
@@ -640,7 +643,7 @@
           "rates": []
         }
       ],
-      "flyer": "Old Tappan HS_2026-27.pdf",
+      "flyer": "old-tappan-hs-2026-27.pdf",
       "zip": "live",
       "needs_confirming": [
         "This flyer has no photo and video consent paragraph.",
