@@ -170,11 +170,56 @@ test registrations stay out of the handover table (`Registrations`).
 | 09 | 7 Oct | Item 0, the mobile hero hotfix, shipped in round 10. Items 1 to 4 ran in round 11. `prompts/2026-10-05-round09-program-pages.md` |
 | 10 | 7 Oct | Launch plan and the 7 October client review guide, hero hotfix. `prompts/2026-10-07-round10-launch-review.md` |
 | 11 | 7 Oct | Client review changes and the generated program pages. `prompts/2026-10-07-round11-client-changes-and-program-pages.md` |
+| 12 | 7 Oct | Flyer re-baseline, Teams on the camps page, small fixes, launch hardening. `prompts/2026-10-07-round12-launch-hardening.md` |
 
 Every round is a committed prompt file in `prompts/`. Read the round in flight
 before doing anything.
 
 ## 8. Where things stand, 7 October 2026
+
+**Done in round 12, 7 October**
+
+- **The nine flyers are the source of truth**, in `assets/flyers/<slug>.pdf`.
+  `data/programs.json` re-baselined against them field by field. One fact
+  changed: the Infield combined Superdome dates gain Mar 6 (Feb 6 is at the
+  academy, so 11 academy and 4 Superdome). No price changed. Each program's
+  `flyer` field names its file, and every program page has the flyer button.
+- **Teams on the camps page.** A Teams filter and cards for IHA Softball, Fair
+  Lawn HS Softball and Old Tappan HS. Every live program now has a generated
+  page, gated ones included. A gated program is not sold on the site: every
+  register button on its card and page is "Ask about joining", to
+  `contact.html?about=<slug>`, and the checkout still refuses it.
+- The header lines up with the content container at every width.
+- The Infield venue counts, schedule sentence and group lede are generated
+  from the data through tokens in `data/program-copy.json`, so they cannot
+  drift from the dates again.
+- **Past options are not sellable.** Monthly packages carry their own
+  `dates`. An option with no session still to come is hidden on the program
+  page, left out of `/api/programs/<slug>` and refused by `priceCart` with
+  the same "Unknown option" error as an option that never existed.
+- `/api/config-check` deleted.
+- **Signature failure alert.** A webhook that fails verification writes one
+  `signature_failed` row a minute, ID `SIGFAIL-<UTC minute>`, with "Webhook
+  signature failure" in program and "<bytes> bytes at <time>" in option,
+  never the body, headers or secret. On a preview the 401 body reports the
+  row read back from Airtable.
+- **Third state.** After 60 seconds unconfirmed the confirmation screen says
+  "Still confirming your payment.", shows the reference and a call button,
+  and keeps checking every 5 seconds, moving to confirmed when it lands.
+- **No screen promises an email, receipt or reminder.** The confirmation
+  screens say "Keep this page. Your reference number is your proof of
+  registration." once each.
+- **301 redirects** from all 35 old Framer paths, in `vercel.json`.
+- **Vercel Web Analytics** tag in `partials/head.html`, with a commented
+  slot for Google Analytics. Daniel enables Analytics in the dashboard.
+- `check-payments` has 11 checks: 5 rewritten for the alert row, 10 for
+  past options, 11 for the third state.
+
+**Decisions taken on 7 October, round 11 verdict, do not re-ask**
+
+- The kit's fixed spacing, hover and 44px touch-target system is not
+  adopted before launch. The site meets the WCAG 2.2 AA 24px minimum. 44px
+  targets and the kit's system are post-launch.
 
 **Done in rounds 10 and 11, 7 October**
 
@@ -316,12 +361,35 @@ under "Before go-live". The two that bite silently:
 
 - A voided or refunded payment leaves the registration `confirmed`, because
   Clover sends no webhook for it. Manual for now.
-- Repeated signature failures only reach the Vercel log. Nobody reads logs
-  unprompted. A visible counter or alert is a launch blocker.
-- The success page promises a confirmation email that is not built.
-- A registration that cannot be confirmed leaves the parent on "Confirming
-  your payment" indefinitely. Correct as a rule, a dead end as an experience.
-  It needs a third state.
+- **`legal.json` still promises emails.** The privacy policy says the
+  academy emails "confirmations, reminders and receipts" through Constant
+  Contact, and the terms say a booking is confirmed when "you have received a
+  confirmation email". No email is sent. `legal.json` is off limits without a
+  round that names it.
+- **The confirmation title can show the placeholder name "Mia".** A parent
+  who returns from payment in a browser that did not start the registration
+  (no saved state) sees "Mia is registered." `state.player` defaults to the
+  prototype name. Small fix in `register.js`, money-path screen.
+- **The review table has no `webhook_note` field**, so notes on unmatched
+  and flagged rows are dropped on the preview. The signature alert carries
+  its facts in program and option for that reason. Check the production
+  `Registrations` table has the field before launch.
+- **Test rows from round 12 in Registrations Review:** `DBSA-DXCECT6VJD`
+  (Hit Night drop-in, mock, confirmed, the third-state proof) and
+  `SIGFAIL-20261007-2045` to `SIGFAIL-20261007-2049` (signature alert proofs,
+  up to one a minute). Safe to delete.
+- **Program pages are static.** A past option disappears from a page at the
+  next deploy; between deploys the checkout refuses it, and the register
+  flow does not offer it.
+- **Gated team programs register by contact only.** Whether Michael wants
+  them registered online is his decision; online needs the code system.
+- `llms.txt` still lists only ungated programs, from round 08's rule. The
+  team programs are now on the camps page, so the rule may no longer apply.
+- **Flyer contradictions for Michael:** Hit Night Fall's registration box
+  prints November $25 and December $125 against its own schedule ($125 and
+  $100, which the data follows). Hit Night Winter prints "March 1, 8l". Old
+  Tappan lists "Live BP" twice. Fair Lawn HS and Old Tappan have no photo
+  consent paragraph.
 - Clover sandbox access was never granted. It needs their support team.
 - `netlify.toml` is dead. Clean URLs are off. `verify.mjs` has gaps.
 - **"Have a town or league code?" link removed** from the program template
