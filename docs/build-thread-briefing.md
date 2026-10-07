@@ -168,13 +168,52 @@ test registrations stay out of the handover table (`Registrations`).
 | 06 | 1 Oct | Playbook revision, docs added |
 | 07 | 3 to 5 Oct | Copy overhaul across every page. Finished, B10 reported. `prompts/2026-10-03-round07-copy-overhaul.md` |
 | 08 | 5 Oct | Sticky header, eyebrow icon and colors, one image hero, one stat strip, responsive sweep. Parts A and B accepted, closing fixes done. `prompts/2026-10-05-round08-responsive-and-global.md` |
+| 09 | 7 Oct | Item 0, the mobile hero hotfix, shipped in round 10. Items 1 to 4 ran in round 11. `prompts/2026-10-05-round09-program-pages.md` |
+| 10 | 7 Oct | Launch plan and the 7 October client review guide, hero hotfix. `prompts/2026-10-07-round10-launch-review.md` |
+| 11 | 7 Oct | Client review changes and the generated program pages. `prompts/2026-10-07-round11-client-changes-and-program-pages.md` |
 
 Every round is a committed prompt file in `prompts/`. Read the round in flight
 before doing anything.
 
-## 8. Where things stand, 5 October 2026
+## 8. Where things stand, 7 October 2026
 
-**Done**
+**Done in rounds 10 and 11, 7 October**
+
+- `docs/launch-plan.md` and `docs/client-review-2026-10-07.md` written.
+  Go-live target Tuesday 13 October.
+- Mobile hero hotfix: lighter dim over the top of the image hero on phones,
+  stacked natural-width buttons, homepage hero is `dbsa-07`.
+- **Program pages are generated.** `build.mjs` writes one page per program
+  in `data/programs.json` that is `live` and not `gated`, at
+  `programs/<slug>.html`, plus `programs/<slug>.ics` with one event per
+  session date. Six today. Facts come only from `data/programs.json`, words
+  only from `data/program-copy.json` (keyed by slug), the page shell is
+  `pages/_program.html`. A section with no data and no copy is left out.
+  Change either data file and every page rebuilds, no template edit.
+- `program.html` is now a noindex forwarder: `program.html?p=<old slug or
+  data slug>` goes to the program page, anything else to
+  `camps-and-clinics.html`.
+- Every "See dates and details" link points at its own program page.
+- Instructor selection removed (Lessons hero sub, og description, the
+  "Choose who teaches" band, the Contact FAQ). Lessons links to Instructors
+  from the end of Rates. `pages/instructors.html` untouched, Daniel owns it.
+- About staff teaser has the `dbsa-09` photo. Homepage Lou band links to
+  Instagram. Homepage HitTrax button is "Request a HitTrax session" to
+  `contact.html?about=hittrax`.
+- `verify.mjs` walks the six program pages and checks the calendar files.
+
+**Decisions taken on 7 October, already answered, do not re-ask**
+
+- Families can no longer choose or request an instructor anywhere on the
+  site.
+- HitTrax stays a promotion with a "Request a HitTrax session" option. It is
+  not sold online yet. Michael is setting its pricing.
+- Michael is sending 9 PDFs as the new baseline for every camp, lesson and
+  purchasable item. A later round re-baselines `data/programs.json` from
+  them (round 13), with the Teams filter, three more camps, flyer buttons
+  and the final copy sweep. Round 12 is launch hardening.
+
+**Done before 7 October**
 
 - Full front end built across ten pages, unindexed, on `review`.
 - Registration and payment path proven end to end against Clover production,
@@ -288,13 +327,12 @@ under "Before go-live". The two that bite silently:
   It needs a third state.
 - Clover sandbox access was never granted. It needs their support team.
 - `netlify.toml` is dead. Clean URLs are off. `verify.mjs` has gaps.
-- **"Have a town or league code?" on the program page links to a code field
-  that no longer exists.** The link goes to `register.html?program=...#code`,
-  and the field was removed when codes were taken out, so it opens the top of
-  the register page. Parked for the program template round.
-- **Register progress connector at 360px.** The line between steps 2 and 3
-  runs through the 03 marker on the narrowest phones. Parked for the final
-  copy sweep.
+- **"Have a town or league code?" link removed** from the program template
+  in round 11, because the code field no longer exists. It comes back if
+  codes come back.
+- **Register progress connector at 360px**, fixed in round 11: the steps are
+  equal columns on phones and each connector stops 8px short of the next
+  marker.
 - **There is a second Vercel project called plain `dichiarobaseball.com`**,
   separate from `dichiarobaseball.com-rgr6`, last touched 1 October. Two
   projects and one domain is a cutover hazard: the domain can only point at
