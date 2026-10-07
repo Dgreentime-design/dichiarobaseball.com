@@ -10,7 +10,9 @@
         does not.
      2. Horizontal overflow at 390, 768 and 1440.
      3. Tap targets under 24px that are not inline links in a sentence.
-     4. Every internal link resolves. No dead ends in the prototype.
+     4. Every internal link resolves, calendar downloads included. No dead
+        ends in the prototype. The walk starts from the homepage and every
+        generated program page.
      5. Eyebrow color. Every visible .eyebrow is one of the two approved
         colors, and the same color at 390 as at 1440. The color is set by
         the background, never by the breakpoint.
@@ -19,6 +21,7 @@
    ========================================================================== */
 
 import { chromium } from "playwright";
+import { readFileSync } from "node:fs";
 
 const BASE = (process.argv[2] || "http://localhost:8080").replace(/\/$/, "");
 const EXE = process.env.CHROME_PATH || undefined;
@@ -91,17 +94,25 @@ async function inspect(url, width) {
       const inline = el.closest("p, li, blockquote") && getComputedStyle(el).display === "inline";
       return r.width > 0 && r.height < 24 && !inline;
     }).map(el => (el.textContent || "").trim().slice(0, 30)),
+    /* Resolved against the page, so a link from programs/ written as
+       ../index.html is the same route as index.html from the root. */
     links: Array.from(document.querySelectorAll("a[href]"))
       .map(a => a.getAttribute("href"))
       .filter(h => h && !/^(https?:|mailto:|tel:|#)/.test(h))
-      .map(h => h.split(/[?#]/)[0])
+      .map(h => new URL(h, location.href).pathname.replace(/^\//, "") || "index.html")
   }));
   await page.close();
   return data;
 }
 
 const seen = new Set();
-const queue = ["index.html"];
+/* The program pages are generated from data/programs.json, so the walk
+   starts from them as well as the homepage: a program with no card linking
+   to it is still checked. */
+const programPages = JSON.parse(readFileSync("data/programs.json", "utf8")).programs
+  .filter(p => p.status === "live" && !p.gated)
+  .map(p => `programs/${p.slug}.html`);
+const queue = ["index.html", ...programPages];
 const allLinks = new Set();
 
 console.log(`\nVerifying ${BASE}\n`);
@@ -155,17 +166,19 @@ while (queue.length) {
   const small = Array.from(new Set([...d.small, ...m.small]));
   if (small.length) fail("tap targets under 24px: " + small.join(", ")); else pass("tap targets");
 
-  d.links.forEach(l => { allLinks.add(l); if (!seen.has(l)) queue.push(l); });
+  d.links.forEach(l => { allLinks.add(l); if (!seen.has(l) && l.endsWith(".html")) queue.push(l); });
   console.log("");
 }
 
 /* --- 4: every internal link resolves ------------------------------------ */
 
 console.log("Links");
-const checker = await browser.newPage();
+/* Requested rather than opened, so a download such as a calendar file is
+   checked the same way as a page. */
+const checker = await browser.newContext();
 let broken = 0;
 for (const link of Array.from(allLinks).sort()) {
-  const res = await checker.goto(`${BASE}/${link}`, { waitUntil: "domcontentloaded" }).catch(() => null);
+  const res = await checker.request.get(`${BASE}/${link}`).catch(() => null);
   if (!res || res.status() >= 400) { fail(`${link} -> ${res ? res.status() : "no response"}`); broken++; }
 }
 await checker.close();

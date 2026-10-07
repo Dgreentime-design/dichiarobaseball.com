@@ -167,13 +167,15 @@
   /* Stack rather than hide. The step names are content, so every breakpoint
      shows all three. */
   .progress__inner { align-items: flex-start; gap: 8px; }
-  .progress__step { flex-direction: column; align-items: center; gap: 8px; text-align: center; }
+  /* Equal columns, the last one included, so each connector can be sized
+     from its own step and land 8px short of the next marker. */
+  .progress__step, .progress__step:last-child { flex: 1 1 0; min-width: 0; flex-direction: column; align-items: center; gap: 8px; text-align: center; }
   .progress__label { white-space: normal; }
   .progress__rule { display: none; }
   .progress__step:not(:last-child) { position: relative; }
   .progress__step:not(:last-child)::after {
     content: ""; position: absolute; top: 16px; left: calc(50% + 24px);
-    width: calc(100% - 48px); height: 1px; background: var(--c-line);
+    width: calc(100% - 40px); height: 1px; background: var(--c-line);
   }
 }
 

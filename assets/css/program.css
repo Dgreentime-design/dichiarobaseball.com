@@ -60,9 +60,12 @@
 .group p { color: var(--c-muted); font-size: var(--t-body-s); }
 .group .btn { margin-top: var(--s-2); }
 
-/* --- Skills, nine numbered items ---------------------------------------- */
+/* --- Skills, numbered, columns chosen by the build from the count ------- */
 
 .skills { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--s-7) var(--s-6); }
+.skills--4 { grid-template-columns: repeat(4, 1fr); }
+.skills--5 { grid-template-columns: repeat(5, 1fr); }
+@media (max-width: 1179px) { .skills--4, .skills--5 { grid-template-columns: repeat(2, 1fr); } }
 @media (max-width: 899px) { .skills { grid-template-columns: repeat(2, 1fr); } }
 @media (max-width: 599px) { .skills { grid-template-columns: 1fr; gap: 0; } }
 .skill { display: grid; gap: 10px; align-content: start; padding-top: var(--s-4); border-top: 1px solid var(--c-line); }
@@ -122,6 +125,9 @@
 .plan__amount span { font-family: var(--f-mono); font-size: var(--t-data-m); color: var(--c-muted); }
 .plan p { color: var(--c-muted); font-size: var(--t-body-s); }
 .plan .btn { margin-top: var(--s-2); }
+/* More than two options: one card holding a price list, at a reading width. */
+.plan--list { grid-column: 1 / -1; max-width: 720px; }
+.plan--list .btn { justify-self: start; }
 
 .included { display: flex; flex-wrap: wrap; gap: var(--s-4) var(--s-8); margin-top: var(--s-7); }
 .included li {

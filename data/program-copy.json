@@ -1,0 +1,222 @@
+{
+  "_meta": {
+    "what": "Written copy for the generated program pages, keyed by program slug. Facts (dates, times, prices, ages, options, skills) come from data/programs.json and never from here.",
+    "rule": "A key that is missing leaves its section or line out of the page. Nothing is filled in. Strings are HTML.",
+    "skills": "Descriptions are keyed by the skill name exactly as it appears in the program's teaches list. A skill with no description shows its name only.",
+    "image": "The hero image is an asset choice, not copy. The five programs without copy use the photo their homepage or camps card already uses."
+  },
+  "infield-camp-2026-27": {
+    "description": "Fifteen Saturdays of infield work for grades 4 to 8 and high school. Ground ball approach, footwork, double plays and relays, taught by Lou DiChiaro in Fair Lawn, New Jersey.",
+    "og_description": "Fifteen Saturdays of nothing but infield, taught by the man local coaches send their own players to.",
+    "crumb": "Infield Camp",
+    "image": {
+      "src": "assets/img/dbsa-04-fielding-turf.jpg",
+      "width": 2000,
+      "height": 1144,
+      "label": "dbsa-04 · Infield camp, ground ball mid-play"
+    },
+    "title_html": "Lou DiChiaro&rsquo;s<br>Infield Camp",
+    "hero_sub": "Fifteen Saturdays of infield, taught by Lou himself.",
+    "register_label": "Register for this camp",
+    "groups": {
+      "eyebrow": "Two groups",
+      "title": "Split by age, same coach.",
+      "lede": "Same fifteen Saturdays, same instructor, split by age so the drills land at the right level. Both groups combine for the four Superdome sessions in February.",
+      "cards": {
+        "grades-4-8": {
+          "chip": "Six places left",
+          "chip_class": "chip--turf",
+          "body": "Fundamentals first, then position work.",
+          "cta": {
+            "label": "Register for grades 4-8",
+            "href": "register.html?program=infield-camp-2026-27&amp;group=grades-4-8"
+          }
+        },
+        "high-school": {
+          "chip": "Full",
+          "body": "Game speed: double plays, relays and reads.",
+          "cta": {
+            "label": "Full &nbsp;·&nbsp; Call about openings",
+            "href": "tel:+12017736858",
+            "class": "btn--outline"
+          }
+        }
+      }
+    },
+    "skills": {
+      "eyebrow": "What Lou actually teaches",
+      "descriptions": {
+        "Correct approach to ground balls": "Reading the hop before it happens, and getting the feet there early.",
+        "Proper footwork": "The three steps that turn a hard chance into a routine one.",
+        "Proper throwing mechanics": "Grip, transfer and release, from every angle a game will ask for.",
+        "Position specifics": "What the job actually is at short, at second, at third.",
+        "Double plays": "The feed, the turn and the finish, both sides of the bag.",
+        "Slow rollers": "Charging, barehanding, and throwing on the run.",
+        "Different ground ball angles": "Balls that are never hit straight at you, which is most of them.",
+        "Relays": "Where to be, when to turn, and who is calling it.",
+        "Soft hand drills": "The drill Lou is known for."
+      }
+    },
+    "schedule": {
+      "lede": "No session is a surprise. Eleven at Pollitt Drive, then four combined mornings at the Superdome in February and March."
+    },
+    "pricing": {
+      "title": "{price} for the winter.",
+      "lede": "About {per_session} a Saturday, everything included.",
+      "plans": {
+        "full": {
+          "label": "Pay in full",
+          "note": "One charge when you register",
+          "cta": "Register and pay in full",
+          "plan": "full"
+        },
+        "two-payments": {
+          "label": "Two payments",
+          "body": "Same total, no interest, no fee.",
+          "cta": "Register and pay in two",
+          "plan": "two"
+        }
+      },
+      "included": [
+        "All fifteen sessions",
+        "Both venues",
+        "Balls, screens and machines",
+        "Refund up to 14 days before"
+      ],
+      "note_html": "<div class=\"build-note\">\n      <p class=\"meta\">How this block behaves</p>\n      <p>\n        $950 is the standard price, and the standard price is the only price this page\n        ever shows. A town or league rate is reached by a code, never by browsing, and\n        the town name appears only after a code is accepted. No list of towns, no\n        comparison price, no discount language. The full rules are in the registration\n        build spec.\n      </p>\n      <p>\n        The refund window reads 14 days here and on the waiver page. Both are\n        placeholders and must agree once Michael sets it.\n      </p>\n    </div>"
+    },
+    "instructor": {
+      "image": {
+        "src": "assets/img/dbsa-09-lou-coaching.jpg",
+        "alt": "Lou DiChiaro mid instruction with a player",
+        "width": 2000,
+        "height": 2000,
+        "label": "dbsa-09 · Lou mid-instruction"
+      },
+      "eyebrow": "Who teaches it",
+      "name": "Lou DiChiaro",
+      "body": "Infield is Lou&rsquo;s position. He has taught it here since 2000.",
+      "credits": [
+        [
+          "1980-83",
+          "Seton Hall University. Four-year starter, 1983 captain"
+        ],
+        [
+          "1983",
+          "Drafted 19th round, Baltimore Orioles"
+        ],
+        [
+          "2008-13",
+          "Don Bosco Prep assistant varsity. 2008 National Champions"
+        ],
+        [
+          "2021-",
+          "Old Tappan High School assistant varsity"
+        ]
+      ],
+      "quote": {
+        "text": "&ldquo;If you want real instruction done the right way, Lou is your guy.&rdquo;",
+        "cite": "Ed Blankmeyer, St. John&rsquo;s University"
+      }
+    },
+    "venues": {
+      "eyebrow": "Where it happens",
+      "title": "Two venues, one camp.",
+      "cards": {
+        "facility": {
+          "title": "The academy",
+          "count": "11 of 15 sessions",
+          "when": "Saturdays 9:00am - 12:00pm",
+          "map": {
+            "src": "assets/img/dbsa-18-map-fair-lawn.png",
+            "alt": "Map showing the academy on Pollitt Drive in Fair Lawn",
+            "label": "dbsa-18 · Map, pin on Pollitt Drive"
+          }
+        },
+        "superdome": {
+          "title": "Superdome Sports Center",
+          "count": "4 of 15 sessions",
+          "when": "Saturdays 8:00 - 10:00am, both groups",
+          "map": {
+            "src": "assets/img/dbsa-18-map-fair-lawn.png",
+            "alt": "Map showing the Superdome Sports Center in Waldwick",
+            "label": "dbsa-18 · Map, pin on Hopper Avenue"
+          }
+        }
+      }
+    },
+    "faq": [
+      [
+        "What if we miss a Saturday?",
+        "Sessions can&rsquo;t be carried over, but tell us ahead and Lou will catch the player up."
+      ],
+      [
+        "Does my player need their own gear?",
+        "Bring a glove. We supply bats, helmets and the rest. Turf shoes or sneakers, no metal cleats."
+      ],
+      [
+        "Baseball and softball together?",
+        "Yes. The infield work is the same and the groups train side by side."
+      ],
+      [
+        "Can we watch?",
+        "Yes, there&rsquo;s seating along the netting. We ask that the coaching stays with Lou."
+      ],
+      [
+        "What if it is full when we try?",
+        "Call us and we&rsquo;ll tell you if a place opens."
+      ]
+    ],
+    "register_band": {
+      "title_html": "Six places left in<br>grades 4-8.",
+      "body": "Registration takes about three minutes.",
+      "cta": {
+        "label": "Register for grades 4-8",
+        "href": "register.html?program=infield-camp-2026-27&amp;group=grades-4-8"
+      }
+    }
+  },
+  "little-league-fall-2026": {
+    "image": {
+      "src": "assets/img/dbsa-07-little-league.jpg",
+      "width": 1920,
+      "height": 1080,
+      "label": "dbsa-07 · Little League camp on the turf",
+      "focus": "76% 50%"
+    }
+  },
+  "little-league-winter-2027": {
+    "image": {
+      "src": "assets/img/dbsa-07-little-league.jpg",
+      "width": 1920,
+      "height": 1080,
+      "label": "dbsa-07 · Little League camp on the turf",
+      "focus": "76% 50%"
+    }
+  },
+  "little-league-march-2027": {
+    "image": {
+      "src": "assets/img/dbsa-07-little-league.jpg",
+      "width": 1920,
+      "height": 1080,
+      "label": "dbsa-07 · Little League camp on the turf",
+      "focus": "76% 50%"
+    }
+  },
+  "hit-night-fall-2026": {
+    "image": {
+      "src": "assets/img/dbsa-03-hitting-cage.jpg",
+      "width": 1920,
+      "height": 1080,
+      "label": "dbsa-03 · Hit Night, the cage"
+    }
+  },
+  "hit-night-winter-2027": {
+    "image": {
+      "src": "assets/img/dbsa-03-hitting-cage.jpg",
+      "width": 1920,
+      "height": 1080,
+      "label": "dbsa-03 · Hit Night, the cage"
+    }
+  }
+}

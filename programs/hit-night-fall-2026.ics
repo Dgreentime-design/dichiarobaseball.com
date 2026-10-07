@@ -1,0 +1,167 @@
+BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//DiChiaro Baseball & Softball Academy//Program calendar//EN
+CALSCALE:GREGORIAN
+METHOD:PUBLISH
+X-WR-CALNAME:Monday Hit Night\, Fall 2026
+BEGIN:VEVENT
+UID:hit-night-fall-2026-2026-09-14@dichiarobaseball.com
+DTSTAMP:20261007T000000Z
+DTSTART:20260914T230000Z
+DTEND:20260915T010000Z
+SUMMARY:Monday Hit Night
+LOCATION:DiChiaro Baseball & Softball Academy\, 18-01 Pollitt Drive\, Fair 
+ Lawn\, NJ 07410
+DESCRIPTION:Softball: 7:00pm - 8:00pm. Baseball: 8:00pm - 9:00pm
+END:VEVENT
+BEGIN:VEVENT
+UID:hit-night-fall-2026-2026-09-21@dichiarobaseball.com
+DTSTAMP:20261007T000000Z
+DTSTART:20260921T230000Z
+DTEND:20260922T010000Z
+SUMMARY:Monday Hit Night
+LOCATION:DiChiaro Baseball & Softball Academy\, 18-01 Pollitt Drive\, Fair 
+ Lawn\, NJ 07410
+DESCRIPTION:Softball: 7:00pm - 8:00pm. Baseball: 8:00pm - 9:00pm
+END:VEVENT
+BEGIN:VEVENT
+UID:hit-night-fall-2026-2026-09-28@dichiarobaseball.com
+DTSTAMP:20261007T000000Z
+DTSTART:20260928T230000Z
+DTEND:20260929T010000Z
+SUMMARY:Monday Hit Night
+LOCATION:DiChiaro Baseball & Softball Academy\, 18-01 Pollitt Drive\, Fair 
+ Lawn\, NJ 07410
+DESCRIPTION:Softball: 7:00pm - 8:00pm. Baseball: 8:00pm - 9:00pm
+END:VEVENT
+BEGIN:VEVENT
+UID:hit-night-fall-2026-2026-10-05@dichiarobaseball.com
+DTSTAMP:20261007T000000Z
+DTSTART:20261005T230000Z
+DTEND:20261006T010000Z
+SUMMARY:Monday Hit Night
+LOCATION:DiChiaro Baseball & Softball Academy\, 18-01 Pollitt Drive\, Fair 
+ Lawn\, NJ 07410
+DESCRIPTION:Softball: 7:00pm - 8:00pm. Baseball: 8:00pm - 9:00pm
+END:VEVENT
+BEGIN:VEVENT
+UID:hit-night-fall-2026-2026-10-12@dichiarobaseball.com
+DTSTAMP:20261007T000000Z
+DTSTART:20261012T230000Z
+DTEND:20261013T010000Z
+SUMMARY:Monday Hit Night
+LOCATION:DiChiaro Baseball & Softball Academy\, 18-01 Pollitt Drive\, Fair 
+ Lawn\, NJ 07410
+DESCRIPTION:Softball: 7:00pm - 8:00pm. Baseball: 8:00pm - 9:00pm
+END:VEVENT
+BEGIN:VEVENT
+UID:hit-night-fall-2026-2026-10-19@dichiarobaseball.com
+DTSTAMP:20261007T000000Z
+DTSTART:20261019T230000Z
+DTEND:20261020T010000Z
+SUMMARY:Monday Hit Night
+LOCATION:DiChiaro Baseball & Softball Academy\, 18-01 Pollitt Drive\, Fair 
+ Lawn\, NJ 07410
+DESCRIPTION:Softball: 7:00pm - 8:00pm. Baseball: 8:00pm - 9:00pm
+END:VEVENT
+BEGIN:VEVENT
+UID:hit-night-fall-2026-2026-10-26@dichiarobaseball.com
+DTSTAMP:20261007T000000Z
+DTSTART:20261026T230000Z
+DTEND:20261027T010000Z
+SUMMARY:Monday Hit Night
+LOCATION:DiChiaro Baseball & Softball Academy\, 18-01 Pollitt Drive\, Fair 
+ Lawn\, NJ 07410
+DESCRIPTION:Softball: 7:00pm - 8:00pm. Baseball: 8:00pm - 9:00pm
+END:VEVENT
+BEGIN:VEVENT
+UID:hit-night-fall-2026-2026-11-02@dichiarobaseball.com
+DTSTAMP:20261007T000000Z
+DTSTART:20261103T000000Z
+DTEND:20261103T020000Z
+SUMMARY:Monday Hit Night
+LOCATION:DiChiaro Baseball & Softball Academy\, 18-01 Pollitt Drive\, Fair 
+ Lawn\, NJ 07410
+DESCRIPTION:Softball: 7:00pm - 8:00pm. Baseball: 8:00pm - 9:00pm
+END:VEVENT
+BEGIN:VEVENT
+UID:hit-night-fall-2026-2026-11-09@dichiarobaseball.com
+DTSTAMP:20261007T000000Z
+DTSTART:20261110T000000Z
+DTEND:20261110T020000Z
+SUMMARY:Monday Hit Night
+LOCATION:DiChiaro Baseball & Softball Academy\, 18-01 Pollitt Drive\, Fair 
+ Lawn\, NJ 07410
+DESCRIPTION:Softball: 7:00pm - 8:00pm. Baseball: 8:00pm - 9:00pm
+END:VEVENT
+BEGIN:VEVENT
+UID:hit-night-fall-2026-2026-11-16@dichiarobaseball.com
+DTSTAMP:20261007T000000Z
+DTSTART:20261117T000000Z
+DTEND:20261117T020000Z
+SUMMARY:Monday Hit Night
+LOCATION:DiChiaro Baseball & Softball Academy\, 18-01 Pollitt Drive\, Fair 
+ Lawn\, NJ 07410
+DESCRIPTION:Softball: 7:00pm - 8:00pm. Baseball: 8:00pm - 9:00pm
+END:VEVENT
+BEGIN:VEVENT
+UID:hit-night-fall-2026-2026-11-23@dichiarobaseball.com
+DTSTAMP:20261007T000000Z
+DTSTART:20261124T000000Z
+DTEND:20261124T020000Z
+SUMMARY:Monday Hit Night
+LOCATION:DiChiaro Baseball & Softball Academy\, 18-01 Pollitt Drive\, Fair 
+ Lawn\, NJ 07410
+DESCRIPTION:Softball: 7:00pm - 8:00pm. Baseball: 8:00pm - 9:00pm
+END:VEVENT
+BEGIN:VEVENT
+UID:hit-night-fall-2026-2026-11-30@dichiarobaseball.com
+DTSTAMP:20261007T000000Z
+DTSTART:20261201T000000Z
+DTEND:20261201T020000Z
+SUMMARY:Monday Hit Night
+LOCATION:DiChiaro Baseball & Softball Academy\, 18-01 Pollitt Drive\, Fair 
+ Lawn\, NJ 07410
+DESCRIPTION:Softball: 7:00pm - 8:00pm. Baseball: 8:00pm - 9:00pm
+END:VEVENT
+BEGIN:VEVENT
+UID:hit-night-fall-2026-2026-12-07@dichiarobaseball.com
+DTSTAMP:20261007T000000Z
+DTSTART:20261208T000000Z
+DTEND:20261208T020000Z
+SUMMARY:Monday Hit Night
+LOCATION:DiChiaro Baseball & Softball Academy\, 18-01 Pollitt Drive\, Fair 
+ Lawn\, NJ 07410
+DESCRIPTION:Softball: 7:00pm - 8:00pm. Baseball: 8:00pm - 9:00pm
+END:VEVENT
+BEGIN:VEVENT
+UID:hit-night-fall-2026-2026-12-14@dichiarobaseball.com
+DTSTAMP:20261007T000000Z
+DTSTART:20261215T000000Z
+DTEND:20261215T020000Z
+SUMMARY:Monday Hit Night
+LOCATION:DiChiaro Baseball & Softball Academy\, 18-01 Pollitt Drive\, Fair 
+ Lawn\, NJ 07410
+DESCRIPTION:Softball: 7:00pm - 8:00pm. Baseball: 8:00pm - 9:00pm
+END:VEVENT
+BEGIN:VEVENT
+UID:hit-night-fall-2026-2026-12-21@dichiarobaseball.com
+DTSTAMP:20261007T000000Z
+DTSTART:20261222T000000Z
+DTEND:20261222T020000Z
+SUMMARY:Monday Hit Night
+LOCATION:DiChiaro Baseball & Softball Academy\, 18-01 Pollitt Drive\, Fair 
+ Lawn\, NJ 07410
+DESCRIPTION:Softball: 7:00pm - 8:00pm. Baseball: 8:00pm - 9:00pm
+END:VEVENT
+BEGIN:VEVENT
+UID:hit-night-fall-2026-2026-12-28@dichiarobaseball.com
+DTSTAMP:20261007T000000Z
+DTSTART:20261229T000000Z
+DTEND:20261229T020000Z
+SUMMARY:Monday Hit Night
+LOCATION:DiChiaro Baseball & Softball Academy\, 18-01 Pollitt Drive\, Fair 
+ Lawn\, NJ 07410
+DESCRIPTION:Softball: 7:00pm - 8:00pm. Baseball: 8:00pm - 9:00pm
+END:VEVENT
+END:VCALENDAR

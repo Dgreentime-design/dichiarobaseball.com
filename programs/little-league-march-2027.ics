@@ -1,0 +1,43 @@
+BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//DiChiaro Baseball & Softball Academy//Program calendar//EN
+CALSCALE:GREGORIAN
+METHOD:PUBLISH
+X-WR-CALNAME:Little League Training Camp\, March 2027
+BEGIN:VEVENT
+UID:little-league-march-2027-2027-03-07@dichiarobaseball.com
+DTSTAMP:20261007T000000Z
+DTSTART:20270307T193000Z
+DTEND:20270307T210000Z
+SUMMARY:Little League Training Camp
+LOCATION:DiChiaro Baseball & Softball Academy\, 18-01 Pollitt Drive\, Fair 
+ Lawn\, NJ 07410
+END:VEVENT
+BEGIN:VEVENT
+UID:little-league-march-2027-2027-03-14@dichiarobaseball.com
+DTSTAMP:20261007T000000Z
+DTSTART:20270314T183000Z
+DTEND:20270314T200000Z
+SUMMARY:Little League Training Camp
+LOCATION:DiChiaro Baseball & Softball Academy\, 18-01 Pollitt Drive\, Fair 
+ Lawn\, NJ 07410
+END:VEVENT
+BEGIN:VEVENT
+UID:little-league-march-2027-2027-03-21@dichiarobaseball.com
+DTSTAMP:20261007T000000Z
+DTSTART:20270321T183000Z
+DTEND:20270321T200000Z
+SUMMARY:Little League Training Camp
+LOCATION:DiChiaro Baseball & Softball Academy\, 18-01 Pollitt Drive\, Fair 
+ Lawn\, NJ 07410
+END:VEVENT
+BEGIN:VEVENT
+UID:little-league-march-2027-2027-03-28@dichiarobaseball.com
+DTSTAMP:20261007T000000Z
+DTSTART:20270328T183000Z
+DTEND:20270328T200000Z
+SUMMARY:Little League Training Camp
+LOCATION:DiChiaro Baseball & Softball Academy\, 18-01 Pollitt Drive\, Fair 
+ Lawn\, NJ 07410
+END:VEVENT
+END:VCALENDAR

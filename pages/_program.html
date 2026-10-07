@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="en">
+<head>
+{{> head }}
+
+<title>{{title}}</title>
+<meta name="description" content="{{description}}">
+<link rel="canonical" href="https://dichiarobaseball.com/{{file}}">
+<meta property="og:type" content="website">
+<meta property="og:title" content="{{og_title}}">
+<meta property="og:description" content="{{og_description}}">
+<meta property="og:url" content="https://dichiarobaseball.com/{{file}}">
+<meta property="og:image" content="https://dichiarobaseball.com/{{og_image}}">
+<meta name="twitter:card" content="summary_large_image">
+</head>
+
+<body>
+<a class="skip-link" href="#main">Skip to content</a>
+
+{{> header }}
+
+{{> menu }}
+
+<main id="main">
+<!-- One template, ten blocks. The blocks are written by build.mjs from
+     data/programs.json (facts) and data/program-copy.json (words). A block
+     is on or off, it never moves. -->
+{{blocks}}
+</main>
+
+{{> footer }}
+
+<script src="assets/js/site.js" defer></script>
+</body>
+</html>

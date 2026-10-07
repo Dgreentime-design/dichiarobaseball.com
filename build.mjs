@@ -6,6 +6,8 @@
    2. Generates a stub page for every route that is designed but not built
       yet, from pages/_stub.html and stubs.json, so no link in the
       prototype dead-ends in a 404.
+   3. Generates one page and one calendar file per public program, from
+      pages/_program.html, data/programs.json and data/program-copy.json.
 
    Three things are shared by every page: the header, the mobile menu and
    the footer. They live once, in partials/, so a change to the navigation
@@ -14,7 +16,7 @@
    Run: node build.mjs
    ========================================================================== */
 
-import { readFileSync, writeFileSync, readdirSync, existsSync } from "node:fs";
+import { readFileSync, writeFileSync, readdirSync, existsSync, mkdirSync } from "node:fs";
 import { join } from "node:path";
 
 const PAGES = "pages";
@@ -67,7 +69,8 @@ const IS_PROD = process.env.SITE_ORIGIN === PROD_ORIGIN;
 
 /* Pages that stay out of the index whatever the origin. The registration
    flow is a transaction, not a page anyone should arrive at from a search. */
-const ALWAYS_NOINDEX = new Set(["register.html"]);
+/* program.html only forwards old links to a program's own page. */
+const ALWAYS_NOINDEX = new Set(["register.html", "program.html"]);
 
 /* Collected as pages are written, so robots.txt, sitemap.xml and llms.txt
    are generated from the routes that actually exist rather than a list
@@ -199,7 +202,7 @@ function facilityNode() {
    Where a program splits into groups, the group carries the time, so each
    group is its own series. Where it has combined sessions at the other
    venue, those dates take that venue and that time. */
-function eventsFor(program) {
+function eventsFor(program, file) {
   const s = program.schedule || {};
   const combined = s.combined || null;
   const combinedDates = new Set((combined && combined.dates) || []);
@@ -240,7 +243,7 @@ function eventsFor(program) {
           address: postalAddress(venue.address || facility.address || ""),
         },
         organizer: { "@id": FACILITY_ID },
-        url: `${ORIGIN}/program.html`,
+        url: `${ORIGIN}/${file}`,
         offers,
       });
     }
@@ -285,9 +288,8 @@ function nthSunday(year, month, n) {
   return new Date(Date.UTC(year, month, 1 + offset + (n - 1) * 7, 12));
 }
 
-/* The program page currently carries one program. Keyed by file so a second
-   program page only needs its slug adding. */
-const PROGRAM_PAGE = { "program.html": "infield-camp-2026-27" };
+/* Program pages, keyed by file. Filled in as the pages are generated. */
+const PROGRAM_PAGE = {};
 
 function structuredData(file) {
   const graph = [];
@@ -297,7 +299,7 @@ function structuredData(file) {
     const program = programs.programs.find((p) => p.slug === slug);
     if (program) {
       graph.push(facilityNode());
-      graph.push(...eventsFor(program));
+      graph.push(...eventsFor(program, file));
     }
   }
   if (!graph.length) return null;
@@ -404,6 +406,540 @@ if (existsSync("legal.json") && existsSync(join(PAGES, "_legal.html"))) {
     write(doc.file, html);
     legal++;
   }
+}
+
+/* --- Program pages -------------------------------------------------------
+
+   One static page per program that is live and not gated, at
+   programs/<slug>.html, plus a calendar file beside it. Facts come from
+   data/programs.json and words from data/program-copy.json, and nothing
+   else: change either file and every page rebuilds, with no edit here.
+
+   A section with neither data nor approved copy is left out, never filled
+   in. Static rather than rendered in the browser, so each program can be
+   indexed at launch with its own title, description and events. */
+
+console.log("Programs");
+const COPY = existsSync(join("data", "program-copy.json"))
+  ? JSON.parse(readFileSync(join("data", "program-copy.json"), "utf8"))
+  : {};
+const PUBLIC = programs.programs.filter((p) => p.status === "live" && !p.gated);
+const MON = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+const MONTH = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+const DOW = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+const WORDS = ["Zero", "One", "Two", "Three", "Four", "Five", "Six", "Seven", "Eight", "Nine", "Ten",
+  "Eleven", "Twelve", "Thirteen", "Fourteen", "Fifteen", "Sixteen", "Seventeen", "Eighteen", "Nineteen", "Twenty"];
+const word = (n) => WORDS[n] || String(n);
+const ymd = (iso) => { const [y, m, d] = iso.split("-").map(Number); return { y, m: m - 1, d }; };
+/* American order, from the data: "Nov 14, 2026". */
+const usDate = (iso) => { const { y, m, d } = ymd(iso); return `${MON[m]} ${d}, ${y}`; };
+const dow = (iso) => DOW[new Date(`${iso}T12:00:00Z`).getUTCDay()];
+const money = (n) => "$" + Number(n).toLocaleString("en-US");
+const typo = (s) => String(s).replace(/'/g, "&rsquo;");
+const compact = (t) => String(t).replace(/\s*-\s*/, "-");
+const fill = (s, vars) => String(s).replace(/\{(\w+)\}/g, (_, k) => (k in vars ? vars[k] : `{${k}}`));
+const today = new Date().toISOString().slice(0, 10);
+
+/* "18-01 Pollitt Drive, Fair Lawn, NJ 07410" to "Pollitt Drive, Fair Lawn". */
+const shortPlace = (address) => {
+  const parts = String(address).split(",").map((s) => s.trim());
+  return [parts[0].replace(/^[\d-]+\s+/, ""), parts[1]].filter(Boolean).join(", ");
+};
+
+/* The span a program day covers, earliest start to latest end. */
+function daySpan(s) {
+  if (!(s.groups && s.groups.length)) return s.time ? compact(s.time) : "";
+  const first = s.groups[0].time.split(/\s*-\s*/)[0];
+  const last = s.groups[s.groups.length - 1].time.split(/\s*-\s*/)[1];
+  return `${first}-${last}`;
+}
+
+function heroBlock(p, c, f) {
+  const s = p.schedule;
+  const prices = [...new Set(p.options.map((o) => o.price))];
+  const min = Math.min(...p.options.map((o) => o.price));
+  const instalments = Math.max(0, ...p.options.map((o) => (o.schedule || []).length));
+  const from = money(min) + (instalments > 1 ? `, ${instalments}-payment plan` : "");
+  const ages = /^\d/.test(p.ages) ? `Ages ${p.ages}` : p.ages;
+  const sports = p.sport.map((x) => x[0].toUpperCase() + x.slice(1)).join(" &amp; ");
+  const dates = s.dates || [];
+  const img = c.image;
+  const flyer = p.flyer && existsSync(join("assets", "flyers", p.flyer))
+    ? `\n        <a class="btn btn--ghost" href="assets/flyers/${encodeURI(p.flyer)}" download>Download the flyer (PDF)</a>` : "";
+  const starts = dates.length && dates[0] > today ? `\n        <p class="status">Starts ${MON[ymd(dates[0]).m]} ${ymd(dates[0]).d}</p>` : "";
+  const cta = `${c.register_label || "Register"} &nbsp;·&nbsp; ${prices.length > 1 ? "from " : ""}${money(min)}`;
+  return `
+<!-- ===================================================================== -->
+<!-- Block 01 · Hero · required                                            -->
+<!-- ===================================================================== -->
+<section class="hero"${img.focus ? ` style="--hero-focus: ${img.focus};"` : ""}>
+  <div class="hero__media media media--16x9 media--note">
+    <img src="${img.src}" alt="" width="${img.width}" height="${img.height}" fetchpriority="high">
+    <span class="media__label">${img.label}</span>
+  </div>
+
+  <div class="hero__inner">
+    <div class="hero__copy">
+      <nav class="crumbs" aria-label="Breadcrumb">
+        <a href="camps-and-clinics.html">Camps &amp; Clinics</a>
+        <span aria-hidden="true">/</span>
+        <span aria-current="page">${c.crumb || typo(p.name)}</span>
+      </nav>
+
+      <p class="eyebrow eyebrow--on-dark">${sports} &nbsp;·&nbsp; ${esc(p.season)}</p>
+      <h1 class="display-xl">${c.title_html || typo(p.name)}</h1>
+      <p class="hero__lede body-l">
+        ${c.hero_sub || typo(p.summary)}
+      </p>
+
+      <dl class="prog-facts">
+        <div class="stat stat--label"><dt>Who</dt><dd>${esc(ages)}</dd></div>
+        <div class="stat stat--label"><dt>When</dt><dd>${dates.length} ${s.day}s, ${daySpan(s)}</dd></div>
+        <div class="stat stat--label"><dt>Runs</dt><dd>${usDate(dates[0])} to ${usDate(dates[dates.length - 1])}</dd></div>
+        <div class="stat stat--label"><dt>${p.options.length > 1 ? "From" : "Price"}</dt><dd>${from}</dd></div>
+      </dl>
+
+      <div class="prog-actions">
+        <a class="btn btn--primary" href="${f.register}">${cta}</a>${flyer}${starts}
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Block 02 · Marquee · optional -->
+{{> marquee }}
+`;
+}
+
+function groupsBlock(p, c, f) {
+  const groups = p.schedule.groups || [];
+  if (groups.length < 2) return "";
+  const g = c.groups || {};
+  const cards = groups.map((grp) => {
+    const gc = (g.cards || {})[grp.id] || {};
+    const chip = gc.chip ? `\n          <span class="chip${gc.chip_class ? " " + gc.chip_class : ""}">${gc.chip}</span>` : "";
+    const body = gc.body ? `\n        <p>${gc.body}</p>` : "";
+    const cta = gc.cta || { label: `Register for ${esc(grp.label.toLowerCase())}`, href: f.register };
+    return `
+      <article class="group">
+        <div class="group__head">
+          <h3 class="heading-m">${esc(grp.label)}</h3>${chip}
+        </div>
+        <p class="group__when">${p.schedule.day}s &nbsp;·&nbsp; ${esc(grp.time)}</p>${body}
+        <a class="btn ${cta.class || "btn--primary"}" href="${cta.href}">${cta.label}</a>
+      </article>`;
+  }).join("\n");
+  const lede = g.lede ? `\n      <p class="sec-head__lede body-l">\n        ${g.lede}\n      </p>` : "";
+  return `
+<!-- ===================================================================== -->
+<!-- Block 03 · Groups · optional, two or more groups only                 -->
+<!-- ===================================================================== -->
+<section class="band band--bone" aria-labelledby="groups-title">
+  <div class="container">
+    <div class="sec-head">
+      <p class="eyebrow">${g.eyebrow || word(groups.length) + " groups"}</p>
+      <h2 class="display-l" id="groups-title">${g.title || groups.map((x, i) => esc(i ? x.label.toLowerCase() : x.label)).join(" and ") + "."}</h2>${lede}
+    </div>
+
+    <div class="group-grid">${cards}
+    </div>
+  </div>
+</section>
+`;
+}
+
+function skillsBlock(p, c) {
+  const list = p.teaches || [];
+  if (!list.length) return "";
+  const k = c.skills || {};
+  const desc = k.descriptions || {};
+  const items = list.map((name, i) =>
+    `      <article class="skill"><p class="skill__n">${String(i + 1).padStart(2, "0")}</p><h3>${esc(name)}</h3>${desc[name] ? `<p>${desc[name]}</p>` : ""}</article>`
+  ).join("\n");
+  const eyebrow = k.eyebrow ? `\n      <p class="eyebrow">${k.eyebrow}</p>` : "";
+  /* Three across unless another count fills every row: ten skills are two
+     rows of five, eight are two rows of four, never a row with one. */
+  const cols = list.length % 3 === 0 ? 3 : [5, 4].find((n) => list.length % n === 0) || 3;
+  return `
+<!-- ===================================================================== -->
+<!-- Block 04 · What is taught · required                                  -->
+<!-- ===================================================================== -->
+<section class="band band--surface" aria-labelledby="taught-title">
+  <div class="container">
+    <div class="sec-head">${eyebrow}
+      <h2 class="display-l" id="taught-title">${word(list.length)} skills, drilled until they&rsquo;re automatic.</h2>
+    </div>
+
+    <div class="skills${cols === 3 ? "" : ` skills--${cols}`}">
+${items}
+    </div>
+  </div>
+</section>
+`;
+}
+
+function scheduleBlock(p, c, f) {
+  const s = p.schedule;
+  const away = new Set((s.combined && s.combined.dates) || []);
+  const months = [];
+  for (const iso of s.dates) {
+    const { y, m, d } = ymd(iso);
+    const key = `${MONTH[m]} ${y}`;
+    let row = months.find((r) => r.key === key);
+    if (!row) months.push(row = { key, days: [] });
+    row.days.push(`<span class="day${away.has(iso) ? " day--away" : ""}">${dow(iso)} ${d}</span>`);
+  }
+  const facility = VENUES.facility || {};
+  const other = VENUES.superdome || {};
+  const key = (s.groups && s.groups.length)
+    ? s.groups.map((g) => `      <li>${esc(g.label)} &nbsp;·&nbsp; ${compact(g.time)}</li>`)
+    : [`      <li>${esc(shortPlace(facility.address))} &nbsp;·&nbsp; ${compact(s.time)}</li>`];
+  if (s.combined) key.push(`      <li class="is-away">${esc(s.combined.label)} &nbsp;·&nbsp; ${compact(s.combined.time)}</li>`);
+  const lede = (c.schedule && c.schedule.lede)
+    ? `\n    <p class="sec-head__lede body-l schedule__lede">\n      ${c.schedule.lede}\n    </p>` : "";
+  return `
+<!-- ===================================================================== -->
+<!-- Block 05 · Schedule · required                                        -->
+<!-- ===================================================================== -->
+<section class="band band--ink" aria-labelledby="schedule-title">
+  <div class="container">
+    <p class="eyebrow eyebrow--dim">Every date, up front</p>
+    <div class="schedule__head">
+      <h2 class="display-l on-dark" id="schedule-title">${word(s.dates.length)} ${s.day}s.</h2>
+      <a class="btn btn--ghost btn--compact" href="${f.ics}" download>Add all dates to your calendar</a>
+    </div>${lede}
+
+    <div class="months">
+${months.map((r) => `      <div class="month">
+        <p class="month__name">${r.key}</p>
+        <div class="month__days">${r.days.join("")}</div>
+      </div>`).join("\n")}
+    </div>
+
+    <ul class="schedule__key">
+${key.join("\n")}
+    </ul>
+  </div>
+</section>
+`;
+}
+
+function pricingBlock(p, c, f) {
+  const opts = p.options;
+  if (opts.length < 2) return "";
+  const k = c.pricing || {};
+  const plans = k.plans || {};
+  const min = Math.min(...opts.map((o) => o.price));
+  const vars = { price: money(min), per_session: money(Math.round(min / p.schedule.dates.length)) };
+  const reg = (plan) => f.register + (plan ? `&amp;plan=${plan}` : "");
+  let body;
+  if (opts.length === 2) {
+    body = `    <div class="plans">` + opts.map((o) => {
+      const pc = plans[o.id] || {};
+      const sched = o.schedule && o.schedule.length > 1 ? o.schedule : null;
+      const amount = sched ? money(sched[0].amount) : money(o.price);
+      const note = sched
+        ? "now, " + sched.slice(1).map((x) => `then ${money(x.amount)} on ${usDate(x.when)}`).join(", ")
+        : (pc.note || "");
+      return `
+      <article class="plan">
+        <p class="plan__label">${pc.label || esc(o.label)}</p>
+        <div class="plan__amount">
+          <strong>${amount}</strong>${note ? `\n          <span>${note}</span>` : ""}
+        </div>${pc.body ? `\n        <p>${pc.body}</p>` : ""}
+        <a class="btn btn--primary" href="${reg(pc.plan)}">${pc.cta || "Register"}</a>
+      </article>`;
+    }).join("\n") + `\n    </div>`;
+  } else {
+    /* More than two options reads as a price list, not a row of cards. */
+    body = `    <div class="plans">
+      <article class="plan plan--list">
+        <div class="rate-group">
+${opts.map((o) => `          <div class="rate-row">
+            <div class="rate-row__label"><span class="body-m">${esc(o.label)}</span></div>
+            <span class="rate-row__price">${money(o.price)}</span>
+          </div>`).join("\n")}
+        </div>
+        <a class="btn btn--primary" href="${f.register}">Register</a>
+      </article>
+    </div>`;
+  }
+  const lede = k.lede ? `\n      <p class="sec-head__lede body-l">\n        ${fill(k.lede, vars)}\n      </p>` : "";
+  const included = (k.included || []).length
+    ? `\n\n    <ul class="included">\n${k.included.map((x) => `      <li>${x}</li>`).join("\n")}\n    </ul>` : "";
+  const note = k.note_html ? `\n\n    ${k.note_html}` : "";
+  return `
+<!-- ===================================================================== -->
+<!-- Block 06 · Pricing · optional, plans or packages only                 -->
+<!-- ===================================================================== -->
+<section class="band band--bone" aria-labelledby="price-title">
+  <div class="container">
+    <div class="sec-head">
+      <p class="eyebrow">${word(opts.length)} ways to pay</p>
+      <h2 class="display-l" id="price-title">${k.title ? fill(k.title, vars) : `From ${money(min)}.`}</h2>${lede}
+    </div>
+
+${body}${included}${note}
+  </div>
+</section>
+`;
+}
+
+function instructorBlock(c) {
+  const k = c.instructor;
+  if (!k) return "";
+  return `
+<!-- ===================================================================== -->
+<!-- Block 07 · Instructor · copy only                                     -->
+<!-- ===================================================================== -->
+<section class="band band--surface" aria-labelledby="who-teaches-title">
+  <div class="container instructor-split">
+    <div class="media media--4x5">
+      <img src="${k.image.src}" alt="${k.image.alt}" width="${k.image.width}" height="${k.image.height}" loading="lazy">
+      <span class="media__label">${k.image.label}</span>
+    </div>
+
+    <div class="lou__copy">
+      <p class="eyebrow">${k.eyebrow}</p>
+      <h2 class="display-l" id="who-teaches-title">${k.name}</h2>
+      <p class="body-l">
+        ${k.body}
+      </p>
+
+      <dl class="lou__credits">
+${k.credits.map(([y, t]) => `        <div class="lou__credit"><dt>${y}</dt><dd>${t}</dd></div>`).join("\n")}
+      </dl>
+${k.quote ? `
+      <figure class="pull-quote">
+        <blockquote>${k.quote.text}</blockquote>
+        <cite>${k.quote.cite}</cite>
+      </figure>
+` : ""}
+      <p class="chip-row__action">
+        <a class="arrow-link" href="instructors.html"><span>Meet all the instructors</span><span aria-hidden="true">&rarr;</span></a>
+      </p>
+    </div>
+  </div>
+</section>
+`;
+}
+
+function venuesBlock(p, c) {
+  const s = p.schedule;
+  const k = c.venues;
+  if (s.venue !== "split" || !k) return "";
+  const card = (id) => {
+    const v = VENUES[id] || {};
+    const vc = (k.cards || {})[id] || {};
+    const parts = String(v.address).split(",").map((x) => x.trim());
+    const q = encodeURIComponent(v.address).replace(/%20/g, "+").replace(/%2C/g, "");
+    return `
+      <article class="venue">
+        <div class="media media--16x9">
+          <img src="${vc.map.src}" alt="${vc.map.alt}" width="1200" height="800" loading="lazy">
+          <span class="media__label">${vc.map.label}</span>
+        </div>
+        <div class="venue__body">
+          <div class="venue__head">
+            <h3 class="heading-m">${vc.title || esc(v.name)}</h3>${vc.count ? `\n            <span class="venue__count">${vc.count}</span>` : ""}
+          </div>
+          <address>${esc(parts[0])}<br>${esc(parts.slice(1).join(", ").replace(/, (\d{5})$/, " $1"))}</address>${vc.when ? `\n          <p class="venue__when">${vc.when}</p>` : ""}
+          <a class="btn btn--outline btn--compact" href="https://maps.google.com/?q=${q}" rel="noopener">Get directions</a>
+        </div>
+      </article>`;
+  };
+  return `
+<!-- ===================================================================== -->
+<!-- Block 08 · Location · optional, two or more venues only               -->
+<!-- ===================================================================== -->
+<section class="band band--bone" aria-labelledby="where-title">
+  <div class="container">
+    <div class="sec-head">
+      <p class="eyebrow">${k.eyebrow}</p>
+      <h2 class="heading-xl" id="where-title">${k.title}</h2>
+    </div>
+
+    <div class="venues">${card("facility")}
+${card("superdome")}
+    </div>
+  </div>
+</section>
+`;
+}
+
+function faqBlock(c) {
+  if (!(c.faq && c.faq.length)) return "";
+  return `
+<!-- ===================================================================== -->
+<!-- Block 09 · FAQ · optional                                             -->
+<!-- ===================================================================== -->
+<section class="band band--surface" aria-labelledby="faq-title">
+  <div class="container">
+    <div class="sec-head">
+      <p class="eyebrow">Before you ask</p>
+      <h2 class="heading-xl" id="faq-title">Questions parents ask.</h2>
+    </div>
+
+    <div class="faq">
+${c.faq.map(([q, a]) => `      <details>
+        <summary>${q}</summary>
+        <p>${a}</p>
+      </details>`).join("\n")}
+    </div>
+  </div>
+</section>
+`;
+}
+
+function registerBlock(p, c, f) {
+  const k = c.register_band || {};
+  const prices = [...new Set(p.options.map((o) => o.price))];
+  const min = Math.min(...p.options.map((o) => o.price));
+  const cta = k.cta || { label: `Register &nbsp;·&nbsp; ${prices.length > 1 ? "from " : ""}${money(min)}`, href: f.register };
+  return `
+<!-- ===================================================================== -->
+<!-- Block 10 · Register band · required                                   -->
+<!-- ===================================================================== -->
+<section class="band band--red" aria-labelledby="prog-register-title">
+  <div class="register__inner">
+    <div class="register__copy">
+      <h2 class="display-l" id="prog-register-title">${k.title_html || `${typo(p.name)},<br>${esc(p.season)}.`}</h2>${k.body ? `
+      <p class="body-m">
+        ${k.body}
+      </p>` : ""}
+    </div>
+    <div class="register__actions">
+      <a class="btn btn--secondary" href="${cta.href}">${cta.label}</a>
+    </div>
+  </div>
+</section>
+`;
+}
+
+/* The calendar file. One event per session date: a family is in one group,
+   so a day with two groups is one event spanning both, with each group's
+   time in the description. Combined dates take that time and that venue.
+   Times are written in UTC from the Eastern offset of each date. */
+function icsFor(p) {
+  const s = p.schedule;
+  const away = new Set((s.combined && s.combined.dates) || []);
+  const facility = VENUES.facility || {};
+  const other = VENUES.superdome || {};
+  const text = (x) => String(x).replace(/\\/g, "\\\\").replace(/;/g, "\;").replace(/,/g, "\\,").replace(/\n/g, "\\n");
+  const utc = (local) => new Date(local).toISOString().replace(/[-:]/g, "").replace(/\.\d{3}/, "");
+  /* The build day, not the build second, so a rebuild on the same day
+     writes the same file. */
+  const stamp = today.replace(/-/g, "") + "T000000Z";
+  const lines = ["BEGIN:VCALENDAR", "VERSION:2.0", "PRODID:-//DiChiaro Baseball & Softball Academy//Program calendar//EN",
+    "CALSCALE:GREGORIAN", "METHOD:PUBLISH", `X-WR-CALNAME:${text(`${plain(p.name)}, ${p.season}`)}`];
+  for (const date of s.dates) {
+    const combined = away.has(date);
+    const time = combined ? s.combined.time : daySpan(s).replace("-", " - ");
+    const range = parseRange(date, time);
+    if (!range) continue;
+    const venue = combined ? other : facility;
+    const detail = combined
+      ? s.combined.label
+      : (s.groups && s.groups.length ? s.groups.map((g) => `${g.label}: ${g.time}`).join(". ") : "");
+    lines.push("BEGIN:VEVENT", `UID:${p.slug}-${date}@dichiarobaseball.com`, `DTSTAMP:${stamp}`,
+      `DTSTART:${utc(range.start)}`, `DTEND:${utc(range.end)}`,
+      `SUMMARY:${text(plain(p.name))}`,
+      `LOCATION:${text(`${venue.name}, ${venue.address}`)}`);
+    if (detail) lines.push(`DESCRIPTION:${text(detail)}`);
+    lines.push("END:VEVENT");
+  }
+  lines.push("END:VCALENDAR");
+  /* Lines longer than 75 octets are folded, as the format requires. */
+  const fold = (line) => {
+    const out = [];
+    let rest = Buffer.from(line, "utf8");
+    let limit = 75;
+    while (rest.length > limit) {
+      let cut = limit;
+      while (cut > 0 && (rest[cut] & 0xc0) === 0x80) cut--;
+      out.push(rest.subarray(0, cut).toString("utf8"));
+      rest = rest.subarray(cut);
+      limit = 74;
+    }
+    out.push(rest.toString("utf8"));
+    return out.join("\r\n ");
+  };
+  return lines.map(fold).join("\r\n") + "\r\n";
+}
+
+const PROGRAM_DIR = "programs";
+
+/* Pages in programs/ sit one folder down, and every link in the partials
+   and the template is relative to the root. Rewritten once, here, so the
+   partials stay as they are. */
+const upOne = (html) => html.replace(
+  /(\s(?:href|src)=")(?!https?:|\/\/|#|mailto:|tel:|data:|\/|\.\.\/)([^"]+)"/g,
+  (_, a, url) => {
+    if (url.startsWith(PROGRAM_DIR + "/")) return `${a}${url.slice(PROGRAM_DIR.length + 1)}"`;
+    if (url === "./") return `${a}../"`;
+    return `${a}../${url}"`;
+  }
+);
+
+if (PUBLIC.length && existsSync(join(PAGES, "_program.html"))) {
+  mkdirSync(PROGRAM_DIR, { recursive: true });
+  const template = readFileSync(join(PAGES, "_program.html"), "utf8");
+  for (const p of PUBLIC) {
+    const c = COPY[p.slug] || {};
+    const file = `${PROGRAM_DIR}/${p.slug}.html`;
+    const f = { register: `register.html?program=${p.slug}`, ics: `${PROGRAM_DIR}/${p.slug}.ics` };
+    if (!c.image) throw new Error(`build: ${p.slug} has no hero image in data/program-copy.json`);
+    const blocks = [heroBlock(p, c, f), groupsBlock(p, c, f), skillsBlock(p, c), scheduleBlock(p, c, f),
+      pricingBlock(p, c, f), instructorBlock(c), venuesBlock(p, c), faqBlock(c), registerBlock(p, c, f)].join("");
+    const name = typo(p.name);
+    const html = resolvePartials(template
+      .replace("{{blocks}}", () => blocks)
+      .replaceAll("{{title}}", () => `${name}, ${esc(p.season)} · DiChiaro Baseball &amp; Softball Academy`)
+      .replaceAll("{{og_title}}", () => `${name}, ${esc(p.season)}`)
+      .replaceAll("{{description}}", () => c.description || esc(p.summary))
+      .replaceAll("{{og_description}}", () => c.og_description || c.description || esc(p.summary))
+      .replaceAll("{{og_image}}", () => c.image.src)
+      .replaceAll("{{file}}", () => file));
+    PROGRAM_PAGE[file] = p.slug;
+    write(file, upOne(html));
+    writeFileSync(f.ics, icsFor(p));
+    console.log("  built", f.ics);
+  }
+
+  /* program.html was the one fixed program page and every old link points
+     at it, as program.html?p=<old slug>. It now forwards to the program's
+     own page, and anything it does not know goes to the camps page. */
+  const LEGACY = {
+    "little-league-training-camp": "little-league-fall-2026",
+    "spring-little-league": "little-league-march-2027",
+    "infield-camp": "infield-camp-2026-27",
+    "monday-hit-night": "hit-night-fall-2026",
+  };
+  const map = Object.fromEntries([
+    ...Object.entries(LEGACY).filter(([, to]) => PUBLIC.some((p) => p.slug === to)),
+    ...PUBLIC.map((p) => [p.slug, p.slug]),
+  ]);
+  write("program.html", `<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Camps &amp; Clinics · DiChiaro Baseball &amp; Softball Academy</title>
+<link rel="canonical" href="https://dichiarobaseball.com/camps-and-clinics.html">
+<script>
+  (function () {
+    var map = ${JSON.stringify(map)};
+    var p = new URLSearchParams(window.location.search).get("p");
+    window.location.replace(map[p] ? "${PROGRAM_DIR}/" + map[p] + ".html" : "camps-and-clinics.html");
+  })();
+</script>
+<noscript><meta http-equiv="refresh" content="0; url=camps-and-clinics.html"></noscript>
+</head>
+<body>
+<p><a href="camps-and-clinics.html">See camps and clinics</a></p>
+</body>
+</html>
+`);
 }
 
 /* --- robots.txt, sitemap.xml, llms.txt -----------------------------------

@@ -100,6 +100,9 @@ the stylesheets read against the rule.
   beside the content it follows.
 - The register progress rule between steps becomes a short connector when
   the steps stack. It is decoration with no content.
+- Program page skills: three across, unless four or five fills every row
+  (ten skills are two rows of five, eight are two rows of four). Those drop
+  to two across below 1180px, and every count drops to one below 600px.
 - The footer spacer, a layout element with no content, is dropped when the
   footer stacks.
 
