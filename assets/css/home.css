@@ -286,3 +286,4 @@
 /* Lou band: link out to the journey page. */
 .lou__more { margin-top: var(--s-6); }
 .lou__more .btn { width: auto; }
+.lou__social { margin-top: var(--s-5); }
