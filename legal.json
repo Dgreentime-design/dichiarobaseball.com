@@ -168,7 +168,7 @@
         "blocks": [
           {
             "t": "p",
-            "text": "To run the booking, to know who is in the building on a given day, to reach a parent if something happens during a session, and to email confirmations, reminders and receipts."
+            "text": "To run the booking, to know who is in the building on a given day, and to reach a parent if something happens during a session."
           },
           {
             "t": "p",
@@ -188,7 +188,6 @@
             "t": "ul",
             "items": [
               "Clover, which processes the payment",
-              "Constant Contact, which sends confirmations, reminders and receipts",
               "Our website and database host"
             ]
           }
@@ -200,7 +199,7 @@
         "blocks": [
           {
             "t": "p",
-            "text": "Confirmations, reminders and receipts are part of the booking and are sent whether or not you join a mailing list."
+            "text": "Keep your reference number. It is your proof of registration."
           },
           {
             "t": "p",
@@ -282,7 +281,7 @@
         "blocks": [
           {
             "t": "p",
-            "text": "A booking is confirmed when payment has been taken and you have received a confirmation email, not when you submit the form."
+            "text": "Your booking is confirmed when the confirmation screen shows your reference number."
           },
           {
             "t": "p",
