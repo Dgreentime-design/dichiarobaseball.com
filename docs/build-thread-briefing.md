@@ -1,7 +1,7 @@
 # Build thread briefing
 
 DiChiaro Baseball & Softball Academy, dichiarobaseball.com.
-Current as of 3 October 2026.
+Current as of 8 October 2026.
 
 This is the handover document for a dedicated Claude Code build thread. It
 assumes no prior conversation. Read it, then read `CLAUDE.md` for the standing
@@ -171,11 +171,40 @@ test registrations stay out of the handover table (`Registrations`).
 | 10 | 7 Oct | Launch plan and the 7 October client review guide, hero hotfix. `prompts/2026-10-07-round10-launch-review.md` |
 | 11 | 7 Oct | Client review changes and the generated program pages. `prompts/2026-10-07-round11-client-changes-and-program-pages.md` |
 | 12 | 7 Oct | Flyer re-baseline, Teams on the camps page, small fixes, launch hardening. `prompts/2026-10-07-round12-launch-hardening.md` |
+| 13 | 8 Oct | Launch polish: no placeholder name, legal email lines, review notes off, final copy sweep. `prompts/2026-10-07-round13-launch-polish.md` |
 
 Every round is a committed prompt file in `prompts/`. Read the round in flight
 before doing anything.
 
-## 8. Where things stand, 7 October 2026
+## 8. Where things stand, 8 October 2026
+
+**The review preview is the launch candidate**, pending Daniel's
+Instructors rework and Michael's sign-off.
+
+**Done in round 13, 8 October**
+
+- **No placeholder name.** A parent back from payment in a browser with no
+  saved name sees "You're registered." The status endpoint still returns no
+  personal data. check-payments 11 asserts it and fails if "Mia" comes back.
+- **`legal.json` no longer promises email.** Terms: "Your booking is
+  confirmed when the confirmation screen shows your reference number."
+  Privacy: confirmation, reminder and receipt emails removed, and Constant
+  Contact removed from the sharing list. Everything else word for word.
+- **Review notes and placeholders off** every page except Instructors.
+  `build.mjs` no longer renders `legal.json` note blocks (they stay in the
+  file). Hours on About and Contact read "Call (201) 773-6858 for today's
+  hours." Lou's Journey lost its three empty sections (video, recovery,
+  coverage). Register lost the prototype note, the "Add another player"
+  button and the sibling promises. Every open question is in
+  `docs/launch-plan.md`, section 5, "Open after launch".
+- **Copy sweep.** One time range style ("9:00am-12:00pm") on every page and
+  in the calendar files. Camp date ranges carry years. Sentence case page
+  titles and breadcrumb. Email promises off the camps and team camps pages.
+- **The Contact and Team camps forms still send nothing.** They now say so
+  plainly with the phone and email. This is the one launch blocker left on
+  the front end. See launch plan section 5.
+
+**Earlier, 7 October 2026**
 
 **Done in round 12, 7 October**
 
@@ -361,15 +390,9 @@ under "Before go-live". The two that bite silently:
 
 - A voided or refunded payment leaves the registration `confirmed`, because
   Clover sends no webhook for it. Manual for now.
-- **`legal.json` still promises emails.** The privacy policy says the
-  academy emails "confirmations, reminders and receipts" through Constant
-  Contact, and the terms say a booking is confirmed when "you have received a
-  confirmation email". No email is sent. `legal.json` is off limits without a
-  round that names it.
-- **The confirmation title can show the placeholder name "Mia".** A parent
-  who returns from payment in a browser that did not start the registration
-  (no saved state) sees "Mia is registered." `state.player` defaults to the
-  prototype name. Small fix in `register.js`, money-path screen.
+- **Test row from round 13 in Registrations Review:** `DBSA-SZVG7RZ5FA`
+  (Little League fall, mock card, confirmed, the 390 preview walk). Safe to
+  delete.
 - **The review table has no `webhook_note` field**, so notes on unmatched
   and flagged rows are dropped on the preview. The signature alert carries
   its facts in program and option for that reason. Check the production
