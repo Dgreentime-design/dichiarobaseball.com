@@ -173,6 +173,7 @@ test registrations stay out of the handover table (`Registrations`).
 | 12 | 7 Oct | Flyer re-baseline, Teams on the camps page, small fixes, launch hardening. `prompts/2026-10-07-round12-launch-hardening.md` |
 | 13 | 8 Oct | Launch polish: no placeholder name, legal email lines, review notes off, final copy sweep. `prompts/2026-10-07-round13-launch-polish.md` |
 | 14 | 8 Oct | Enquiry forms save to Airtable, factual legal fixes, one time and age style. `prompts/2026-10-08-round14-forms-and-legal.md` |
+| 15 | 8 Oct | Spam trap fix, add to calendar three ways, true metadata, the Full switch, marketing opt-in. `prompts/2026-10-08-round15-calendar-metadata-full-optin.md` |
 
 Every round is a committed prompt file in `prompts/`. Read the round in flight
 before doing anything.
@@ -181,6 +182,29 @@ before doing anything.
 
 **The review preview is the launch candidate**, pending Daniel's
 Instructors rework, Michael's sign-off and the enquiries table below.
+
+**Done in round 15, 8 October**
+
+- **The spam trap no longer eats real messages.** The honeypot was named
+  `website`, which browsers autofill, so real parents got a fake success
+  and no row. It is now `dbsa_trap` with every autofill-ignore attribute,
+  and a discard logs `honeypot` or `too_fast`, never the value.
+- **Add to calendar** on every program page and the confirmation screen: a
+  disclosure button with Apple Calendar (the `.ics`, also Outlook desktop),
+  Google Calendar and Outlook.com. Absolute URLs come from `SITE_ORIGIN`,
+  else the deployment's branch URL. Events carry group times, the venue
+  address (the Superdome on Superdome dates) and a link back.
+- **Metadata has one source per page**: the `<title>` and meta
+  description. The build copies them into og: and twitter: tags. Program
+  descriptions come from the data, the Camps count from its cards. verify
+  checks it. Rule in CLAUDE.md under "Metadata".
+- **The Full switch**: `"full": true` on a program in `data/programs.json`
+  closes it everywhere (buttons become "Ask about openings", a Full chip,
+  checkout refuses it). Steps in `docs/launch-plan.md`, section 6.
+- **Marketing opt-in** on Register, Contact and Team camps, stored as
+  `marketing_opt_in` and `marketing_opt_in_at`. A table without those
+  columns still gets the row. Nothing talks to Constant Contact yet.
+- check-payments has 13 checks, check-enquiry 12.
 
 **Done in round 14, 8 October**
 
@@ -193,9 +217,7 @@ Instructors rework, Michael's sign-off and the enquiries table below.
   5 a minute per address, in memory. `?about=<slug>` preselects the Contact
   topic and is stored, from `api/_lib/topics.js`, which the build also
   writes into the page. `npm run check:enquiry` has 9 checks.
-- **Not live on the preview yet:** `ENQUIRIES_TABLE_NAME` is not set, so
-  both forms show "That didn't send" with the phone and email. Daniel adds
-  the variable and the `Enquiries Review` table, then redeploys.
+- `ENQUIRIES_TABLE_NAME` is set on Preview and messages save (round 15).
 - **`legal.json` factual fixes:** last updated Oct 8, 2026; no cookies,
   Vercel Web Analytics named; no waitlist; "on the confirmation screen";
   no waiver skip (Register too); the forms sentence in privacy; American
