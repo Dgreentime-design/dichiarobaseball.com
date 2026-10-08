@@ -2,7 +2,7 @@
    POST /api/checkout/session
 
    Body: { programSlug, optionId, rateId?, paymentMethod, players[], parent,
-           waiverAccepted, photoConsent }
+           waiverAccepted, photoConsent, marketingOptIn? }
 
    The amount is computed here from the IDs. Any amount in the body is
    ignored. Online payment writes a pending row and returns the provider's
@@ -83,7 +83,11 @@ export async function POST(request) {
     amount: cart.amountCents / 100,
     payment_method: method,
     waiver_accepted: true,
-    photo_consent: body.photoConsent === true
+    photo_consent: body.photoConsent === true,
+    /* News about camps and clinics, never pre-ticked. The time is set only
+       when the box was ticked. Both fields are optional in the table. */
+    marketing_opt_in: body.marketingOptIn === true,
+    ...(body.marketingOptIn === true ? { marketing_opt_in_at: new Date().toISOString() } : {})
   };
 
   let stage = "store.create";

@@ -79,7 +79,7 @@ function read(form, raw) {
   return f;
 }
 
-function row(form, f, about, pageUrl, reference) {
+function row(form, f, about, pageUrl, reference, optIn) {
   const common = {
     reference,
     created_at: new Date().toISOString(),
@@ -88,7 +88,9 @@ function row(form, f, about, pageUrl, reference) {
     email: f.email,
     phone: f.phone,
     page_url: pageUrl,
-    status: "new"
+    status: "new",
+    marketing_opt_in: optIn,
+    ...(optIn ? { marketing_opt_in_at: new Date().toISOString() } : {})
   };
   if (form === "contact") {
     return { ...common, name: `${f["first-name"]} ${f["last-name"]}`, topic: f.topic, message: f.message };
@@ -138,7 +140,8 @@ export async function POST(request) {
   const pageUrl = text(body.pageUrl, 300);
 
   try {
-    await enquiryStore().create(row(form, fields, about, pageUrl, reference));
+    const optIn = body.fields.marketing_opt_in === true;
+    await enquiryStore().create(row(form, fields, about, pageUrl, reference, optIn));
   } catch (e) {
     console.error("enquiry", reference, "failed", e.constructor.name);
     return FAILED();

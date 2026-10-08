@@ -24,6 +24,10 @@
    8. Contact at 390     ?about=hittrax preselects the topic, the button reads
                          Sending..., success takes focus, about is stored
    9. Team camps at 390  success with a reference, the row has the details
+  10. Opt-in             ticked stores true and a time, unticked false and no
+                         time; one unticked, optional box on all three forms
+  11. Optional columns   scripts/check-store.mjs: a table without the opt-in
+                         or note columns still gets the row
    ========================================================================== */
 
 import { chromium } from "playwright";
@@ -244,6 +248,33 @@ await check("9. Team camps at 390: success with a reference, the row has the det
   const r = row(ref);
   assert(r && r.form === "team-camps" && /Team: TEST Ridgewood 12U/.test(r.details) && /Players: 12/.test(r.details), "row or details wrong");
   await ctx.close();
+});
+
+await check("10. Opt-in: ticked is stored true with a time, unticked false with none", async () => {
+  const yes = await (await post(contact({ fields: { ...contact().fields, marketing_opt_in: true } }))).json();
+  const no = await (await post(contact())).json();
+  const y = row(yes.reference), n = row(no.reference);
+  assert(y.marketing_opt_in === true && !Number.isNaN(Date.parse(y.marketing_opt_in_at)), `ticked: ${y.marketing_opt_in}, ${y.marketing_opt_in_at}`);
+  assert(n.marketing_opt_in === false && !("marketing_opt_in_at" in n), `unticked: ${n.marketing_opt_in}, ${n.marketing_opt_in_at}`);
+  const ctx = await browser.newContext(phone);
+  const page = await ctx.newPage();
+  for (const file of ["contact.html", "team-camps.html", "register.html"]) {
+    await page.goto(`${BASE}/${file}${file === "register.html" ? "?program=little-league-fall-2026" : ""}`);
+    const box = page.locator('input[name="marketing_opt_in"]');
+    assert(await box.count() === 1, `${file}: ${await box.count()} opt-in boxes`);
+    assert(!(await box.isChecked()) && !(await box.getAttribute("required")), `${file}: pre-ticked or required`);
+    const label = (await page.locator('label:has(input[name="marketing_opt_in"])').textContent()).replace(/\s+/g, " ").trim();
+    assert(label === "Send me news about camps and clinics. You can unsubscribe at any time.", `${file}: ${label}`);
+  }
+  await ctx.close();
+});
+
+await check("11. A missing optional Airtable column never loses the row (scripts/check-store.mjs)", async () => {
+  const run = spawn(process.execPath, [new URL("./check-store.mjs", import.meta.url).pathname], { stdio: ["ignore", "pipe", "pipe"] });
+  let out = "";
+  run.stdout.on("data", (d) => { out += d; });
+  const code = await new Promise((r) => run.on("close", r));
+  assert(code === 0, out.split("\n").filter((l) => /FAIL/.test(l)).join("; ") || `exit ${code}`);
 });
 
 await browser.close();

@@ -513,7 +513,8 @@
         phone: val("g-mobile")
       },
       waiverAccepted: checked("waiver-agree"),
-      photoConsent: checked("photo-consent")
+      photoConsent: checked("photo-consent"),
+      marketingOptIn: checked("marketing-opt-in")
     };
 
     fetch("/api/checkout/session", {

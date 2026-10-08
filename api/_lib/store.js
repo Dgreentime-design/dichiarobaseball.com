@@ -6,10 +6,11 @@
 
      registration_id, status, program, option, players, parent_name,
      parent_email, parent_phone, amount, payment_method, provider_order_id,
-     checkout_session_id, waiver_accepted, photo_consent, webhook_note
+     checkout_session_id, waiver_accepted, photo_consent, webhook_note,
+     marketing_opt_in, marketing_opt_in_at
 
-   webhook_note is optional: where the table lacks it, writes go ahead
-   without it.
+   webhook_note and the two marketing fields are optional: where the table
+   lacks one, writes go ahead without it.
 
    created_at is Airtable's own created-time field and is never written.
 
@@ -55,22 +56,34 @@ function airtableTable(table) {
   return { call, quote, findAll };
 }
 
+/* Fields a table may not have yet. If Airtable says one does not exist,
+   the same row is written without it rather than lost, and the log names
+   the field, never its value. Every other error still fails the write. */
+const OPTIONAL_FIELDS = ["webhook_note", "marketing_opt_in", "marketing_opt_in_at"];
+
+async function writeOptional(call, path, method, fields, wrap) {
+  let current = fields;
+  for (;;) {
+    try {
+      return await call(path, { method, body: JSON.stringify(wrap(current)) });
+    } catch (e) {
+      const missing = /UNKNOWN_FIELD_NAME/.test(e.message)
+        /* The name arrives inside Airtable's JSON, as \"name\". The quote
+           after it keeps marketing_opt_in from matching marketing_opt_in_at. */
+        && OPTIONAL_FIELDS.find((f) => f in current && new RegExp(`${f}\\\\?"`).test(e.message));
+      if (!missing) throw e;
+      const { [missing]: _, ...rest } = current;
+      console.warn(`Airtable has no ${missing} field; written without it`);
+      current = rest;
+    }
+  }
+}
+
 function airtable() {
   const { call, quote, findAll } = airtableTable(process.env.AIRTABLE_TABLE_NAME);
   const findOne = async (field, value) => (await findAll(field, value))[0] || null;
 
-  /* webhook_note is optional in the table. If Airtable says it does not
-     exist, write the same fields without it rather than lose the row. */
-  async function write(path, method, fields, wrap) {
-    try {
-      return await call(path, { method, body: JSON.stringify(wrap(fields)) });
-    } catch (e) {
-      if (!("webhook_note" in fields) || !/UNKNOWN_FIELD_NAME/.test(e.message) || !/webhook_note/.test(e.message)) throw e;
-      const { webhook_note, ...rest } = fields;
-      console.warn("Airtable has no webhook_note field; the note was not stored");
-      return call(path, { method, body: JSON.stringify(wrap(rest)) });
-    }
-  }
+  const write = (path, method, fields, wrap) => writeOptional(call, path, method, fields, wrap);
 
   return {
     async create(fields) {
@@ -148,7 +161,7 @@ export function enquiryStore() {
   if (process.env.AIRTABLE_TOKEN) {
     const { call, findAll } = airtableTable(table);
     return {
-      async create(fields) { await call("", { method: "POST", body: JSON.stringify({ records: [{ fields }], typecast: true }) }); },
+      async create(fields) { await writeOptional(call, "", "POST", fields, (f) => ({ records: [{ fields: f }], typecast: true })); },
       async get(reference) { return (await findAll("reference", reference))[0]?.fields || null; }
     };
   }

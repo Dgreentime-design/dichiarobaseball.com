@@ -28,6 +28,8 @@
                           is not offered to the register page. Runs a second
                           server on port 8092 against a copy of the data with
                           one program full, and puts the data back after
+  13. Opt-in              the news box ticked on the parent step is stored
+                          true with a time; check 1 stores false with none
    ========================================================================== */
 
 import { chromium } from "playwright";
@@ -84,7 +86,7 @@ function webhook(sessionId, { status = "APPROVED", amount = 32000, secret = SECR
 }
 
 /* Walks the real form to the payment page in a browser. */
-async function walkToCheckout(page) {
+async function walkToCheckout(page, { optIn = false } = {}) {
   await page.goto(`${BASE}/register.html?program=little-league-fall-2026`);
   await page.fill("#p1-first", "Mia");
   await page.fill("#p1-last", "Rodriguez");
@@ -94,6 +96,7 @@ async function walkToCheckout(page) {
   await page.fill("#g-last", "Rodriguez");
   await page.fill("#g-email", "elena@example.com");
   await page.fill("#g-mobile", "(201) 555 0148");
+  if (optIn) await page.check("#marketing-opt-in");
   await page.click('[data-step-form="1"] button[type=submit]');
   await page.check("#waiver-agree");
   await page.fill("#sign-name", "Elena Rodriguez");
@@ -124,6 +127,7 @@ await check("1. Happy path: approve moves the row pending -> confirmed with the 
   assert(r.status === "confirmed", `row is ${r.status}`);
   assert(r.amount === 320, `row amount is ${r.amount}`);
   assert(r.provider_order_id, "no provider_order_id");
+  assert(r.marketing_opt_in === false && !("marketing_opt_in_at" in r), "an unticked opt-in was not stored as false with no time");
   await page.close();
 });
 
@@ -334,6 +338,15 @@ await check("12. Full: a program marked full is refused at checkout, writes noth
     if (server) server.kill();
   }
   assert(readFileSync(DATA, "utf8") === original, "the data was not put back");
+});
+
+await check("13. Opt-in: ticked on the parent step is stored true with a time", async () => {
+  const page = await browser.newPage();
+  const id = await walkToCheckout(page, { optIn: true });
+  const r = row(id);
+  assert(r.marketing_opt_in === true && !Number.isNaN(Date.parse(r.marketing_opt_in_at)), `stored ${r.marketing_opt_in}, ${r.marketing_opt_in_at}`);
+  assert(r.amount === 320, `amount ${r.amount}`);
+  await page.close();
 });
 
 await browser.close();

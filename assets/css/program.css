@@ -215,3 +215,6 @@
 @media (max-width: 599px) {
   .cal__menu { left: 0; right: auto; }
 }
+/* On the confirmation card the button sits at the right, so the list opens
+   leftward from it at every width. */
+.cal--light .cal__menu { left: auto; right: 0; }

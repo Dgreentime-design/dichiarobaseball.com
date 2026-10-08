@@ -251,7 +251,7 @@
 
       var fields = {};
       Array.prototype.forEach.call(form.elements, function (el) {
-        if (el.name && el.name !== "dbsa_trap") fields[el.name] = el.value;
+        if (el.name && el.name !== "dbsa_trap") fields[el.name] = el.type === "checkbox" ? el.checked : el.value;
       });
 
       if (error) error.hidden = true;
