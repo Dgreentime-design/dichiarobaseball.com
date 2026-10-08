@@ -21,7 +21,7 @@ const TYPES = {
   ".html": "text/html; charset=utf-8", ".css": "text/css", ".js": "application/javascript",
   ".json": "application/json", ".svg": "image/svg+xml", ".png": "image/png", ".jpg": "image/jpeg",
   ".jpeg": "image/jpeg", ".webp": "image/webp", ".txt": "text/plain", ".xml": "application/xml",
-  ".woff2": "font/woff2", ".ico": "image/x-icon"
+  ".woff2": "font/woff2", ".ico": "image/x-icon", ".ics": "text/calendar; charset=utf-8"
 };
 
 const isFile = (p) => stat(p).then((s) => s.isFile(), () => false);

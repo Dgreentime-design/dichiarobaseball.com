@@ -192,6 +192,28 @@
     });
   });
 
+  /* --- Add to calendar ---------------------------------------------------
+     A disclosure: the button opens and closes a list of links. Escape
+     closes it and returns focus to the button, and so does a click
+     anywhere else. */
+
+  Array.prototype.forEach.call(document.querySelectorAll("[data-cal]"), function (cal) {
+    var button = cal.querySelector(".cal__toggle");
+    var menu = cal.querySelector(".cal__menu");
+    if (!button || !menu) return;
+    var set = function (open) {
+      button.setAttribute("aria-expanded", open ? "true" : "false");
+      menu.hidden = !open;
+    };
+    button.addEventListener("click", function () { set(menu.hidden); });
+    cal.addEventListener("keydown", function (e) {
+      if (e.key === "Escape" && !menu.hidden) { set(false); button.focus(); }
+    });
+    document.addEventListener("click", function (e) {
+      if (!menu.hidden && !cal.contains(e.target)) set(false);
+    });
+  });
+
   /* --- Enquiry forms -----------------------------------------------------
      Contact and Team camps post to /api/enquiry, which saves the message
      for the academy. Success replaces the form with the reference and moves

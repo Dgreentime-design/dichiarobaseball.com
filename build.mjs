@@ -158,6 +158,45 @@ const programs = existsSync(join("data", "programs.json"))
 
 const VENUES = (programs._meta && programs._meta.venues) || {};
 const PHONE = "+1-201-773-6858";
+
+/* --- Add to calendar -------------------------------------------------------
+
+   Google and Outlook.com subscribe to a calendar by fetching it themselves,
+   so they need an absolute URL that serves the file. One value decides it:
+   SITE_ORIGIN, which is https://dichiarobaseball.com from the cutover.
+   Until then it is the deployment's own branch URL, where this build's
+   files actually are. (ORIGIN, above, points a preview at the project's
+   production URL, which serves main and may not have the file.) */
+const CALENDAR_ORIGIN = (
+  process.env.SITE_ORIGIN ||
+  (process.env.VERCEL_BRANCH_URL ? `https://${process.env.VERCEL_BRANCH_URL}` : ORIGIN)
+).replace(/\/+$/, "");
+
+/* Apple Calendar, and Outlook on the desktop, take the file itself: `ics`
+   is the path from the site root, made relative by the page. */
+function calendarLinks(slug) {
+  const ics = `programs/${slug}.ics`;
+  const url = `${CALENDAR_ORIGIN}/${ics}`;
+  return {
+    ics,
+    google: `https://calendar.google.com/calendar/r?cid=${encodeURIComponent(url.replace(/^https?:/, "webcal:"))}`,
+    outlook: `https://outlook.live.com/calendar/0/addfromweb?url=${encodeURIComponent(url)}`
+  };
+}
+
+/* A disclosure button and a list of links, opened by site.js. No hover:
+   it works by keyboard and is read as a button and a list. */
+function calendarControl(id, links, ics = links.ics) {
+  const a = (s) => s.replace(/&/g, "&amp;");
+  return `<div class="cal" data-cal>
+        <button class="btn btn--ghost btn--compact cal__toggle" type="button" aria-expanded="false" aria-controls="${id}">Add to calendar</button>
+        <ul class="cal__menu" id="${id}" hidden>
+          <li><a href="${a(ics)}" download>Apple Calendar <span class="cal__note">or Outlook on a computer</span></a></li>
+          <li><a href="${a(links.google)}" target="_blank" rel="noopener">Google Calendar</a></li>
+          <li><a href="${a(links.outlook)}" target="_blank" rel="noopener">Outlook.com</a></li>
+        </ul>
+      </div>`;
+}
 const EMAIL = "info@dichiarobaseball.com";
 
 function postalAddress(address) {
@@ -331,7 +370,37 @@ function injectJsonLd(html, file) {
   return html.replace(/<\/head>/i, tag + "\n</head>");
 }
 
+/* --- Metadata, one source per page ----------------------------------------
+
+   A page's <title> and meta description are the only place its search and
+   share text is written. The og: and twitter: title and description are
+   copied from them here, so they cannot drift apart, and a page with no
+   share image gets the facility photo. Any count, price, date or age in a
+   description comes from the data the page renders (see the Metadata rule
+   in CLAUDE.md); verify.mjs checks it. */
+const DEFAULT_OG_IMAGE = `${PROD_ORIGIN}/assets/img/dbsa-01-facility-in-use.jpg`;
+function setMeta(html) {
+  const title = pick(html, /<title>([\s\S]*?)<\/title>/i);
+  const description = pick(html, /<meta name="description" content="([^"]*)"/i);
+  if (!title || !description) return html;
+  html = html.replace(/\n?<meta (?:property="og:(?:title|description)"|name="twitter:(?:title|description|image)") content="[^"]*">/gi, "");
+  const image = pick(html, /<meta property="og:image" content="([^"]*)"/i) || DEFAULT_OG_IMAGE;
+  const tags = [
+    `<meta property="og:title" content="${title}">`,
+    `<meta property="og:description" content="${description}">`,
+    ...(/property="og:image"/i.test(html) ? [] : [`<meta property="og:image" content="${image}">`]),
+    ...(/name="twitter:card"/i.test(html) ? [] : [`<meta name="twitter:card" content="summary_large_image">`]),
+    `<meta name="twitter:title" content="${title}">`,
+    `<meta name="twitter:description" content="${description}">`,
+    `<meta name="twitter:image" content="${image}">`
+  ];
+  /* A function, not a "$1" string: a price such as $165 in the text would
+     otherwise be read as a capture group. */
+  return html.replace(/(<meta name="description" content="[^"]*">)/i, (tag) => `${tag}\n${tags.join("\n")}`);
+}
+
 function write(file, html) {
+  html = setMeta(html);
   html = setOrigin(html);
   html = setRobots(html, file);
   html = injectJsonLd(html, file);
@@ -354,7 +423,13 @@ for (const file of readdirSync(PAGES).filter(f => f.endsWith(".html") && !f.star
   /* {{about_topics}}: the Contact page's ?about= slugs and the topic each
      preselects, from api/_lib/topics.js, the same map the endpoint checks. */
   const html = resolvePartials(readFileSync(join(PAGES, file), "utf8"))
-    .replaceAll("{{about_topics}}", JSON.stringify(ABOUT_TOPICS).replace(/<\//g, "<\\/"));
+    /* {{card_count}}: the Camps description counts the cards on the page,
+       so it cannot say four while the page shows seven. */
+    .replace(/\{\{card_count\}\}/g, (_, i, src) => ["No", "One", "Two", "Three", "Four", "Five", "Six", "Seven", "Eight",
+      "Nine", "Ten", "Eleven", "Twelve"][(src.match(/<article class="card[ "]/g) || []).length] || String((src.match(/<article class="card[ "]/g) || []).length))
+    .replaceAll("{{about_topics}}", JSON.stringify(ABOUT_TOPICS).replace(/<\//g, "<\\/"))
+    .replaceAll("{{calendar_links}}", JSON.stringify(Object.fromEntries(programs.programs
+      .filter((p) => p.status === "live").map((p) => [p.slug, calendarLinks(p.slug)]))).replace(/<\//g, "<\\/"));
   write(file, html);
   pages++;
 }
@@ -517,6 +592,22 @@ function factsFor(p) {
   };
 }
 
+/* The search and share description of a program page, from its data only:
+   name, ages, sessions, first and last date, time and price. */
+function programDescription(p) {
+  const s = p.schedule;
+  const opts = openOptions(p).length ? openOptions(p) : p.options;
+  const prices = [...new Set(opts.map((o) => o.price))];
+  const min = Math.min(...opts.map((o) => o.price));
+  const d = s.dates || [];
+  const later = s.time_change ? `, ${compact(s.time_change.time)} from ${MON[ymd(s.time_change.from).m]} ${ymd(s.time_change.from).d}` : "";
+  const time = compact(s.groups && s.groups.length ? daySpan(s) : s.time) + later;
+  const when = d.length ? `, ${d.length} ${s.day}s from ${usDate(d[0])} to ${usDate(d[d.length - 1])}, ${time}` : "";
+  const text = `${typo(p.name)}, ${esc(p.season)}. ${esc(`${agesLabel(p.ages)}${when}. ${prices.length > 1 ? "From " : ""}${money(min)}.`)}`;
+  /* The place is left off where it would take the description past 160. */
+  return plain(text).length + 15 <= 160 ? `${text} Fair Lawn, NJ.` : text;
+}
+
 function heroBlock(p, c, f) {
   const s = p.schedule;
   const opts = openOptions(p).length ? openOptions(p) : p.options;
@@ -671,7 +762,7 @@ function scheduleBlock(p, c, f) {
     <p class="eyebrow eyebrow--dim">Every date, up front</p>
     <div class="schedule__head">
       <h2 class="display-l on-dark" id="schedule-title">${word(s.dates.length)} ${s.day}s.</h2>
-      <a class="btn btn--ghost btn--compact" href="${f.ics}" download>Add all dates to your calendar</a>
+      ${calendarControl(`cal-${p.slug}`, calendarLinks(p.slug), f.ics)}
     </div>${lede}
 
     <div class="months">
@@ -894,7 +985,8 @@ function icsFor(p) {
   const away = new Set((s.combined && s.combined.dates) || []);
   const facility = VENUES.facility || {};
   const other = VENUES.superdome || {};
-  const text = (x) => String(x).replace(/\\/g, "\\\\").replace(/;/g, "\;").replace(/,/g, "\\,").replace(/\n/g, "\\n");
+  const text = (x) => String(x).replace(/\\/g, "\\\\").replace(/;/g, "\\;").replace(/,/g, "\\,").replace(/\n/g, "\\n");
+  const page = `${CALENDAR_ORIGIN}/programs/${p.slug}.html`;
   const utc = (local) => new Date(local).toISOString().replace(/[-:]/g, "").replace(/\.\d{3}/, "");
   /* The build day, not the build second, so a rebuild on the same day
      writes the same file. */
@@ -908,14 +1000,15 @@ function icsFor(p) {
     const range = parseRange(date, time);
     if (!range) continue;
     const venue = combined ? other : facility;
-    const detail = combined
-      ? s.combined.label
-      : (s.groups && s.groups.length ? s.groups.map((g) => `${g.label}: ${compact(g.time)}`).join(". ") : "");
+    const when = combined
+      ? `${s.combined.label}: ${compact(s.combined.time)}`
+      : (s.groups && s.groups.length ? s.groups.map((g) => `${g.label}: ${compact(g.time)}`).join(". ") : compact(timeOn(s, date)));
+    const detail = `${when}. ${venue.name}, ${venue.address}. Dates and details: ${page}`;
     lines.push("BEGIN:VEVENT", `UID:${p.slug}-${date}@dichiarobaseball.com`, `DTSTAMP:${stamp}`,
       `DTSTART:${utc(range.start)}`, `DTEND:${utc(range.end)}`,
       `SUMMARY:${text(plain(p.name))}`,
       `LOCATION:${text(`${venue.name}, ${venue.address}`)}`);
-    if (detail) lines.push(`DESCRIPTION:${text(detail)}`);
+    lines.push(`DESCRIPTION:${text(detail)}`, `URL:${page}`);
     lines.push("END:VEVENT");
   }
   lines.push("END:VCALENDAR");
@@ -965,9 +1058,7 @@ if (PUBLIC.length && existsSync(join(PAGES, "_program.html"))) {
     const html = resolvePartials(template
       .replace("{{blocks}}", () => blocks)
       .replaceAll("{{title}}", () => `${name}, ${esc(p.season)} · DiChiaro Baseball &amp; Softball Academy`)
-      .replaceAll("{{og_title}}", () => `${name}, ${esc(p.season)}`)
-      .replaceAll("{{description}}", () => c.description || esc(p.summary))
-      .replaceAll("{{og_description}}", () => c.og_description || c.description || esc(p.summary))
+      .replaceAll("{{description}}", () => programDescription(p))
       .replaceAll("{{og_image}}", () => c.image.src)
       .replaceAll("{{file}}", () => file));
     PROGRAM_PAGE[file] = p.slug;
@@ -994,7 +1085,8 @@ if (PUBLIC.length && existsSync(join(PAGES, "_program.html"))) {
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Camps &amp; clinics · DiChiaro Baseball &amp; Softball Academy</title>
+<title>Finding your program · DiChiaro Baseball &amp; Softball Academy</title>
+<meta name="description" content="This old program link now forwards to the program&rsquo;s own page at DiChiaro Baseball &amp; Softball Academy, or to the full list of camps and clinics.">
 <link rel="canonical" href="https://dichiarobaseball.com/camps-and-clinics.html">
 <script>
   (function () {

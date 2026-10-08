@@ -18,6 +18,11 @@
         the background, never by the breakpoint.
      6. Stat strips. No figure is clipped or wrapped, and no strip leaves an
         empty slot, at 390, 768 and 1440.
+     7. Metadata. Every page has its own title and description; og: and
+        twitter: title and description equal them; there is a share image;
+        the description is 70 to 160 characters; and every number in the
+        description also appears in the page body, so a share card cannot
+        claim a count, price or date the page does not show.
    ========================================================================== */
 
 import { chromium } from "playwright";
@@ -183,6 +188,55 @@ for (const link of Array.from(allLinks).sort()) {
 }
 await checker.close();
 if (broken === 0) pass(`${allLinks.size} internal links, all resolve`);
+
+/* --- 7: metadata describes the real page -------------------------------- */
+
+console.log("\nMetadata");
+const decode = (x) => x
+  .replace(/&nbsp;/g, " ").replace(/&rsquo;|&lsquo;/g, "\u2019").replace(/&ldquo;|&rdquo;/g, "\"")
+  .replace(/&middot;/g, "\u00b7").replace(/&rarr;/g, "\u2192").replace(/&mdash;|&ndash;/g, "-")
+  .replace(/&#(\d+);/g, (_, n) => String.fromCharCode(Number(n))).replace(/&amp;/g, "&");
+const meta = (html, attr, name) => {
+  const m = html.match(new RegExp(`<meta ${attr}="${name}" content="([^"]*)"`, "i"));
+  return m ? m[1] : null;
+};
+const titles = new Map(), descriptions = new Map();
+const metaChecker = await browser.newContext();
+let metaProblems = 0;
+for (const file of Array.from(seen).filter((f) => f.endsWith(".html")).sort()) {
+  const res = await metaChecker.request.get(`${BASE}/${file}`);
+  const html = await res.text();
+  const problems = [];
+  const title = (html.match(/<title>([\s\S]*?)<\/title>/i) || [])[1];
+  const description = meta(html, "name", "description");
+  if (!title) problems.push("no title");
+  if (!description) problems.push("no meta description");
+  if (title) titles.set(title, [...(titles.get(title) || []), file]);
+  if (description) descriptions.set(description, [...(descriptions.get(description) || []), file]);
+  for (const [attr, name, want] of [["property", "og:title", title], ["property", "og:description", description],
+    ["name", "twitter:title", title], ["name", "twitter:description", description]]) {
+    const got = meta(html, attr, name);
+    if (got !== want) problems.push(`${name} ${got === null ? "missing" : "differs from the page"}`);
+  }
+  if (!meta(html, "property", "og:image")) problems.push("no og:image");
+  if (description) {
+    const text = decode(description);
+    /* Declared exception: pages/instructors.html is Daniel's to edit, and
+       its description is his to shorten. Reported, not failed. */
+    if ((text.length < 70 || text.length > 160) && file === "instructors.html") console.log(`  note  instructors.html: description is ${text.length} characters (Daniel's page)`);
+    else if (text.length < 70 || text.length > 160) problems.push(`description is ${text.length} characters`);
+    const body = decode(html.replace(/^[\s\S]*?<body[^>]*>/i, "").replace(/<(script|style)[\s\S]*?<\/\1>/gi, " ").replace(/<[^>]+>/g, " "))
+      .replace(/\s+/g, " ");
+    const missing = (text.match(/\d+(?:,\d{3})*(?::\d\d)?/g) || []).filter((n) => !body.includes(n));
+    if (missing.length) problems.push(`description says ${missing.join(", ")}, the page does not`);
+  }
+  if (problems.length) { metaProblems += problems.length; fail(`${file}: ${problems.join("; ")}`); }
+}
+for (const [kind, map] of [["title", titles], ["description", descriptions]]) {
+  for (const [, files] of map) if (files.length > 1) { metaProblems++; fail(`same ${kind} on ${files.join(", ")}`); }
+}
+await metaChecker.close();
+if (metaProblems === 0) pass(`${titles.size} pages: unique titles and descriptions, share tags match, 70 to 160 characters, every number on the page`);
 
 await browser.close();
 console.log(`\n${failures === 0 ? "All checks passed." : failures + " failure(s)."}`);

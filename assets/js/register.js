@@ -440,6 +440,18 @@
         }).join("");
         set("[data-dates-note]", "Sessions run " + when(p.schedule) + " at " +
           p.venues.map(function (v) { return v.address; }).join(" and ") + ".");
+
+        /* Add to calendar, for the program just registered: the same three
+           links as its program page, written into the page by the build. */
+        var links = null;
+        try { links = JSON.parse(document.getElementById("calendar-links").textContent)[p.slug]; } catch (e) { links = null; }
+        var cal = card.querySelector("[data-cal]");
+        if (cal) cal.hidden = !links;
+        if (links) {
+          Array.prototype.forEach.call(card.querySelectorAll("[data-cal-link]"), function (a) {
+            a.href = links[a.getAttribute("data-cal-link")];
+          });
+        }
       }
     }
 

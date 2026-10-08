@@ -17,6 +17,8 @@
 
 <main id="main">
 
+<script type="application/json" id="calendar-links">{{calendar_links}}</script>
+
 <!-- ===================================================================== -->
 <!-- Progress                                                              -->
 <!-- ===================================================================== -->
@@ -382,7 +384,14 @@
         <div class="reg-card" data-dates-card hidden>
           <div class="reg-card__head">
             <h3 class="heading-s" data-dates-title></h3>
-            <a class="code-toggle" href="contact.html?about=calendar">Add to calendar</a>
+            <div class="cal cal--light" data-cal>
+              <button class="code-toggle cal__toggle" type="button" aria-expanded="false" aria-controls="cal-confirm">Add to calendar</button>
+              <ul class="cal__menu" id="cal-confirm" hidden>
+                <li><a href="#" data-cal-link="ics" download>Apple Calendar <span class="cal__note">or Outlook on a computer</span></a></li>
+                <li><a href="#" data-cal-link="google" target="_blank" rel="noopener">Google Calendar</a></li>
+                <li><a href="#" data-cal-link="outlook" target="_blank" rel="noopener">Outlook.com</a></li>
+              </ul>
+            </div>
           </div>
           <div class="dates" data-dates></div>
           <p class="reg-card__note" data-dates-note></p>

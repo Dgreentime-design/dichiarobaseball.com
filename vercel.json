@@ -101,6 +101,15 @@
   ],
   "headers": [
     {
+      "source": "/programs/(.*)\\.ics",
+      "headers": [
+        {
+          "key": "Content-Type",
+          "value": "text/calendar; charset=utf-8"
+        }
+      ]
+    },
+    {
       "source": "/assets/(.*)",
       "headers": [
         {

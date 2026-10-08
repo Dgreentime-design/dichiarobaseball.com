@@ -190,3 +190,27 @@
 }
 .schedule__head { margin-top: var(--s-5); }
 .schedule__lede { margin-top: var(--s-5); }
+
+/* --- Add to calendar ------------------------------------------------------
+   A button and a list of links. The list opens below the button, over
+   what follows, on dark or light. */
+
+.cal { position: relative; }
+.cal[hidden] { display: none; }
+.cal__menu {
+  position: absolute; right: 0; top: calc(100% + 8px); z-index: 20;
+  min-width: 260px; margin: 0; padding: 8px; list-style: none;
+  background: var(--c-bone); border: 1px solid var(--c-line); border-radius: var(--r-2);
+  box-shadow: 0 12px 32px rgba(0, 0, 0, .18);
+}
+.cal__menu[hidden] { display: none; }
+.cal__menu a {
+  display: flex; flex-direction: column; justify-content: center; min-height: 44px;
+  padding: 8px 12px; border-radius: var(--r-1);
+  color: var(--c-ink); font-size: var(--t-body-s); text-decoration: none;
+}
+.cal__menu a:hover, .cal__menu a:focus-visible { background: var(--c-bone-dim); }
+.cal__note { color: var(--c-muted); font-size: var(--t-meta); }
+@media (max-width: 599px) {
+  .cal__menu { left: 0; right: auto; }
+}

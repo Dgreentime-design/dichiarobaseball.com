@@ -80,6 +80,22 @@ than publishing either version.
 Aggregate claims ("three draft picks", "more than thirty teams") must be
 counted against the source before they are written.
 
+## Metadata
+
+Search and share text must describe the real page.
+
+- A page's `<title>` and meta description are its only source.
+  `build.mjs` copies them into `og:` and `twitter:` title and description.
+  Never write those tags by hand.
+- Any count, price, date, age or program name in a description is
+  generated from the data the page renders (`data/programs.json`, the
+  cards, `data/program-copy.json`), never typed. Program pages build theirs
+  from the program's data. Where a fact cannot be generated, write the
+  description without it.
+- `npm run verify` checks it: unique titles and descriptions, share tags
+  equal to them, 70 to 160 characters, and every number in a description
+  also on the page.
+
 ## The money path
 
 A registration is confirmed when a verified webhook says the payment
