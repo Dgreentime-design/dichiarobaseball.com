@@ -44,6 +44,7 @@
 .prog-actions .status {
   font-family: var(--f-mono); font-size: var(--t-data-m); color: var(--c-turf-light);
 }
+.prog-actions .status--full { color: var(--c-red-bright); }
 @media (max-width: 599px) { .prog-actions { display: grid; } .prog-actions .btn { width: 100%; } }
 
 /* --- Groups -------------------------------------------------------------- */

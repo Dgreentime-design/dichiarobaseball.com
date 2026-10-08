@@ -43,7 +43,10 @@ export function optionOpen(program, option, today = todayEastern()) {
    would charge a family the wrong amount. */
 export function priceCart({ programSlug, optionId, rateId, playerCount }) {
   const program = findProgram(programSlug);
-  if (!program || program.status !== "live") throw new CartError("Unknown program");
+  /* A full camp is closed by hand, "full": true in the data, and gets the
+     same answer as one that does not exist: nothing is sold, and the
+     register page, which prices through here, is not offered it. */
+  if (!program || program.status !== "live" || program.full) throw new CartError("Unknown program");
   if (program.gated) throw new CartError("This program needs a code, and codes are not available yet");
 
   /* A past option gets the same answer as one that never existed. */

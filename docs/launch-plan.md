@@ -284,3 +284,36 @@ pages; `build.mjs` no longer renders note blocks, and they stay in
   asks for the waiver again.
 - Town and league codes, and the confirmation email, were in the register
   prototype note. Both are already listed under "Week after launch".
+
+---
+
+## 6. Closing a full camp, and reopening it
+
+There is no live counting of places. Michael watches Registrations in
+Airtable and tells Daniel when a camp is full. One line closes it.
+
+**Close a camp**
+
+1. Open `data/programs.json` on GitHub, on the `review` branch:
+   https://github.com/Dgreentime-design/dichiarobaseball.com/edit/review/data/programs.json
+2. Find the camp by its `"slug"` (for example `"little-league-fall-2026"`).
+   A few lines below it is `"full": false,`. Change it to `"full": true,`
+   and change nothing else.
+3. Commit straight to `review` with a message such as "Close Little League
+   fall: full". (Or ask CC: "Close little-league-fall-2026".)
+4. **Check the preview** a minute later:
+   - the camp's page shows "Full" in red, and every register button for it
+     reads "Ask about openings" and opens the Contact form;
+   - its card on Camps (and Home, if it has one) shows a "Full" chip;
+   - `register.html?program=<slug>` says "We could not find that program".
+   The checkout refuses it too, so nobody can pay for a place that is not
+   there.
+5. **Production:** merge `review` into `main` as usual, then check the same
+   three things on dichiarobaseball.com.
+
+**Reopen it:** the same steps, changing `"full": true,` back to
+`"full": false,`.
+
+**Not switched for you:** hand-written lines such as "Six places left" on
+the Infield page and "4 spots left" on the homepage Hit Night card are
+copy, not data. If a camp closes, those lines need editing too (ask CC).

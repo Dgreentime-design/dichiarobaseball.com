@@ -68,6 +68,7 @@
       "ages": "6 to 12",
       "status": "live",
       "gated": false,
+      "full": false,
       "summary": "Eight Sundays of fundamentals. Throwing, fielding, hitting and base running, taught slowly enough that the habits actually stick.",
       "teaches": [
         "Hitting drills",
@@ -116,6 +117,7 @@
       "ages": "6 to 12",
       "status": "live",
       "gated": false,
+      "full": false,
       "summary": "Nine Sundays of fundamentals through the winter.",
       "teaches": [
         "Hitting drills",
@@ -165,6 +167,7 @@
       "ages": "6 to 12",
       "status": "live",
       "gated": false,
+      "full": false,
       "summary": "A shorter four-Sunday block in March.",
       "teaches": [
         "Hitting drills",
@@ -209,6 +212,7 @@
       "ages": "Grades 4 to 8 and high school",
       "status": "live",
       "gated": false,
+      "full": false,
       "summary": "Fifteen Saturdays of nothing but infield. Ground ball approach, footwork, double plays, slow rollers and relays.",
       "teaches": [
         "Correct approach to ground balls",
@@ -306,6 +310,7 @@
       "ages": "10 to 18",
       "status": "live",
       "gated": false,
+      "full": false,
       "summary": "One hour of high-rep hitting against live pitching and machines. Drop in for a session or buy the month.",
       "teaches": [
         "Professional instruction",
@@ -422,6 +427,7 @@
       "ages": "10 to 18",
       "status": "live",
       "gated": false,
+      "full": false,
       "summary": "The same format running January through June.",
       "teaches": [
         "Professional instruction",
@@ -574,6 +580,7 @@
       "ages": "IHA squad",
       "status": "live",
       "gated": true,
+      "full": false,
       "summary": "Hitting and fielding for the IHA squad. Nine Mondays.",
       "teaches": [
         "Hitting drills",
@@ -618,6 +625,7 @@
       "ages": "Fair Lawn HS squad",
       "status": "live",
       "gated": true,
+      "full": false,
       "summary": "Hitting and fielding for the Fair Lawn HS squad. Eight Wednesdays.",
       "teaches": [
         "Hitting drills",
@@ -664,6 +672,7 @@
       "ages": "Old Tappan HS squad",
       "status": "live",
       "gated": true,
+      "full": false,
       "summary": "Fifteen Sundays of hitting for the Old Tappan squad.",
       "teaches": [
         "Hitting drills",

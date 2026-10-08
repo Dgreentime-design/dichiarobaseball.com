@@ -266,8 +266,8 @@ function eventsFor(program, file) {
     name: plain(o.label),
     price: String(o.price),
     priceCurrency: "USD",
-    availability: "https://schema.org/InStock",
-    url: `${ORIGIN}/${signUpUrl(program)}`,
+    availability: program.full ? "https://schema.org/SoldOut" : "https://schema.org/InStock",
+    url: `${ORIGIN}/${program.full ? `contact.html?about=${encodeURIComponent(program.slug)}` : signUpUrl(program)}`,
   }));
 
   const times = (date) => (s.groups && s.groups.length)
@@ -399,7 +399,27 @@ function setMeta(html) {
   return html.replace(/(<meta name="description" content="[^"]*">)/i, (tag) => `${tag}\n${tags.join("\n")}`);
 }
 
+/* --- The "Full" switch -----------------------------------------------------
+
+   "full": true on a program in data/programs.json closes it by hand. On
+   every page, each register link for it becomes "Ask about openings" to
+   contact.html?about=<slug>, and each card that links to its page shows a
+   "Full" chip. The program page shows Full in its hero (heroBlock), and
+   the checkout refuses it (priceCart). Nothing to edit but the one line. */
+const FULL = programs.programs.filter((p) => p.full).map((p) => p.slug);
+function applyFull(html) {
+  for (const slug of FULL) {
+    const s = slug.replace(/[-]/g, "\\-");
+    html = html.replace(new RegExp(`<a([^>]*?)href="((?:\\.\\./)?)register\\.html\\?program=${s}(?:&[^"]*)?"([^>]*)>[\\s\\S]*?</a>`, "g"),
+      (_, pre, up, post) => `<a${pre}href="${up}contact.html?about=${slug}"${post}>Ask about openings</a>`);
+    html = html.replace(/<article\b[\s\S]*?<\/article>/g, (card) => card.includes(`programs/${slug}.html`)
+      ? card.replace(/<span class="chip[^"]*">[^<]*<\/span>/, '<span class="chip">Full</span>') : card);
+  }
+  return html;
+}
+
 function write(file, html) {
+  html = applyFull(html);
   html = setMeta(html);
   html = setOrigin(html);
   html = setRobots(html, file);
@@ -621,7 +641,8 @@ function heroBlock(p, c, f) {
   const img = c.image;
   const flyer = p.flyer && existsSync(join("assets", "flyers", p.flyer))
     ? `\n        <a class="btn btn--ghost" href="assets/flyers/${encodeURI(p.flyer)}" download>Download the flyer (PDF)</a>` : "";
-  const starts = dates.length && dates[0] > today ? `\n        <p class="status">Starts ${MON[ymd(dates[0]).m]} ${ymd(dates[0]).d}</p>` : "";
+  const starts = p.full ? `\n        <p class="status status--full">Full</p>`
+    : dates.length && dates[0] > today ? `\n        <p class="status">Starts ${MON[ymd(dates[0]).m]} ${ymd(dates[0]).d}</p>` : "";
   const cta = f.gated ? "Ask about joining"
     : `${c.register_label || "Register"} &nbsp;·&nbsp; ${prices.length > 1 ? "from " : ""}${money(min)}`;
   return `

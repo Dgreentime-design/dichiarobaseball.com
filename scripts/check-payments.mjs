@@ -23,10 +23,16 @@
                           confirming, with the reference and a call button, and
                           moves to confirmed when the webhook arrives, titled
                           "You're registered." because this browser has no name
+  12. Full                a program marked "full": true in the data is refused at
+                          checkout with the generic error, writes no row, and
+                          is not offered to the register page. Runs a second
+                          server on port 8092 against a copy of the data with
+                          one program full, and puts the data back after
    ========================================================================== */
 
 import { chromium } from "playwright";
-import { readFileSync } from "node:fs";
+import { readFileSync, writeFileSync } from "node:fs";
+import { spawn } from "node:child_process";
 import { sign } from "../api/_lib/providers/signature.js";
 import { randomBytes } from "node:crypto";
 
@@ -285,6 +291,49 @@ await check("11. Slow webhook: still confirming after 60 seconds, then confirmed
   assert(await page.isHidden("[data-confirm-call]"), "call button still shown once confirmed");
   assert(row(id).status === "confirmed", `row is ${row(id).status}`);
   await page.close();
+});
+
+await check("12. Full: a program marked full is refused at checkout, writes nothing, and is not offered", async () => {
+  const DATA = new URL("../data/programs.json", import.meta.url);
+  const original = readFileSync(DATA, "utf8");
+  const SLUG = "little-league-fall-2026";
+  const FULL_BASE = "http://localhost:8092";
+  let server;
+  try {
+    const data = JSON.parse(original);
+    data.programs.find((p) => p.slug === SLUG).full = true;
+    writeFileSync(DATA, JSON.stringify(data, null, 2) + "\n");
+    server = spawn(process.execPath, [new URL("./dev-server.mjs", import.meta.url).pathname, "8092"], { stdio: "ignore", env: { ...process.env, PAYMENT_PROVIDER: "mock" } });
+    for (let i = 0; i < 50; i++) { try { await fetch(FULL_BASE); break; } catch { await wait(100); } }
+
+    const before = rawStore();
+    const res = await fetch(`${FULL_BASE}/api/checkout/session`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ programSlug: SLUG, optionId: "full", paymentMethod: "online",
+        players: [PLAYER], parent: PARENT, waiverAccepted: true, photoConsent: false })
+    });
+    const body = await res.json();
+    assert(res.status === 400 && body.error === "Unknown program", `checkout ${res.status}: ${JSON.stringify(body)}`);
+    assert(rawStore() === before, "a registration row was written");
+    for (const method of ["facility", "check"]) {
+      const r = await fetch(`${FULL_BASE}/api/checkout/session`, {
+        method: "POST", headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ programSlug: SLUG, optionId: "full", paymentMethod: method,
+          players: [PLAYER], parent: PARENT, waiverAccepted: true, photoConsent: false })
+      });
+      assert(r.status === 400, `${method}: ${r.status}`);
+    }
+    assert(rawStore() === before, "a facility or check row was written");
+    const offered = await fetch(`${FULL_BASE}/api/programs/${SLUG}`);
+    assert(offered.status === 404, `/api/programs/${SLUG} ${offered.status}`);
+    const other = await fetch(`${FULL_BASE}/api/programs/little-league-winter-2027`);
+    assert(other.status === 200, `an open program was refused too: ${other.status}`);
+  } finally {
+    writeFileSync(DATA, original);
+    if (server) server.kill();
+  }
+  assert(readFileSync(DATA, "utf8") === original, "the data was not put back");
 });
 
 await browser.close();
