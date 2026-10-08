@@ -14,6 +14,8 @@
    1. Contact            a valid message writes one row, status new
    2. Team camps         a valid message writes one row, details as lines
    3. Honeypot           a filled hidden field looks like success, writes nothing
+   4b. Trap              empty with 4 seconds saves, filled is discarded, and the
+                         field carries every autofill-ignore attribute
    4. Too fast           under 3 seconds after load looks like success, writes nothing
    5. Bad input          a bad email, a 2,001 character message: 400, nothing written
    6. Rate limit         the sixth request in a minute from one address is refused
@@ -60,7 +62,7 @@ const post = (body, { base = BASE, from = `198.51.100.${++ip}` } = {}) =>
 const contact = (over = {}) => ({
   form: "contact",
   elapsedMs: 8000,
-  website: "",
+  trap: "",
   pageUrl: "/contact.html",
   fields: {
     "first-name": "TEST", "last-name": "Enquiry", email: "test@example.com", phone: "",
@@ -87,7 +89,7 @@ await check("1. Contact: a valid message writes one row, status new", async () =
 
 await check("2. Team camps: a valid message writes one row, details as lines", async () => {
   const res = await post({
-    form: "team-camps", elapsedMs: 9000, website: "", pageUrl: "/team-camps.html",
+    form: "team-camps", elapsedMs: 9000, trap: "", pageUrl: "/team-camps.html",
     fields: { name: "TEST Coach", role: "Head coach, 12U", email: "coach@example.com", phone: "(201) 555 0148",
       team: "TEST 12U", sport: "Softball", players: "14", weeks: "Eight weeks", start: "First week of December", notes: "" }
   });
@@ -101,7 +103,7 @@ await check("2. Team camps: a valid message writes one row, details as lines", a
 
 await check("3. Honeypot: a filled hidden field looks like success and writes nothing", async () => {
   const before = raw(ENQUIRIES);
-  const res = await post(contact({ website: "http://spam.example" }));
+  const res = await post(contact({ trap: "http://spam.example" }));
   const data = await res.json();
   assert(res.status === 200 && REFERENCE.test(data.reference), `status ${res.status}`);
   assert(raw(ENQUIRIES) === before, "a row was written");
@@ -114,6 +116,21 @@ await check("4. Too fast: under 3 seconds looks like success and writes nothing"
     assert(res.status === 200, `elapsed ${elapsedMs}: status ${res.status}`);
   }
   assert(raw(ENQUIRIES) === before, "a row was written");
+});
+
+await check("4b. Trap: empty with 4 seconds elapsed saves, filled is discarded, and nothing autofills it", async () => {
+  const ok = await (await post(contact({ elapsedMs: 4000, trap: "" }))).json();
+  assert(row(ok.reference), "an honest message with 4 seconds elapsed was not saved");
+  const before = raw(ENQUIRIES);
+  await post(contact({ elapsedMs: 4000, trap: "filled" }));
+  assert(raw(ENQUIRIES) === before, "a filled trap was saved");
+  for (const page of ["contact.html", "team-camps.html"]) {
+    const html = await (await fetch(`${BASE}/${page}`)).text();
+    const input = (html.match(/<input[^>]*name="dbsa_trap"[^>]*>/) || [])[0] || "";
+    for (const attr of ['autocomplete="off"', "data-1p-ignore", 'data-lpignore="true"', 'data-form-type="other"', 'tabindex="-1"'])
+      assert(input.includes(attr), `${page}: trap lacks ${attr}`);
+    assert(!/name="(website|url|company|name|email|phone|address)"[^>]*tabindex="-1"/.test(html), `${page}: a hidden field has an autofill name`);
+  }
 });
 
 await check("5. Bad input: a bad email or a 2,001 character message is a 400, nothing written", async () => {

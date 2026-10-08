@@ -2,14 +2,14 @@
    POST /api/enquiry
 
    Body: { form: "contact" | "team-camps", fields: {...}, about?, pageUrl?,
-           elapsedMs, website }
+           elapsedMs, trap }
 
    The Contact and Team camps forms. Each message is one row in the
    enquiries table, and an Airtable automation emails Michael. The site
    sends no email itself.
 
    Two spam checks answer with a success that writes nothing, so a bot
-   learns nothing from the response: the hidden `website` field filled in,
+   learns nothing from the response: the hidden `trap` field filled in,
    or a submit less than 3 seconds after the page loaded. Each address may
    send 5 a minute.
 
@@ -117,10 +117,15 @@ export async function POST(request) {
 
   const reference = newReference();
 
-  /* Spam: answer as if it worked, write nothing. */
+  /* Spam: answer as if it worked, write nothing. The log names the check
+     that caught it, never the value. The trap field is named so that no
+     browser or password manager autofills it: a field called "website"
+     was autofilled and real messages were thrown away. */
   const elapsed = Number(body.elapsedMs);
-  if (text(body.website, 200) || !Number.isFinite(elapsed) || elapsed < MIN_ELAPSED_MS) {
-    console.log("enquiry", reference, "discarded");
+  const caught = text(body.trap, 200) ? "honeypot"
+    : !Number.isFinite(elapsed) || elapsed < MIN_ELAPSED_MS ? "too_fast" : "";
+  if (caught) {
+    console.log("enquiry", reference, "discarded", caught);
     return json({ reference });
   }
 

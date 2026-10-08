@@ -229,7 +229,7 @@
 
       var fields = {};
       Array.prototype.forEach.call(form.elements, function (el) {
-        if (el.name && el.name !== "website") fields[el.name] = el.value;
+        if (el.name && el.name !== "dbsa_trap") fields[el.name] = el.value;
       });
 
       if (error) error.hidden = true;
@@ -245,7 +245,7 @@
           about: about,
           pageUrl: window.location.pathname + window.location.search,
           elapsedMs: Date.now() - loadedAt,
-          website: form.elements.website ? form.elements.website.value : ""
+          trap: form.elements.dbsa_trap ? form.elements.dbsa_trap.value : ""
         })
       })
         .then(function (res) {
