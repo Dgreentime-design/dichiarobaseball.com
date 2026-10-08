@@ -29,7 +29,7 @@
   var root = document.querySelector("[data-progress]");
   if (!root) return;
 
-  var state = { step: 1, method: "online", player: "Mia", program: null, option: null };
+  var state = { step: 1, method: "online", player: "", program: null, option: null };
   var STORE_KEY = "dbsa-registration";
 
   /* ?plan= on the program page's links, mapped to option IDs. */
@@ -398,7 +398,10 @@
     var lede = (about ? about + (start ? ", starting " + long(start) : "") + ". " : "") + fill(c.lede, values);
 
     set("[data-confirm-eyebrow]", c.eyebrow);
-    set("[data-confirm-title]", c.fullTitle || state.player + c.title);
+    /* The name is only known in the browser that started the registration.
+       The status endpoint returns no personal data, so anywhere else the
+       title carries no name. */
+    set("[data-confirm-title]", c.fullTitle || (state.player ? state.player + c.title : "You\u2019re registered."));
     set("[data-confirm-lede]", c.fullTitle ? fill(c.lede, values) : lede);
     set("[data-due-amount]", typeof ctx.amountCents === "number" ? moneyExact(ctx.amountCents) : "");
     set("[data-due-when]", fill(c.when, values));

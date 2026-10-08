@@ -21,7 +21,8 @@
                           like an unknown one, and is not offered
   11. Slow webhook        after 60 seconds unconfirmed the page says it is still
                           confirming, with the reference and a call button, and
-                          moves to confirmed when the webhook arrives
+                          moves to confirmed when the webhook arrives, titled
+                          "You're registered." because this browser has no name
    ========================================================================== */
 
 import { chromium } from "playwright";
@@ -110,6 +111,7 @@ await check("1. Happy path: approve moves the row pending -> confirmed with the 
   await page.click("button[value=approve]");
   await page.waitForURL(new RegExp(`register\\.html\\?registration=${id}`));
   await page.waitForFunction(() => /is registered/.test(document.querySelector("[data-confirm-title]").textContent), null, { timeout: 15000 });
+  assert((await title(page)) === "Mia is registered.", `confirmed title: ${await title(page)}`);
   assert((await page.textContent("[data-due-status]")) === "Paid", "status is not Paid");
   assert((await page.textContent("[data-due-amount]")) === "$320.00", "confirmation amount is not $320.00");
   const r = row(id);
@@ -126,7 +128,7 @@ await check("2. Decline: row moves to failed and the page never claims success",
   await page.waitForURL(new RegExp(`registration=${id}`));
   const seen = [];
   for (let i = 0; i < 12; i++) { seen.push(await title(page)); await wait(500); }
-  assert(!seen.some((t) => /is registered/.test(t)), `a success title appeared: ${seen.join(" | ")}`);
+  assert(!seen.some((t) => /registered\.$/.test(t)), `a success title appeared: ${seen.join(" | ")}`);
   assert(seen.at(-1) === "The payment did not go through.", `final title: ${seen.at(-1)}`);
   assert(["pending", "failed"].includes(row(id).status), `row is ${row(id).status}`);
   assert(!row(id).provider_order_id, "a declined payment recorded an order ID");
@@ -276,7 +278,10 @@ await check("11. Slow webhook: still confirming after 60 seconds, then confirmed
   assert(row(id).status === "pending", `row is ${row(id).status}`);
   const res = await webhook(session);
   assert(res.status === 200, `webhook ${res.status}`);
-  await page.waitForFunction(() => /is registered/.test(document.querySelector("[data-confirm-title]").textContent), null, { timeout: 15000 });
+  /* This browser never saw the player's name, and the status endpoint does
+     not return one, so the title must carry no name at all. */
+  await page.waitForFunction(() => /registered\.$/.test(document.querySelector("[data-confirm-title]").textContent), null, { timeout: 15000 });
+  assert((await title(page)) === "You’re registered.", `confirmed title: ${await title(page)}`);
   assert(await page.isHidden("[data-confirm-call]"), "call button still shown once confirmed");
   assert(row(id).status === "confirmed", `row is ${row(id).status}`);
   await page.close();
