@@ -7,7 +7,7 @@
     "tokens": "Copy may use tokens filled from the data at build time, so a count or a month can never drift from the schedule: {sessions} {home} {away} (counts as words, {Home} capitalised), {away_months}, {day}, {Day}, {home_time}, {away_time}. Venue session counts are generated, never written."
   },
   "infield-camp-2026-27": {
-    "description": "Fifteen Saturdays of infield work for grades 4 to 8 and high school. Ground ball approach, footwork, double plays and relays, taught by Lou DiChiaro in Fair Lawn, New Jersey.",
+    "description": "Fifteen Saturdays of infield work for grades 4-8 and high school. Ground ball approach, footwork, double plays and relays, taught by Lou DiChiaro in Fair Lawn, New Jersey.",
     "og_description": "Fifteen Saturdays of nothing but infield, taught by the man local coaches send their own players to.",
     "crumb": "Infield Camp",
     "image": {

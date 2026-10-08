@@ -62,12 +62,10 @@
   function chip(iso) { var d = day(iso); return DAYS[d.getUTCDay()].slice(0, 3) + " " + short(iso); }
 
   /* "2:30pm - 4:00pm" reads "2:30 to 4:00pm", as the rest of the site does. */
+  /* "2:30pm - 4:00pm" in the data reads "2:30pm-4:00pm", the site's one
+     time range style. */
   function span(t) {
-    var parts = (t || "").split(/\s*-\s*/);
-    if (parts.length !== 2) return t || "";
-    var a = parts[0].match(/(am|pm)$/), b = parts[1].match(/(am|pm)$/);
-    var start = a && b && a[1] === b[1] ? parts[0].slice(0, -2) : parts[0];
-    return start + " to " + parts[1];
+    return (t || "").replace(/\s*-\s*/, "-");
   }
 
   function when(schedule) {
