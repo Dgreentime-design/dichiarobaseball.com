@@ -192,24 +192,82 @@
     });
   });
 
-  /* --- Prototype forms ----------------------------------------------------
-     The marketing forms are not wired to anything yet. Rather than fake a
-     success message, the form validates, then says plainly that nothing was
-     sent and what the built version will do. */
+  /* --- Enquiry forms -----------------------------------------------------
+     Contact and Team camps post to /api/enquiry, which saves the message
+     for the academy. Success replaces the form with the reference and moves
+     focus there. Failure keeps what was typed and gives the phone number
+     and email instead. The time since the page loaded goes with the
+     message, because a submit under 3 seconds is a bot. */
 
-  Array.prototype.forEach.call(document.querySelectorAll("[data-proto-form]"), function (form) {
+  var loadedAt = Date.now();
+  var about = new URLSearchParams(window.location.search).get("about") || "";
+
+  var topics = document.getElementById("about-topics");
+  var topicSelect = document.getElementById("topic");
+  if (topics && topicSelect && about) {
+    try {
+      var topic = JSON.parse(topics.textContent)[about];
+      if (topic) topicSelect.value = topic;
+    } catch (e) { /* no preselection */ }
+  }
+
+  Array.prototype.forEach.call(document.querySelectorAll("[data-enquiry-form]"), function (form) {
+    var button = form.querySelector("button[type=submit]");
+    var label = button ? button.textContent : "";
+    var error = form.querySelector("[data-enquiry-error]");
+
     form.addEventListener("submit", function (e) {
       e.preventDefault();
       var ok = true;
       Array.prototype.forEach.call(form.querySelectorAll("[required]"), function (el) {
         var field = el.closest(".field");
-        var bad = !el.value || (el.type === "email" && el.value.indexOf("@") === -1);
+        var bad = !el.value.trim() || (el.type === "email" && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(el.value.trim()));
         if (field) field.classList.toggle("is-invalid", bad);
         if (bad && ok) { el.focus(); ok = false; }
       });
       if (!ok) return;
-      var notice = document.querySelector("[data-proto-notice]");
-      if (notice) { notice.hidden = false; notice.scrollIntoView({ block: "nearest", behavior: "smooth" }); }
+
+      var fields = {};
+      Array.prototype.forEach.call(form.elements, function (el) {
+        if (el.name && el.name !== "website") fields[el.name] = el.value;
+      });
+
+      if (error) error.hidden = true;
+      button.disabled = true;
+      button.textContent = "Sending...";
+
+      fetch("/api/enquiry", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          form: form.getAttribute("data-enquiry-form"),
+          fields: fields,
+          about: about,
+          pageUrl: window.location.pathname + window.location.search,
+          elapsedMs: Date.now() - loadedAt,
+          website: form.elements.website ? form.elements.website.value : ""
+        })
+      })
+        .then(function (res) {
+          return res.json().catch(function () { return {}; }).then(function (data) {
+            if (!res.ok || !data.reference) throw new Error(String(res.status));
+            return data;
+          });
+        })
+        .then(function (data) {
+          var done = document.createElement("div");
+          done.className = "form-done";
+          done.innerHTML = '<h3 class="heading-m" tabindex="-1">Thanks, we\u2019ve got your message.</h3>' +
+            "<p>We reply within one business day. Your reference is <span data-enquiry-ref></span>.</p>";
+          done.querySelector("[data-enquiry-ref]").textContent = data.reference;
+          form.parentNode.replaceChild(done, form);
+          done.querySelector("h3").focus();
+        })
+        .catch(function () {
+          button.disabled = false;
+          button.textContent = label;
+          if (error) error.hidden = false;
+        });
     });
   });
 

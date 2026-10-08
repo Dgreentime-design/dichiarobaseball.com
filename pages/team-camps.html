@@ -162,32 +162,32 @@
         </p>
       </div>
 
-      <form class="form" data-proto-form novalidate>
+      <form class="form" data-enquiry-form="team-camps" novalidate>
         <div class="form__row">
           <div class="field">
             <label for="tc-name">Your name</label>
-            <input class="input" id="tc-name" name="name" type="text" autocomplete="name" placeholder="Jane Rodriguez" required>
+            <input class="input" id="tc-name" name="name" type="text" autocomplete="name" placeholder="Jane Rodriguez" maxlength="100" required>
           </div>
           <div class="field">
             <label for="tc-role">Your role</label>
-            <input class="input" id="tc-role" name="role" type="text" placeholder="Head coach, 12U" required>
+            <input class="input" id="tc-role" name="role" type="text" placeholder="Head coach, 12U" maxlength="100" required>
           </div>
         </div>
 
         <div class="form__row">
           <div class="field">
             <label for="tc-email">Email</label>
-            <input class="input" id="tc-email" name="email" type="email" autocomplete="email" inputmode="email" placeholder="jane@example.com" required>
+            <input class="input" id="tc-email" name="email" type="email" autocomplete="email" inputmode="email" placeholder="jane@example.com" maxlength="200" required>
           </div>
           <div class="field">
             <label for="tc-phone">Phone</label>
-            <input class="input" id="tc-phone" name="phone" type="tel" autocomplete="tel" inputmode="tel" placeholder="(201) 555 0148" required>
+            <input class="input" id="tc-phone" name="phone" type="tel" autocomplete="tel" inputmode="tel" placeholder="(201) 555 0148" maxlength="40" required>
           </div>
         </div>
 
         <div class="field">
           <label for="tc-team">Team or program</label>
-          <input class="input" id="tc-team" name="team" type="text" placeholder="Ridgewood 12U softball" required>
+          <input class="input" id="tc-team" name="team" type="text" placeholder="Ridgewood 12U softball" maxlength="150" required>
         </div>
 
         <div class="form__row">
@@ -220,26 +220,26 @@
           </div>
           <div class="field">
             <label for="tc-start">Preferred start</label>
-            <input class="input" id="tc-start" name="start" type="text" placeholder="First week of December" required>
+            <input class="input" id="tc-start" name="start" type="text" placeholder="First week of December" maxlength="100" required>
           </div>
         </div>
 
         <div class="field">
           <label for="tc-notes">Anything else</label>
-          <textarea class="input textarea" id="tc-notes" name="notes" rows="4" placeholder="Sunday mornings work best. We skip President's week."></textarea>
+          <textarea class="input textarea" id="tc-notes" name="notes" rows="4" placeholder="Sunday mornings work best. We skip President's week." maxlength="2000"></textarea>
         </div>
 
+        <div class="form__hp" aria-hidden="true">
+          <label for="tc-website">Leave this empty</label>
+          <input id="tc-website" name="website" type="text" tabindex="-1" autocomplete="off">
+        </div>
         <p><button class="btn btn--primary" type="submit">Send team details</button></p>
-        <p class="meta">We reply within one business day.</p>
-      </form>
-
-      <div class="proto-notice" data-proto-notice hidden>
-        <p class="meta">Not sent</p>
-        <p>
-          This form is not taking messages yet. Call <a href="tel:+12017736858">(201) 773-6858</a>
+        <p class="field__error" role="alert" data-enquiry-error hidden>
+          That didn&rsquo;t send. Call <a href="tel:+12017736858">(201) 773-6858</a>
           or email <a href="mailto:info@dichiarobaseball.com">info@dichiarobaseball.com</a>.
         </p>
-      </div>
+        <p class="meta">We reply within one business day.</p>
+      </form>
     </div>
 
     <aside class="wide-card">

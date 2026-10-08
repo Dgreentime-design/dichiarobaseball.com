@@ -9,7 +9,8 @@
     "start": "node build.mjs && npx --yes serve . -l 8080",
     "verify": "node verify.mjs http://localhost:8080",
     "dev": "node --env-file-if-exists=.env.local scripts/dev-server.mjs 8080",
-    "check:payments": "node --env-file-if-exists=.env.local scripts/check-payments.mjs http://localhost:8080"
+    "check:payments": "node --env-file-if-exists=.env.local scripts/check-payments.mjs http://localhost:8080",
+    "check:enquiry": "node --env-file-if-exists=.env.local scripts/check-enquiry.mjs http://localhost:8080"
   },
   "devDependencies": {
     "playwright": "^1.47.0"

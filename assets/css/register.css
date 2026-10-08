@@ -119,18 +119,22 @@
   .qa:first-child { border-top: 1px solid var(--c-line); }
 }
 
-/* --- Prototype notice ----------------------------------------------------
-   Shown when a form is submitted in the prototype. The form is not wired to
-   anything, and saying so beats a fake success message. */
+/* --- Enquiry forms ------------------------------------------------------
+   The Contact and Team camps forms. On success the form is replaced by
+   .form-done, which takes focus. The honeypot is off screen and out of the
+   tab order, so only a bot fills it. */
 
-.proto-notice {
+.form-done {
   display: grid; gap: 10px;
   background: var(--c-turf-bg); color: var(--c-turf);
   border-radius: var(--r-2); padding: var(--s-6) var(--s-7);
 }
-.proto-notice .meta { color: var(--c-turf); }
-.proto-notice p { font-size: var(--t-body-s); line-height: var(--lh-body); }
-.proto-notice[hidden] { display: none; }
+.form-done h3 { color: var(--c-turf); }
+.form-done h3:focus { outline: none; }
+.form-done p { font-size: var(--t-body-s); line-height: var(--lh-body); }
+.form__hp { position: absolute; left: -10000px; width: 1px; height: 1px; overflow: hidden; }
+.field__error[hidden] { display: none; }
+.field__error a { color: inherit; }
 
 /* ==========================================================================
    Registration flow

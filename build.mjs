@@ -18,6 +18,7 @@
 
 import { readFileSync, writeFileSync, readdirSync, existsSync, mkdirSync } from "node:fs";
 import { join } from "node:path";
+import { ABOUT_TOPICS } from "./api/_lib/topics.js";
 
 const PAGES = "pages";
 const PARTIALS = "partials";
@@ -181,7 +182,7 @@ function facilityNode() {
     "@type": "SportsActivityLocation",
     "@id": FACILITY_ID,
     name: f.name || "DiChiaro Baseball & Softball Academy",
-    description: "Year-round indoor baseball and softball instruction in Fair Lawn, New Jersey. Hitting, fielding and pitching for ages six to eighteen.",
+    description: "Year-round indoor baseball and softball instruction in Fair Lawn, New Jersey. Hitting, fielding and pitching for ages 6-18.",
     url: `${ORIGIN}/`,
     telephone: PHONE,
     email: EMAIL,
@@ -350,7 +351,11 @@ function write(file, html) {
 console.log("Pages");
 let pages = 0;
 for (const file of readdirSync(PAGES).filter(f => f.endsWith(".html") && !f.startsWith("_"))) {
-  write(file, resolvePartials(readFileSync(join(PAGES, file), "utf8")));
+  /* {{about_topics}}: the Contact page's ?about= slugs and the topic each
+     preselects, from api/_lib/topics.js, the same map the endpoint checks. */
+  const html = resolvePartials(readFileSync(join(PAGES, file), "utf8"))
+    .replaceAll("{{about_topics}}", JSON.stringify(ABOUT_TOPICS).replace(/<\//g, "<\\/"));
+  write(file, html);
   pages++;
 }
 
@@ -457,6 +462,12 @@ const dow = (iso) => DOW[new Date(`${iso}T12:00:00Z`).getUTCDay()];
 const money = (n) => "$" + Number(n).toLocaleString("en-US");
 const typo = (s) => String(s).replace(/'/g, "&rsquo;");
 const compact = (t) => String(t).replace(/\s*-\s*/, "-");
+/* "6 to 12" in the data reads "Ages 6-12", the site's one range style;
+   "Grades 4 to 8 and high school" reads "Grades 4-8 and high school". */
+const agesLabel = (a) => {
+  const s = String(a).replace(/(\d+) to (\d+)/g, "$1-$2");
+  return /^\d/.test(s) ? `Ages ${s}` : s;
+};
 const fill = (s, vars) => String(s).replace(/\{(\w+)\}/g, (_, k) => (k in vars ? vars[k] : `{${k}}`));
 const today = new Date().toISOString().slice(0, 10);
 
@@ -513,7 +524,7 @@ function heroBlock(p, c, f) {
   const min = Math.min(...opts.map((o) => o.price));
   const instalments = Math.max(0, ...opts.map((o) => (o.schedule || []).length));
   const from = money(min) + (instalments > 1 ? `, ${instalments}-payment plan` : "");
-  const ages = /^\d/.test(p.ages) ? `Ages ${p.ages}` : p.ages;
+  const ages = agesLabel(p.ages);
   const sports = p.sport.map((x) => x[0].toUpperCase() + x.slice(1)).join(" &amp; ");
   const dates = s.dates || [];
   const img = c.image;
@@ -1036,7 +1047,7 @@ writeFileSync("llms.txt", [
   "",
   "> Year-round indoor baseball and softball instruction in Fair Lawn, New",
   "> Jersey. Lou DiChiaro has taught Bergen County players for twenty-five",
-  "> years. Hitting, fielding and pitching for ages six to eighteen, in a",
+  "> years. Hitting, fielding and pitching for ages 6-18, in a",
   "> 5,500 sq ft facility built for it.",
   "",
   `Address: ${(VENUES.facility && VENUES.facility.address) || ""}`,
@@ -1058,7 +1069,7 @@ writeFileSync("llms.txt", [
     const when = (p.schedule && p.schedule.dates && p.schedule.dates.length)
       ? `${p.schedule.dates[0]} to ${p.schedule.dates[p.schedule.dates.length - 1]}, ${p.schedule.day || ""}`.trim()
       : "dates to confirm";
-    return `- ${p.name}, ${p.season}. Ages ${p.ages}. ${when}.`;
+    return `- ${p.name}, ${p.season}. ${agesLabel(p.ages)}. ${when}.`;
   }),
   "",
   "## Notes",

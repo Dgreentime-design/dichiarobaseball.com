@@ -27,11 +27,11 @@ export class StoreUnavailable extends Error {}
 
 /* --- Airtable ------------------------------------------------------------ */
 
-function airtable() {
+/* One table in the base, with the token and base every table shares. */
+function airtableTable(table) {
   const token = process.env.AIRTABLE_TOKEN;
   const base = process.env.AIRTABLE_BASE_ID;
-  const table = process.env.AIRTABLE_TABLE_NAME;
-  if (!base || !table) throw new StoreUnavailable("AIRTABLE_BASE_ID and AIRTABLE_TABLE_NAME must be set");
+  if (!base || !table) throw new StoreUnavailable("AIRTABLE_BASE_ID and a table name must be set");
   const url = `https://api.airtable.com/v0/${encodeURIComponent(base)}/${encodeURIComponent(table)}`;
 
   async function call(path, init = {}) {
@@ -51,6 +51,12 @@ function airtable() {
     const { records } = await call(`?${q}`);
     return records;
   }
+
+  return { call, quote, findAll };
+}
+
+function airtable() {
+  const { call, quote, findAll } = airtableTable(process.env.AIRTABLE_TABLE_NAME);
   const findOne = async (field, value) => (await findAll(field, value))[0] || null;
 
   /* webhook_note is optional in the table. If Airtable says it does not
@@ -126,4 +132,33 @@ export function store() {
   if (process.env.AIRTABLE_TOKEN) return airtable();
   if (process.env.VERCEL) throw new StoreUnavailable("AIRTABLE_TOKEN is not set");
   return localFile();
+}
+
+/* --- Enquiries ------------------------------------------------------------
+
+   The Contact and Team camps forms. Their own table, named by
+   ENQUIRIES_TABLE_NAME, in the same base with the same token. With no table
+   name there is nowhere to write, and it never falls back to the
+   registrations table. */
+
+export function enquiryStore() {
+  const table = process.env.ENQUIRIES_TABLE_NAME;
+  if (!table) throw new StoreUnavailable("ENQUIRIES_TABLE_NAME is not set");
+
+  if (process.env.AIRTABLE_TOKEN) {
+    const { call, findAll } = airtableTable(table);
+    return {
+      async create(fields) { await call("", { method: "POST", body: JSON.stringify({ records: [{ fields }], typecast: true }) }); },
+      async get(reference) { return (await findAll("reference", reference))[0]?.fields || null; }
+    };
+  }
+  if (process.env.VERCEL) throw new StoreUnavailable("AIRTABLE_TOKEN is not set");
+
+  const dir = new URL("../../.data/", import.meta.url);
+  const file = new URL("enquiries.json", dir);
+  const read = () => { try { return JSON.parse(readFileSync(file, "utf8")); } catch { return []; } };
+  return {
+    async create(fields) { mkdirSync(dir, { recursive: true }); writeFileSync(file, JSON.stringify([...read(), fields], null, 2)); },
+    async get(reference) { return read().find((r) => r.reference === reference) || null; }
+  };
 }
