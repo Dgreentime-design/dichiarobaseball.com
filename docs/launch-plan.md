@@ -207,14 +207,12 @@ come back.
 
 **Before 13 October, not after**
 
-- **The Contact and Team camps forms send nothing.** Both are still
-  prototype forms (`data-proto-form` in `assets/js/site.js`): they validate,
-  then show "Not sent. This form is not taking messages yet. Call (201)
-  773-6858 or email info@dichiarobaseball.com." Contact promises "We reply
-  the same day" and Team camps "We reply within one business day". Every
-  "Ask about joining", "Request a HitTrax session" and rental button lands
-  on the Contact form. Wire them, or swap them for phone and email, before
-  go-live.
+- **The enquiry forms need their table.** Built in round 14: both forms post
+  to `/api/enquiry`, which writes to the table named by
+  `ENQUIRIES_TABLE_NAME`. Until Daniel adds the variable and the table
+  (`Enquiries Review` on Preview, `Enquiries` on Production) and the
+  Airtable automation that emails Michael, every message gets "That didn't
+  send" with the phone and email.
 
 **Michael**
 

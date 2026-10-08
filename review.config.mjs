@@ -28,7 +28,8 @@ export default {
     section: 'section, footer',
     // the header and menu, the decorative marquee, review notes and image
     // labels (both come off before launch) are not measured
-    skip: ['.site-header', '.menu', '.marquee', 'noscript', '.build-note', '.media__label', '.hero__scroll'],
+    // .form__hp is the enquiry forms' honeypot, off screen on purpose
+    skip: ['.site-header', '.menu', '.marquee', 'noscript', '.build-note', '.media__label', '.hero__scroll', '.form__hp'],
     reveal: '[data-reveal]',
     menuButton: '.nav__toggle',
   },

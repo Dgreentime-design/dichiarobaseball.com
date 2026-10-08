@@ -172,6 +172,7 @@ test registrations stay out of the handover table (`Registrations`).
 | 11 | 7 Oct | Client review changes and the generated program pages. `prompts/2026-10-07-round11-client-changes-and-program-pages.md` |
 | 12 | 7 Oct | Flyer re-baseline, Teams on the camps page, small fixes, launch hardening. `prompts/2026-10-07-round12-launch-hardening.md` |
 | 13 | 8 Oct | Launch polish: no placeholder name, legal email lines, review notes off, final copy sweep. `prompts/2026-10-07-round13-launch-polish.md` |
+| 14 | 8 Oct | Enquiry forms save to Airtable, factual legal fixes, one time and age style. `prompts/2026-10-08-round14-forms-and-legal.md` |
 
 Every round is a committed prompt file in `prompts/`. Read the round in flight
 before doing anything.
@@ -179,7 +180,30 @@ before doing anything.
 ## 8. Where things stand, 8 October 2026
 
 **The review preview is the launch candidate**, pending Daniel's
-Instructors rework and Michael's sign-off.
+Instructors rework, Michael's sign-off and the enquiries table below.
+
+**Done in round 14, 8 October**
+
+- **The Contact and Team camps forms work.** `POST /api/enquiry` writes one
+  row to the table named by `ENQUIRIES_TABLE_NAME`, same base and token as
+  registrations, through the shared client in `api/_lib/store.js`. An
+  Airtable automation emails Michael; the site sends no email. With no table
+  name it returns the generic failure and writes nothing, never falling back
+  to registrations. Honeypot and a 3 second floor answer with a fake success;
+  5 a minute per address, in memory. `?about=<slug>` preselects the Contact
+  topic and is stored, from `api/_lib/topics.js`, which the build also
+  writes into the page. `npm run check:enquiry` has 9 checks.
+- **Not live on the preview yet:** `ENQUIRIES_TABLE_NAME` is not set, so
+  both forms show "That didn't send" with the phone and email. Daniel adds
+  the variable and the `Enquiries Review` table, then redeploys.
+- **`legal.json` factual fixes:** last updated Oct 8, 2026; no cookies,
+  Vercel Web Analytics named; no waitlist; "on the confirmation screen";
+  no waiver skip (Register too); the forms sentence in privacy; American
+  spellings. "Anything else is opt-in" is left for the lawyer.
+- Times on Register read "2:30pm-4:00pm". Ages read "6-12" everywhere
+  outside the instructors page source.
+
+**Round 13, 8 October**
 
 **Done in round 13, 8 October**
 
@@ -201,8 +225,7 @@ Instructors rework and Michael's sign-off.
   in the calendar files. Camp date ranges carry years. Sentence case page
   titles and breadcrumb. Email promises off the camps and team camps pages.
 - **The Contact and Team camps forms still send nothing.** They now say so
-  plainly with the phone and email. This is the one launch blocker left on
-  the front end. See launch plan section 5.
+  plainly with the phone and email. Fixed in round 14.
 
 **Earlier, 7 October 2026**
 

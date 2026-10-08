@@ -132,6 +132,7 @@
 .form-done h3 { color: var(--c-turf); }
 .form-done h3:focus { outline: none; }
 .form-done p { font-size: var(--t-body-s); line-height: var(--lh-body); }
+.form-done [data-enquiry-ref] { white-space: nowrap; }
 .form__hp { position: absolute; left: -10000px; width: 1px; height: 1px; overflow: hidden; }
 .field__error[hidden] { display: none; }
 .field__error a { color: inherit; }
