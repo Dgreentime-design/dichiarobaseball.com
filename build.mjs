@@ -400,7 +400,9 @@ if (existsSync("legal.json") && existsSync(join(PAGES, "_legal.html"))) {
       const blocks = sec.blocks.map(b => {
         if (b.t === "p") return `\n        <p>${b.text}</p>`;
         if (b.t === "ul") return `\n        <ul>${b.items.map(i => `\n          <li>${i}</li>`).join("")}\n        </ul>`;
-        if (b.t === "note") return `\n        <aside class="draft-note">\n          <p class="meta">Needs legal review</p>\n          <p>${b.text}</p>\n        </aside>`;
+        /* Review notes in legal.json are not published. They are kept in
+           docs/launch-plan.md under "Open after launch". */
+        if (b.t === "note") return "";
         return "";
       }).join("");
       return `\n      <section id="${slug(sec.title)}">\n        <h2 class="heading-l"><span class="num">${sec.num}</span><span>${sec.title}</span></h2>${blocks}\n      </section>`;
@@ -488,7 +490,6 @@ function factsFor(p) {
   const away = (s.combined && s.combined.dates) || [];
   const months = [...new Set(away.map((iso) => MONTH[ymd(iso).m]))];
   const lower = (n) => word(n).toLowerCase();
-  const spaced = (t) => String(t).replace(/\s*-\s*/, " - ");
   return {
     sessions: lower(s.dates.length),
     home: lower(s.dates.length - away.length),
@@ -497,8 +498,8 @@ function factsFor(p) {
     away_months: months.length > 1 ? months.slice(0, -1).join(", ") + " and " + months.at(-1) : (months[0] || ""),
     day: s.day.toLowerCase(),
     Day: s.day,
-    home_time: spaced(daySpan(s)),
-    away_time: s.combined ? spaced(s.combined.time) : "",
+    home_time: compact(daySpan(s)),
+    away_time: s.combined ? compact(s.combined.time) : "",
     home_count: s.dates.length - away.length,
     away_count: away.length,
     total: s.dates.length,
@@ -534,7 +535,7 @@ function heroBlock(p, c, f) {
   <div class="hero__inner">
     <div class="hero__copy">
       <nav class="crumbs" aria-label="Breadcrumb">
-        <a href="camps-and-clinics.html">Camps &amp; Clinics</a>
+        <a href="camps-and-clinics.html">Camps &amp; clinics</a>
         <span aria-hidden="true">/</span>
         <span aria-current="page">${c.crumb || typo(p.name)}</span>
       </nav>
@@ -578,7 +579,7 @@ function groupsBlock(p, c, f) {
         <div class="group__head">
           <h3 class="heading-m">${esc(grp.label)}</h3>${chip}
         </div>
-        <p class="group__when">${p.schedule.day}s &nbsp;·&nbsp; ${esc(grp.time)}</p>${body}
+        <p class="group__when">${p.schedule.day}s &nbsp;·&nbsp; ${esc(compact(grp.time))}</p>${body}
         <a class="btn ${cta.class || "btn--primary"}" href="${cta.href}">${cta.label}</a>
       </article>`;
   }).join("\n");
@@ -898,7 +899,7 @@ function icsFor(p) {
     const venue = combined ? other : facility;
     const detail = combined
       ? s.combined.label
-      : (s.groups && s.groups.length ? s.groups.map((g) => `${g.label}: ${g.time}`).join(". ") : "");
+      : (s.groups && s.groups.length ? s.groups.map((g) => `${g.label}: ${compact(g.time)}`).join(". ") : "");
     lines.push("BEGIN:VEVENT", `UID:${p.slug}-${date}@dichiarobaseball.com`, `DTSTAMP:${stamp}`,
       `DTSTART:${utc(range.start)}`, `DTEND:${utc(range.end)}`,
       `SUMMARY:${text(plain(p.name))}`,
@@ -982,7 +983,7 @@ if (PUBLIC.length && existsSync(join(PAGES, "_program.html"))) {
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Camps &amp; Clinics · DiChiaro Baseball &amp; Softball Academy</title>
+<title>Camps &amp; clinics · DiChiaro Baseball &amp; Softball Academy</title>
 <link rel="canonical" href="https://dichiarobaseball.com/camps-and-clinics.html">
 <script>
   (function () {

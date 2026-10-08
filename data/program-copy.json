@@ -83,8 +83,7 @@
         "Both venues",
         "Balls, screens and machines",
         "Refund up to 14 days before"
-      ],
-      "note_html": "<div class=\"build-note\">\n      <p class=\"meta\">How this block behaves</p>\n      <p>\n        $950 is the standard price, and the standard price is the only price this page\n        ever shows. A town or league rate is reached by a code, never by browsing, and\n        the town name appears only after a code is accepted. No list of towns, no\n        comparison price, no discount language. The full rules are in the registration\n        build spec.\n      </p>\n      <p>\n        The refund window reads 14 days here and on the waiver page. Both are\n        placeholders and must agree once Michael sets it.\n      </p>\n    </div>"
+      ]
     },
     "instructor": {
       "image": {
@@ -111,7 +110,7 @@
           "Don Bosco Prep assistant varsity. 2008 National Champions"
         ],
         [
-          "2021-",
+          "2021 onward",
           "Old Tappan High School assistant varsity"
         ]
       ],

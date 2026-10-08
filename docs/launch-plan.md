@@ -195,3 +195,94 @@ prefer the winter page from December.
 21. **The homepage now shows the Little League photo twice** (hero, from
    the hotfix, and the Little League card). Pick another photo for the
    card, or keep both?
+
+---
+
+## 5. Open after launch
+
+Round 13 took every review note and placeholder off the site. Each note whose
+question is still open is kept here, so nothing is lost. The removed markup
+is in git history on `review`, in the round 13 commit, if a section needs to
+come back.
+
+**Before 13 October, not after**
+
+- **The Contact and Team camps forms send nothing.** Both are still
+  prototype forms (`data-proto-form` in `assets/js/site.js`): they validate,
+  then show "Not sent. This form is not taking messages yet. Call (201)
+  773-6858 or email info@dichiarobaseball.com." Contact promises "We reply
+  the same day" and Team camps "We reply within one business day". Every
+  "Ask about joining", "Request a HitTrax session" and rental button lands
+  on the Contact form. Wire them, or swap them for phone and email, before
+  go-live.
+
+**Michael**
+
+- Opening hours. About and Contact now say "Call (201) 773-6858 for today's
+  hours." Replace with real hours when he sends them.
+- Team camps, billing: are invoiced blocks offered to any association that
+  asks, or only to ones already set up that way? The page reads as an open
+  choice. Is there a minimum roster size or a deposit?
+- Team camps, "Programs that train with us": the five names (IHA softball,
+  Fair Lawn HS softball, Old Tappan HS, Ridgewood 12U to 14U, Fair Lawn
+  Little League) come from the flyers and meeting notes. Listing them uses
+  their name and should be cleared. The section works with as few as three.
+- The roster. About lists seven names. Lessons lists Diana Schraer and Sam
+  Keating as softball pitching coaches. If both are on staff, About gains a
+  third Hall of Fame induction and two softball pitching coaches. Same
+  question as the Instructors page.
+- Lesson package pricing. Five private hitting lessons at $430 is $86 each
+  and ten at $820 is $82 each, against a single 30 minute lesson at $75, so a
+  parent pays more per lesson to buy in bulk. It resolves if the packages are
+  45 minute lessons priced against the $90 rate, and then the page should
+  say so. Pitching packages do not have this problem.
+- The refund window. "Refund up to 14 days before" on the Infield page and
+  the refund sections of the waiver and terms pages are placeholders and must
+  agree once Michael sets the number.
+
+**Lou**
+
+- The video on Lou's Journey. One video, two to three minutes, landscape,
+  with captions. Filmed on a phone in the room suits the tone. Host on
+  YouTube or Vimeo. The weekly interview clip Michael mentioned can reuse
+  the slot. The "In his own words" section was removed until it exists.
+- Lou's heart transplant and recovery. The meeting notes ask Lou's Journey
+  to cover it. We have not written it and should not: it is his own health
+  and his own story. What we need, in whatever form suits him (a voice note
+  is fine): how much he wants said, what he wants it to do for a parent
+  reading it, and whether it belongs on the page at all or in the video. If
+  published coverage already says it the way he likes, a short line and a
+  link out is cleanest. The "Still to come" section was removed until then.
+- Coverage links. The notes mention Fox 5 and other coverage but no URLs.
+  Each goes in as a short list titled with the outlet and the year. We will
+  not go hunting for them, because linking the wrong piece about someone's
+  health is worse than linking nothing. The "Coverage" section was removed
+  until then.
+
+**Michael's attorney** (these were "Needs legal review" notes on the legal
+pages; `build.mjs` no longer renders note blocks, and they stay in
+`legal.json`)
+
+- Waiver, 02 What the waiver covers: a plain-language summary of the consent
+  on the paper flyers. The binding text must be drafted or approved by
+  Michael's attorney. The note said not to publish the section as written.
+- Waiver, 04 Refunds and cancellations: the fourteen-day window is a
+  placeholder (see the refund window above).
+- Privacy, 06 How long we keep it: retention periods and the rights section
+  to be checked against New Jersey requirements and the academy's insurance.
+- Terms, 04 Cancellations and refunds: cross-check against the final refund
+  window so the two pages cannot contradict each other.
+- Terms, 07 Liability: placeholder wording, to be drafted or approved by the
+  academy's attorney under New Jersey law.
+
+**Build, after launch**
+
+- More than one player per registration. The register page had an "Add
+  another player" button that only showed a prototype message, and a note
+  that the waiver card repeats per child. Both removed. Siblings register
+  one at a time until it is built.
+- The waiver skip. A player who already signed this season should show a
+  "Signed" row with the date instead of the waiver. Not built: every booking
+  asks for the waiver again.
+- Town and league codes, and the confirmation email, were in the register
+  prototype note. Both are already listed under "Week after launch".
