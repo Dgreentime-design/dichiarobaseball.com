@@ -1,7 +1,7 @@
 # Build thread briefing
 
 DiChiaro Baseball & Softball Academy, dichiarobaseball.com.
-Current as of 8 October 2026.
+Current as of 9 October 2026.
 
 This is the handover document for a dedicated Claude Code build thread. It
 assumes no prior conversation. Read it, then read `CLAUDE.md` for the standing
@@ -108,7 +108,14 @@ it. The site is deliberately unindexed until cutover.
     prompts/                      one file per round, committed before it runs
     docs/                         this file, the playbook, the principles
 
+    build-images.mjs              image registry -> sized files and <picture>
+    data/images.json              one entry per image slot (1-47): file, alt, focal
+
     assets/                       images and media
+      img/src/                    originals for the registry, never served as is
+      img/gen/                    generated WebP + JPG per width, committed
+      css/                        source stylesheets; site.min.css is built
+      fonts/                      self-hosted Archivo and JetBrains Mono WOFF2
 
 Generated HTML sits at the repo root (`index.html`, `about.html` and so on).
 **Never edit those by hand.** They are build output and they are committed.
@@ -175,14 +182,53 @@ test registrations stay out of the handover table (`Registrations`).
 | 14 | 8 Oct | Enquiry forms save to Airtable, factual legal fixes, one time and age style. `prompts/2026-10-08-round14-forms-and-legal.md` |
 | 15 | 8 Oct | Spam trap fix, add to calendar three ways, true metadata, the Full switch, marketing opt-in. `prompts/2026-10-08-round15-calendar-metadata-full-optin.md` |
 | 16 | 9 Oct | Visual review pack: contact sheet, image map, core flows timed, Lighthouse, client test guide. `prompts/2026-10-09-round16-visual-review.md` |
+| 17 | 9 Oct | Image registry by slot, responsive images, one stylesheet, self-hosted fonts, Register CLS fixed. `prompts/2026-10-09-round17-image-pipeline-and-speed.md` |
 
 Every round is a committed prompt file in `prompts/`. Read the round in flight
 before doing anything.
 
-## 8. Where things stand, 8 October 2026
+## 8. Where things stand, 9 October 2026
 
 **The review preview is the launch candidate**, pending Daniel's
 Instructors rework, Michael's sign-off and the enquiries table below.
+
+**Done in round 17, 9 October**
+
+- **One image registry.** `data/images.json` has slots 1-47, numbered as
+  in `docs/review/image-map.md`, each with `file`, `alt`, `focal` and
+  optional `focal_mobile`, plus a `layout` naming its `sizes` value.
+  Pages write `{{img N}}` (`{{img N hero}}` for the first hero,
+  `{{img_url N}}` for og:image); program pages take `image.slot` from
+  `data/program-copy.json`. A swap is one line plus `npm run build`;
+  steps under "How to swap a photo" in the image map.
+- **Responsive images.** `build-images.mjs` writes WebP and JPG at 480,
+  800, 1280, 1920 (2880 where the original allows; none does today) to
+  `assets/img/gen/`, content hash in the name, cached by
+  `manifest.json`. Committed; Vercel never runs sharp and fails the
+  build if a file is missing. Every image is a `<picture>` with a
+  measured `sizes`; the first hero is eager, `fetchpriority="high"` and
+  preloaded.
+- **Instructors (slots 48-54) not in the registry.** Daniel owns that
+  page. Its files stay in `assets/img/` (01, 09 and the portraits), so
+  01 and 09 exist twice for now, once in `src/`. Bring them in and
+  delete the loose copies with the Instructors rework.
+- **One stylesheet, self-hosted fonts.** `build.mjs` concatenates
+  `fonts.css` and the ten stylesheets into `assets/css/site.min.css`
+  (73 KB, was 11 requests plus Google Fonts), linked with a hash.
+  Edit the sources, never `site.min.css`.
+- **Register CLS** 0.844 to 0: `main` holds the screen until a step
+  panel shows (`register.css`).
+- **Lighthouse mobile on the preview, median of three:** Home 81 to 99
+  (LCP 3.76s to 2.13s), Camps 82 to 99 (3.74s to 2.12s), Infield 81 to
+  100, Register 89 to 99. CLS 0 on all twelve runs. Home image weight
+  for a full scroll 2,437 KB to 592 KB on a phone.
+- **No visual change**, proven by before and after screenshots at 390,
+  768, 1024 and 1440: same page heights, no changed pixel outside a
+  photo, Register and Instructors pixel-identical.
+- verify checks images: a missing original fails, sizes against drawn
+  width at three widths, and the six duplicate photos are listed (set
+  `DUPLICATES_FAIL = true` in `verify.mjs` after the photo round).
+- **Next: round 18** swaps the photos and copy from Daniel's list.
 
 **Done in round 16, 9 October**
 
