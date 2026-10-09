@@ -55,9 +55,10 @@
     var p = iso.split("-").map(Number);
     return new Date(Date.UTC(p[0], p[1] - 1, p[2]));
   }
-  function long(iso) { var d = day(iso); return d.getUTCDate() + " " + MONTHS[d.getUTCMonth()]; }
-  function longYear(iso) { return long(iso) + " " + day(iso).getUTCFullYear(); }
-  function short(iso) { var d = day(iso); return d.getUTCDate() + " " + MONTHS[d.getUTCMonth()].slice(0, 3); }
+  /* US order, as on the rest of the site: "October 25", "Oct 25". */
+  function long(iso) { var d = day(iso); return MONTHS[d.getUTCMonth()] + " " + d.getUTCDate(); }
+  function longYear(iso) { return long(iso) + ", " + day(iso).getUTCFullYear(); }
+  function short(iso) { var d = day(iso); return MONTHS[d.getUTCMonth()].slice(0, 3) + " " + d.getUTCDate(); }
   function monthDay(iso) { var d = day(iso); return MONTHS[d.getUTCMonth()].slice(0, 3) + " " + d.getUTCDate(); }
   function chip(iso) { var d = day(iso); return DAYS[d.getUTCDay()].slice(0, 3) + " " + short(iso); }
 
@@ -171,7 +172,7 @@
     if (state.step === 2) {
       var now = new Date();
       var input = document.querySelector("[data-sign-date]");
-      if (input) input.value = now.getDate() + " " + MONTHS[now.getMonth()] + " " + now.getFullYear();
+      if (input) input.value = MONTHS[now.getMonth()] + " " + now.getDate() + ", " + now.getFullYear();
     }
 
     /* Move focus to the new step's heading so a keyboard or screen reader
@@ -384,7 +385,7 @@
     var slot = p && !p.schedule.groups.length && p.schedule.time ? ", " + p.schedule.time.split(/\s*-\s*/)[0] : "";
     var values = {
       startShort: start ? ", " + short(start) : "",
-      first: start ? " " + DAYS[day(start).getUTCDay()] + " " + long(start) + slot + "." : "",
+      first: start ? " " + DAYS[day(start).getUTCDay()] + ", " + long(start) + slot + "." : "",
       payableTo: p ? p.check.payableTo : "",
       mailTo: p ? p.check.mailTo : "",
       ref: ctx.id || ""
