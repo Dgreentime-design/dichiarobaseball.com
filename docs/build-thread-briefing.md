@@ -21,7 +21,7 @@ Lessons, camps and clinics, cage and facility rentals, for ages 6 to 18.
 - Client contact: Michael
 - Facility: 18-01 Pollitt Drive, Fair Lawn, NJ 07410
 - Phone used across the site: (201) 773-6858
-- Target go-live: 9 October 2026
+- Go-live: Monday 12 October 2026, 1:00pm Eastern (`docs/go-live-runbook.md`)
 
 Built by Box to Box Design. Daniel is the designer, director and the only
 person who merges to `main`.
@@ -154,7 +154,8 @@ All on Vercel, read from `process.env`, never in a file.
 | `CLOVER_MERCHANT_ID`, `CLOVER_PRIVATE_TOKEN` | Clover ecommerce credentials |
 | `CLOVER_WEBHOOK_SECRET` | the Hosted Checkout signing secret |
 | `AIRTABLE_TOKEN`, `AIRTABLE_BASE_ID`, `AIRTABLE_TABLE_NAME` | storage |
-| `SITE_ORIGIN` | unset until cutover. Unset keeps every page noindex |
+| `ENQUIRIES_TABLE_NAME` | `Enquiries Review` on Preview, `Enquiries` on Production |
+| `SITE_ORIGIN` | unset until cutover. Unset keeps every page noindex. Production only, exactly `https://dichiarobaseball.com` |
 
 **A changed variable needs a redeploy.** An existing deployment keeps the
 values it was built with. An empty commit to `review` is enough.
@@ -183,14 +184,54 @@ test registrations stay out of the handover table (`Registrations`).
 | 15 | 8 Oct | Spam trap fix, add to calendar three ways, true metadata, the Full switch, marketing opt-in. `prompts/2026-10-08-round15-calendar-metadata-full-optin.md` |
 | 16 | 9 Oct | Visual review pack: contact sheet, image map, core flows timed, Lighthouse, client test guide. `prompts/2026-10-09-round16-visual-review.md` |
 | 17 | 9 Oct | Image registry by slot, responsive images, one stylesheet, self-hosted fonts, Register CLS fixed. `prompts/2026-10-09-round17-image-pipeline-and-speed.md` |
+| 18a | 9 Oct | New Home hero (coach) and Facility band (turf). `prompts/2026-10-09-round18a-home-hero-test.md` |
+| 18b | 9 Oct | Phone hero: `file_mobile` and `zoom_mobile` in the registry, turf photo on phones. `prompts/2026-10-09-round18b-phone-hero.md` |
+| 19 | 9 Oct | Launch readiness: images locked, cutover rehearsed, variables audited, 404 page, runbook. `prompts/2026-10-09-round19-launch-readiness.md` |
 
 Every round is a committed prompt file in `prompts/`. Read the round in flight
 before doing anything.
 
 ## 8. Where things stand, 9 October 2026
 
-**The review preview is the launch candidate**, pending Daniel's
-Instructors rework, Michael's sign-off and the enquiries table below.
+**Launch candidate, frozen for go-live Monday 12 October 1pm.** The review
+preview is what ships. Only Daniel's weekend photo pass (the list in
+`docs/review/image-map.md`) and the runbook steps change anything before
+then. Run Monday from `docs/go-live-runbook.md`.
+
+**Done in round 19, 9 October**
+
+- **Images locked.** Round 18b kept: phones get the turf photo in the Home
+  hero through `file_mobile`, desktop the coach. Slot 8 is back on
+  `dbsa-02`; slot 32 keeps `dbsa-05`. Both photos turned out to be the same
+  room (a batting cage with HitTrax, sofas and house windows behind the
+  net), so both alts now say what is in them and both head the weekend
+  photo list.
+- **How production builds.** Vercel runs `node build.mjs` on every deploy
+  (build log: "Running vercel build", then the build's own output), so the
+  committed HTML is regenerated there. `SITE_ORIGIN` belongs in Vercel
+  Production variables only; no local production build step exists or is
+  needed. Rehearsed in a temp copy: robots allows, sitemap 21 of 21 URLs on
+  the domain, every canonical and `og:url` on the domain, noindex only on
+  404, program and register. The preview stays noindex (meta, header,
+  robots, empty sitemap). The `x-robots-tag` header on previews is Vercel's
+  own and is not sent on Production.
+- **Production variables, 9 October:** only `AIRTABLE_TABLE_NAME` is set.
+  The other nine go in on Monday by the runbook, before the merge, because
+  the merge itself starts the Production build.
+- **Merge readiness.** `main` is at round 02 (30 September) and has nothing
+  `review` lacks; the merge brings 120 commits. verify, check:payments (13)
+  and check:enquiry (12) pass. All 34 old Framer paths 301 to a 200, with or
+  without a trailing slash.
+- **New:** `404.html` (noindex, links root-absolute so it works at any
+  depth), `trailingSlash: false`, a 180px icon also served at
+  `/favicon.ico`.
+- **The second Vercel project is gone.** Only `dichiarobaseball.com-rgr6`
+  is listed.
+- **Airtable is ready.** `Registrations` has `webhook_note` and the opt-in
+  columns; `Enquiries` exists; the live alerts for both are deployed.
+- **DNS today** (InMotion nameservers, TTL 900): apex A `31.43.160.6` and
+  `31.43.161.6`, `www` CNAME `sites.framer.app`, mail on its own A record.
+  These are the rollback values.
 
 **Done in round 17, 9 October**
 
@@ -559,7 +600,8 @@ under "Before go-live". The two that bite silently:
   it before those answers exist.
   Answers from CC's read-only check on 3 October: the domain is not attached
   to it, it is connected to the repo and builds every push, and it holds no
-  environment variables at all.
+  environment variables at all. **Resolved by 9 October:** the project no
+  longer exists in the team.
 - **Internal docs are no longer deployed.** `.vercelignore` excludes `docs/`,
   `prompts/`, `CLAUDE.md` and `README.md`, so they return 404 on every
   deployment. Anything else at the repo root is still publicly served.
