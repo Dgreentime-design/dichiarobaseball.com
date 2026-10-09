@@ -174,6 +174,7 @@ test registrations stay out of the handover table (`Registrations`).
 | 13 | 8 Oct | Launch polish: no placeholder name, legal email lines, review notes off, final copy sweep. `prompts/2026-10-07-round13-launch-polish.md` |
 | 14 | 8 Oct | Enquiry forms save to Airtable, factual legal fixes, one time and age style. `prompts/2026-10-08-round14-forms-and-legal.md` |
 | 15 | 8 Oct | Spam trap fix, add to calendar three ways, true metadata, the Full switch, marketing opt-in. `prompts/2026-10-08-round15-calendar-metadata-full-optin.md` |
+| 16 | 9 Oct | Visual review pack: contact sheet, image map, core flows timed, Lighthouse, client test guide. `prompts/2026-10-09-round16-visual-review.md` |
 
 Every round is a committed prompt file in `prompts/`. Read the round in flight
 before doing anything.
@@ -182,6 +183,26 @@ before doing anything.
 
 **The review preview is the launch candidate**, pending Daniel's
 Instructors rework, Michael's sign-off and the enquiries table below.
+
+**Done in round 16, 9 October**
+
+- **Visual review pack.** Contact sheet of every page at 1440 and 390 in
+  `_proof/round16/contact-sheet.html` (local only). Image map in
+  `docs/review/image-map.md`: 54 numbered slots, export sizes grouped A to
+  I, heavy files and problems. Next round swaps images and copy from
+  Daniel's answers against those slot numbers.
+- **Core flows pass on the preview at 390**: register online, at the
+  facility and by check, Contact, Team camps, HitTrax from Home, Add to
+  calendar. Rows read back from the Review tables. One fix: the
+  confirmation screen's dates now read in US order ("October 25").
+- **Client test guide** for Michael in `docs/review/client-test-guide.md`.
+- **Lighthouse, mobile**: performance 84 to 96 on content pages, 75 on
+  Register (layout shift); accessibility 100. Wins for later: one CSS file
+  and self-hosted fonts, image compression with WebP, reserve the register
+  page's height.
+- The launch plan's cutover section now warns not to touch the MX record.
+- The `marketing_opt_in` columns exist in all four tables (Airtable
+  schema read 9 October).
 
 **Done in round 15, 8 October**
 

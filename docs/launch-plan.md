@@ -118,6 +118,13 @@ prefer the winter page from December.
 | **Tue 13, go-live** | Post-cutover checks: routes, redirects, `robots` and sitemap, webhook TEST URL, Airtable row read back | Merges `review` to `main`. Sets Production variables (`PAYMENT_PROVIDER=clover`, Clover, Airtable `Registrations`, `SITE_ORIGIN=https://dichiarobaseball.com`). Points Clover webhook at the domain, copies the secret, TEST URL. Points the domain. One live payment, then void | Retires the Home Game links and listing. Updates Google Business and social links |
 | **Wed 14** | Buffer: fixes from go-live day only | Buffer | First real registrations |
 
+### Cutover: the domain and email
+
+The academy's email is hosted at mail.dichiarobaseball.com (MX record). When
+the domain points at Vercel, change only the website records (A, CNAME for
+www). Do not remove or change the MX record or the mail host's A record, or
+the academy's email stops.
+
 ### Week after launch
 
 - Confirmation email from the site, contact pushed to Constant Contact
