@@ -41,7 +41,7 @@ that becomes a failure after the photo round.
 | 5 | Home | Every swing, measured. | `dbsa-08-hittrax-screen.jpg` (1920x1249) | 1440x609 / 390x826 | 21:9 / 0.47:1 | centred; crop changes to 0.47:1 at 390 | (empty) |
 | 6 | Home | Lessons and rentals, all year. > Private and semi-private lessons | `dbsa-06-group-semi-private.jpg` (2000x1115) | 220x338 / 344x193 | 2:3 / 16:9 | centred; crop changes to 16:9 at 390 | Three players working with one coach in a semi-private lesson |
 | 7 | Home | Lessons and rentals, all year. > Cage and facility rentals | `dbsa-01-facility-in-use.jpg` (2000x1130) | 220x338 / 344x193 | 2:3 / 16:9 | centred; crop changes to 16:9 at 390 | The full academy floor with the batting nets up |
-| 8 | Home | Fundamentals first. Every level welcome. | `dbsa-02-facility-empty.jpg` (1920x1080) | 1280x420 / 346x114 | 3.05:1 | centred (back to dbsa-02 in round 19) | A wide view of the empty academy floor with the lights on |
+| 8 | Home | Fundamentals first. Every level welcome. | `dbsa-02-facility-empty.jpg` (1920x1080) | 1280x420 / 346x114 | 3.05:1 | centred (back to dbsa-02 in round 19) | A batting cage on turf with a HitTrax unit and the mound, nets up on both sides |
 | 9 | Home | Lou DiChiaro | `dbsa-09-lou-coaching.jpg` (1800x2400) | 440x550 / 346x432 | 4:5 | centred | Lou DiChiaro standing with a softball player in front of the academy logo |
 | 10 | Camps | Camps and clinics for ages 6-18. | `dbsa-07-little-league.jpg` (1920x1080) | 1440x660 / 390x620 | 2.18:1 / 0.63:1 | centred; crop changes to 0.63:1 at 390 | (empty) |
 | 11 | Camps | Program cards > Little League Training Camp | `dbsa-07-little-league.jpg` (1920x1080) | 626x352 / 344x193 | 16:9 | centred | A young player mid swing with a coach kneeling beside him |
@@ -97,6 +97,7 @@ the Monday 12 October launch; anything here ships as it is.
 | # | Page | Why |
 |---|---|---|
 | 32 | Lessons > Pitching | `dbsa-05-pitching-mound.jpg` shows a HitTrax unit behind a cage net with the edge of the mound, not a pitcher, and the room behind may not be the academy. Alt corrected in round 19 to describe what is in it. Needs a real pitching photo. |
+| 8 | Home > Fundamentals first band | `dbsa-02-facility-empty.jpg` is the same room as `dbsa-05`: a batting cage with the HitTrax unit, and sofas and house windows behind the net. Not the academy floor its old alt described, and Home already has a HitTrax band. Alt corrected in round 19. Needs a wide photo of the academy floor (the turf photo, `dbsa-20`, is the hero on phones, so not that one). |
 
 ## What to supply, grouped
 
