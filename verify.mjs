@@ -107,7 +107,10 @@ async function inspect(url, width) {
        is drawn at. Smaller is a blurry image, much larger is wasted bytes. */
     sizes: Array.from(document.querySelectorAll("img[data-slot]")).map(i => {
       let val = null;
-      for (const part of (i.getAttribute("sizes") || "").split(/,(?![^(]*\))/)) {
+      /* An art-directed slot (file_mobile) takes sizes from the <source>
+         the browser is using at this width, not from the <img>. */
+      const used = Array.from(i.parentElement.querySelectorAll("source")).find(s => !s.media || matchMedia(s.media).matches) || i;
+      for (const part of (used.getAttribute("sizes") || "").split(/,(?![^(]*\))/)) {
         const m = part.trim().match(/^(\(.*\))\s+(.+)$/);
         if (!m) { val = part.trim(); break; }
         if (matchMedia(m[1]).matches) { val = m[2]; break; }

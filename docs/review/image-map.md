@@ -16,7 +16,10 @@ registry yet; that page still names its files directly.
    `focal_mobile` for a different crop on phones (up to 767px wide). When no
    crop of the photo works on a phone, set `file_mobile` to a second original:
    the slot then shows that photo up to 767px wide and `file` above it, and
-   `focal_mobile` applies to `file_mobile`. On a hero the preload follows
+   `focal_mobile` applies to `file_mobile`. A phone photo that fills a tall
+   box by height cannot move up with the focal point alone; `zoom_mobile`
+   (for example "1.2") scales it about `focal_mobile`, so "x% 100%" crops
+   from the top and lifts the subject. On a hero the preload follows
    (one per breakpoint), so a phone never downloads the desktop photo.
 3. Run `npm run build`. It writes the sized WebP and JPG files to
    `assets/img/gen/` (only for originals that changed), rebuilds every page
@@ -31,7 +34,7 @@ that becomes a failure after the photo round.
 
 | # | Page | Section | Current file | Rendered size at 1440 / 390 (px) | Aspect ratio | Crop or focal note | Alt text |
 |---|---|---|---|---|---|---|---|
-| 1 | Home | Get better at the game you love. | `dbsa-19-coach-fielding-drill.jpg` (1428x816); phones up to 767px: `dbsa-20-facility-turf-wide.jpg` (2528x1904) | 1440x660 / 390x665 | 2.18:1 / 0.59:1 | focal point 70% 80%; phone photo focal 50% 40% (round 18b) | (empty) |
+| 1 | Home | Get better at the game you love. | `dbsa-19-coach-fielding-drill.jpg` (1428x816); phones up to 767px: `dbsa-20-facility-turf-wide.jpg` (2528x1904) | 1440x660 / 390x665 | 2.18:1 / 0.59:1 | focal point 70% 80%; phone photo focal 68% 100% with zoom_mobile 1.2, which lifts the wall logo above the copy (round 18b) | (empty) |
 | 2 | Home | Fall camps and clinics, open now. > Little League Training Camp | `dbsa-07-little-league.jpg` (1920x1080) | 409x230 / 344x193 | 16:9 | centred | Players working through a drill at the Little League training camp |
 | 3 | Home | Fall camps and clinics, open now. > Monday Hit Night | `dbsa-03-hitting-cage.jpg` (1920x1080) | 409x230 / 344x193 | 16:9 | centred | A hitter working in the cage during Monday Hit Night |
 | 4 | Home | Fall camps and clinics, open now. > Lou DiChiaro’s Infield Camp | `dbsa-04-fielding-turf.jpg` (2000x1144) | 409x230 / 344x193 | 16:9 | centred | An infielder fielding a ground ball on the turf |

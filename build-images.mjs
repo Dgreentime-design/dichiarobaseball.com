@@ -104,6 +104,15 @@ const attr = (s) => String(s).replace(/&(?!(?:amp|lt|gt|quot|rsquo|#\d+);)/g, "&
 /* The media query file_mobile answers. Matches the focal_mobile CSS. */
 const PHONE = "(max-width: 767px)";
 
+/* The sizes for the phone photo: zoom_mobile draws it wider than the box,
+   so it asks for that much more. Only a single-value sizes can be scaled. */
+function phoneSizes(s) {
+  const sizes = layouts[s.layout];
+  if (!s.zoom_mobile) return sizes;
+  if (sizes.includes(",") || sizes.includes("(")) throw new Error(`images: slot zoom_mobile needs a single-value sizes, layout "${s.layout}" has "${sizes}"`);
+  return `calc(${sizes} * ${s.zoom_mobile})`;
+}
+
 /* The <picture> for a slot. prefix is "../" for pages one folder down. */
 export function picture(n, { hero = false, prefix = "" } = {}) {
   const s = slot(n);
@@ -114,11 +123,12 @@ export function picture(n, { hero = false, prefix = "" } = {}) {
      width and height on them keep the box reserved for the phone photo. */
   const fm = s.file_mobile;
   const phone = fm
-    ? ["webp", "jpg"].map((ext) => `<source media="${PHONE}"${ext === "webp" ? ` type="image/webp"` : ""} srcset="${srcset(fm, ext, prefix)}" sizes="${sizes}" width="${manifest[fm].width}" height="${manifest[fm].height}">`).join("")
+    ? ["webp", "jpg"].map((ext) => `<source media="${PHONE}"${ext === "webp" ? ` type="image/webp"` : ""} srcset="${srcset(fm, ext, prefix)}" sizes="${phoneSizes(s)}" width="${manifest[fm].width}" height="${manifest[fm].height}">`).join("")
     : "";
   const style = [
     s.focal && s.focal !== "50% 50%" ? `--focal: ${s.focal};` : "",
     s.focal_mobile ? `--focal-m: ${s.focal_mobile};` : "",
+    s.zoom_mobile ? `--zoom-m: ${s.zoom_mobile};` : "",
   ].filter(Boolean).join(" ");
   const load = hero ? ` fetchpriority="high"` : ` loading="lazy" decoding="async"`;
   return `<picture>` + phone +
@@ -131,7 +141,7 @@ export function picture(n, { hero = false, prefix = "" } = {}) {
    CSS is parsed. type= keeps a browser without WebP from fetching it. */
 export function preload(n, { prefix = "" } = {}) {
   const s = slot(n);
-  const link = (f, media) => `<link rel="preload" as="image" type="image/webp" imagesrcset="${srcset(f, "webp", prefix)}" imagesizes="${layouts[s.layout]}"${media ? ` media="${media}"` : ""} fetchpriority="high">`;
+  const link = (f, media) => `<link rel="preload" as="image" type="image/webp" imagesrcset="${srcset(f, "webp", prefix)}" imagesizes="${f === s.file_mobile ? phoneSizes(s) : layouts[s.layout]}"${media ? ` media="${media}"` : ""} fetchpriority="high">`;
   /* With a phone photo, one preload per breakpoint, so a phone never
      downloads the desktop photo and a desktop never downloads the phone one. */
   if (s.file_mobile) return link(s.file_mobile, PHONE) + "\n" + link(s.file, "(min-width: 768px)");

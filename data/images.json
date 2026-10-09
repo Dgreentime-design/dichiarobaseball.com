@@ -3,6 +3,7 @@
     "One entry per image slot, numbered as in docs/review/image-map.md. Pages ask for a slot, never a file.",
     "file: an original in assets/img/src/. alt: empty only for a decorative hero. focal: CSS object-position, default 50% 50%. focal_mobile: optional, used up to 767px wide.",
     "file_mobile: optional, a different original shown up to 767px wide (art direction, for when no crop of file works on a phone). focal_mobile then applies to it. The hero preload follows it per breakpoint. A slot's file and file_mobile both count as uses on its page for the same-photo-twice check.",
+    "zoom_mobile: optional, a scale (1.2 is 20% larger) for the phone photo up to 767px wide, about the focal_mobile point. For when the photo fills a tall phone box by height, so the vertical focal cannot move it: a focal_mobile of \"x% 100%\" with a zoom crops from the top and lifts the subject.",
     "layout: which entry in _layouts gives the slot its sizes value. Layout is the page's, not the photo's: a photo swap never touches it.",
     "Swap a photo: put the new original in assets/img/src/, change file (and alt, focal if needed) on the slot, run npm run build."
   ],
@@ -30,7 +31,8 @@
       "file_mobile": "dbsa-20-facility-turf-wide.jpg",
       "alt": "",
       "focal": "70% 80%",
-      "focal_mobile": "50% 40%",
+      "focal_mobile": "68% 100%",
+      "zoom_mobile": "1.2",
       "layout": "hero"
     },
     "2": {
