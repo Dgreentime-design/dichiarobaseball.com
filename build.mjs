@@ -76,7 +76,8 @@ const IS_PROD = process.env.SITE_ORIGIN === PROD_ORIGIN;
 /* Pages that stay out of the index whatever the origin. The registration
    flow is a transaction, not a page anyone should arrive at from a search. */
 /* program.html only forwards old links to a program's own page. */
-const ALWAYS_NOINDEX = new Set(["register.html", "program.html"]);
+/* 404.html is what Vercel serves for any path that does not exist. */
+const ALWAYS_NOINDEX = new Set(["register.html", "program.html", "404.html"]);
 
 /* Collected as pages are written, so robots.txt, sitemap.xml and llms.txt
    are generated from the routes that actually exist rather than a list
@@ -461,7 +462,18 @@ function applyFull(html) {
   return html;
 }
 
+/* The 404 page is served at whatever path was asked for, such as
+   /programs/nope.html, where the relative links every page uses would
+   point one folder too deep. So its links are made root-absolute.
+   A <base href="/"> would do it too, but would also send the skip link
+   (#main) to the homepage. */
+function rootRelative(html) {
+  return html.replace(/\b(href|src)="(?![a-z][a-z0-9+.-]*:|\/|#)([^"]*)"/gi,
+    (_, attr, url) => `${attr}="/${url.replace(/^\.\//, "")}"`);
+}
+
 function write(file, html) {
+  if (file === "404.html") html = rootRelative(html);
   html = applyFull(html);
   html = setMeta(html);
   html = setOrigin(html);
