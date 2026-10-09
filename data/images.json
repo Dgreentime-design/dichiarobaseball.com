@@ -86,9 +86,9 @@
     "8": {
       "page": "index.html",
       "section": "Image band, Fundamentals first",
-      "file": "dbsa-05-pitching-mound.jpg",
-      "alt": "A HitTrax unit behind the cage net, with the turf and the mound in front",
-      "focal": "50% 70%",
+      "file": "dbsa-02-facility-empty.jpg",
+      "alt": "A wide view of the empty academy floor with the lights on",
+      "focal": "50% 50%",
       "layout": "band"
     },
     "9": {
@@ -279,7 +279,7 @@
       "page": "lessons.html",
       "section": "Rates > Pitching",
       "file": "dbsa-05-pitching-mound.jpg",
-      "alt": "A pitcher at release with the mound and net behind",
+      "alt": "A HitTrax unit behind the cage net, with the turf and the mound in front",
       "focal": "50% 50%",
       "layout": "card-2"
     },

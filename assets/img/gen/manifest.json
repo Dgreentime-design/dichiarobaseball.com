@@ -115,5 +115,16 @@
       1280,
       1920
     ]
+  },
+  "dbsa-02-facility-empty.jpg": {
+    "hash": "bb961f9a",
+    "width": 1920,
+    "height": 1080,
+    "widths": [
+      480,
+      800,
+      1280,
+      1920
+    ]
   }
 }
