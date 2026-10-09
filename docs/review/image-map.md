@@ -13,27 +13,32 @@ registry yet; that page still names its files directly.
 2. In `data/images.json`, change that slot's `file` to the new name. Change
    `alt` if the picture says something different, and `focal` (CSS
    object-position, "50% 50%" is centred) if the subject is off centre. Add
-   `focal_mobile` for a different crop on phones (up to 767px wide).
+   `focal_mobile` for a different crop on phones (up to 767px wide). When no
+   crop of the photo works on a phone, set `file_mobile` to a second original:
+   the slot then shows that photo up to 767px wide and `file` above it, and
+   `focal_mobile` applies to `file_mobile`. On a hero the preload follows
+   (one per breakpoint), so a phone never downloads the desktop photo.
 3. Run `npm run build`. It writes the sized WebP and JPG files to
    `assets/img/gen/` (only for originals that changed), rebuilds every page
    that uses the slot, and the files are committed with the pages. Vercel
    never resizes: a swap that was not built locally fails the deploy.
 
 `npm run verify` fails if a slot points at a missing file. It lists any
-photo used twice on one page; that becomes a failure after the photo round.
+photo used twice on one page, counting `file` and `file_mobile` both as uses;
+that becomes a failure after the photo round.
 
 ## Slots
 
 | # | Page | Section | Current file | Rendered size at 1440 / 390 (px) | Aspect ratio | Crop or focal note | Alt text |
 |---|---|---|---|---|---|---|---|
-| 1 | Home | Get better at the game you love. | `dbsa-07-little-league.jpg` (1920x1080) | 1440x660 / 390x665 | 2.18:1 / 0.59:1 | focal point 76% 50%; crop changes to 0.59:1 at 390 | (empty) |
+| 1 | Home | Get better at the game you love. | `dbsa-19-coach-fielding-drill.jpg` (1428x816); phones up to 767px: `dbsa-20-facility-turf-wide.jpg` (2528x1904) | 1440x660 / 390x665 | 2.18:1 / 0.59:1 | focal point 70% 80%; phone photo focal 50% 40% (round 18b) | (empty) |
 | 2 | Home | Fall camps and clinics, open now. > Little League Training Camp | `dbsa-07-little-league.jpg` (1920x1080) | 409x230 / 344x193 | 16:9 | centred | Players working through a drill at the Little League training camp |
 | 3 | Home | Fall camps and clinics, open now. > Monday Hit Night | `dbsa-03-hitting-cage.jpg` (1920x1080) | 409x230 / 344x193 | 16:9 | centred | A hitter working in the cage during Monday Hit Night |
 | 4 | Home | Fall camps and clinics, open now. > Lou DiChiaro’s Infield Camp | `dbsa-04-fielding-turf.jpg` (2000x1144) | 409x230 / 344x193 | 16:9 | centred | An infielder fielding a ground ball on the turf |
 | 5 | Home | Every swing, measured. | `dbsa-08-hittrax-screen.jpg` (1920x1249) | 1440x609 / 390x826 | 21:9 / 0.47:1 | centred; crop changes to 0.47:1 at 390 | (empty) |
 | 6 | Home | Lessons and rentals, all year. > Private and semi-private lessons | `dbsa-06-group-semi-private.jpg` (2000x1115) | 220x338 / 344x193 | 2:3 / 16:9 | centred; crop changes to 16:9 at 390 | Three players working with one coach in a semi-private lesson |
 | 7 | Home | Lessons and rentals, all year. > Cage and facility rentals | `dbsa-01-facility-in-use.jpg` (2000x1130) | 220x338 / 344x193 | 2:3 / 16:9 | centred; crop changes to 16:9 at 390 | The full academy floor with the batting nets up |
-| 8 | Home | Fundamentals first. Every level welcome. | `dbsa-02-facility-empty.jpg` (1920x1080) | 1280x420 / 346x114 | 3.05:1 | centred | A wide view of the empty academy floor with the lights on |
+| 8 | Home | Fundamentals first. Every level welcome. | `dbsa-05-pitching-mound.jpg` (1600x1212) | 1280x420 / 346x114 | 3.05:1 | centred (round 18b) | A pitcher at release with the mound and net behind |
 | 9 | Home | Lou DiChiaro | `dbsa-09-lou-coaching.jpg` (1800x2400) | 440x550 / 346x432 | 4:5 | centred | Lou DiChiaro standing with a softball player in front of the academy logo |
 | 10 | Camps | Camps and clinics for ages 6-18. | `dbsa-07-little-league.jpg` (1920x1080) | 1440x660 / 390x620 | 2.18:1 / 0.63:1 | centred; crop changes to 0.63:1 at 390 | (empty) |
 | 11 | Camps | Program cards > Little League Training Camp | `dbsa-07-little-league.jpg` (1920x1080) | 626x352 / 344x193 | 16:9 | centred | A young player mid swing with a coach kneeling beside him |
@@ -62,7 +67,7 @@ photo used twice on one page; that becomes a failure after the photo round.
 | 34 | Facility | Three ways to use the space. > Cage rental | `dbsa-03-hitting-cage.jpg` (1920x1080) | 409x230 / 344x193 | 16:9 | centred | A hitter mid swing in the cage with the ball just off the bat |
 | 35 | Facility | Three ways to use the space. > Full facility rental | `dbsa-01-facility-in-use.jpg` (2000x1130) | 409x230 / 344x193 | 16:9 | centred | The full floor in use with a team session running end to end |
 | 36 | Facility | Three ways to use the space. > HitTrax session | `dbsa-08-hittrax-screen.jpg` (1920x1249) | 409x230 / 344x193 | 16:9 | centred | The HitTrax screen mid session with a spray chart visible |
-| 37 | Facility | Image band between sections | `dbsa-02-facility-empty.jpg` (1920x1080) | 1280x420 / 346x114 | 3.05:1 | centred | The empty academy floor with the nets down and the turf visible end to end |
+| 37 | Facility | Image band between sections | `dbsa-20-facility-turf-wide.jpg` (2528x1904) | 1280x420 / 346x114 | 3.05:1 | focal point 50% 45% (round 18a) | The academy floor from turf level, with batting cages down both sides and the DiChiaro logo on the far wall |
 | 38 | Facility | Every swing, measured. | `dbsa-08-hittrax-screen.jpg` (1920x1249) | 520x520 / 346x346 | 1:1 | centred | The live HitTrax screen mid session with a player in front |
 | 39 | Team camps | Bring your team indoors this winter. | `dbsa-01-facility-in-use.jpg` (2000x1130) | 1280x420 / 346x114 | 3.05:1 | centred | The full academy floor with nets up and a group working through stations |
 | 40 | About | Every player leaves better than they came in. | `dbsa-01-facility-in-use.jpg` (2000x1130) | 1280x420 / 346x114 | 3.05:1 | centred | The full academy room from the back corner with the nets up and players working |

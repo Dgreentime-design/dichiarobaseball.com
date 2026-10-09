@@ -2,6 +2,7 @@
   "_about": [
     "One entry per image slot, numbered as in docs/review/image-map.md. Pages ask for a slot, never a file.",
     "file: an original in assets/img/src/. alt: empty only for a decorative hero. focal: CSS object-position, default 50% 50%. focal_mobile: optional, used up to 767px wide.",
+    "file_mobile: optional, a different original shown up to 767px wide (art direction, for when no crop of file works on a phone). focal_mobile then applies to it. The hero preload follows it per breakpoint. A slot's file and file_mobile both count as uses on its page for the same-photo-twice check.",
     "layout: which entry in _layouts gives the slot its sizes value. Layout is the page's, not the photo's: a photo swap never touches it.",
     "Swap a photo: put the new original in assets/img/src/, change file (and alt, focal if needed) on the slot, run npm run build."
   ],
@@ -26,10 +27,11 @@
       "page": "index.html",
       "section": "Hero",
       "file": "dbsa-19-coach-fielding-drill.jpg",
+      "file_mobile": "dbsa-20-facility-turf-wide.jpg",
       "alt": "",
       "focal": "70% 80%",
-      "layout": "hero",
-      "focal_mobile": "74% 50%"
+      "focal_mobile": "50% 40%",
+      "layout": "hero"
     },
     "2": {
       "page": "index.html",
@@ -82,9 +84,9 @@
     "8": {
       "page": "index.html",
       "section": "Image band, Fundamentals first",
-      "file": "dbsa-20-facility-turf-wide.jpg",
-      "alt": "The academy floor from turf level, with batting cages down both sides and the DiChiaro logo on the far wall",
-      "focal": "50% 45%",
+      "file": "dbsa-05-pitching-mound.jpg",
+      "alt": "A pitcher at release with the mound and net behind",
+      "focal": "50% 50%",
       "layout": "band"
     },
     "9": {

@@ -276,10 +276,12 @@ const images = JSON.parse(readFileSync("data/images.json", "utf8"));
 const gen = existsSync("assets/img/gen/manifest.json") ? JSON.parse(readFileSync("assets/img/gen/manifest.json", "utf8")) : {};
 let imageProblems = 0;
 for (const [n, s] of Object.entries(images.slots)) {
-  if (!existsSync(`assets/img/src/${s.file}`)) { imageProblems++; fail(`slot ${n}: assets/img/src/${s.file} does not exist`); continue; }
-  const m = gen[s.file];
-  const built = m && m.widths.every(w => ["webp", "jpg"].every(ext => existsSync(`assets/img/gen/${s.file.replace(/\.[^.]+$/, "")}-${w}-${m.hash}.${ext}`)));
-  if (!built) { imageProblems++; fail(`slot ${n}: sized files for ${s.file} are not built, run npm run build`); }
+  for (const f of [s.file, s.file_mobile].filter(Boolean)) {
+    if (!existsSync(`assets/img/src/${f}`)) { imageProblems++; fail(`slot ${n}: assets/img/src/${f} does not exist`); continue; }
+    const m = gen[f];
+    const built = m && m.widths.every(w => ["webp", "jpg"].every(ext => existsSync(`assets/img/gen/${f.replace(/\.[^.]+$/, "")}-${w}-${m.hash}.${ext}`)));
+    if (!built) { imageProblems++; fail(`slot ${n}: sized files for ${f} are not built, run npm run build`); }
+  }
   if (!images._layouts[s.layout]) { imageProblems++; fail(`slot ${n}: layout "${s.layout}" is not in _layouts`); }
 }
 /* Read from the served pages, so this is what a visitor gets. */
@@ -293,8 +295,11 @@ for (const file of Array.from(seen).filter((f) => f.endsWith(".html")).sort()) {
     slotsSeen++;
     const s = images.slots[n];
     if (!s) { imageProblems++; fail(`${file}: slot ${n} is not in data/images.json`); continue; }
-    if (used.has(s.file)) duplicates.push(`${file}: slot ${n} repeats ${s.file}, first used in slot ${used.get(s.file)}`);
-    else used.set(s.file, n);
+    /* A phone photo (file_mobile) is a use on the page too. */
+    for (const f of [s.file, s.file_mobile].filter(Boolean)) {
+      if (used.has(f)) duplicates.push(`${file}: slot ${n} repeats ${f}, first used in slot ${used.get(f)}`);
+      else used.set(f, n);
+    }
   }
 }
 await pageChecker.close();

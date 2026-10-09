@@ -9,6 +9,11 @@
                        and a preload in <head>
      {{img_url 10}}    the slot's 1280px JPG as an absolute URL, for og:image
 
+   A slot can name a second original in file_mobile. The slot then renders
+   that photo up to 767px wide and file above it (art direction, not just a
+   crop), with focal_mobile as its focal point, and the hero preload asks
+   for the right one per breakpoint.
+
    Originals live in assets/img/src/. Each one used by a slot is written to
    assets/img/gen/ as <name>-<width>-<hash>, at 480, 800, 1280, 1920 and
    2880 wide, as far as the
@@ -55,7 +60,7 @@ export function slot(n) {
 
 /* Build every sized file the registry needs. Returns what it did. */
 export async function generate() {
-  const files = [...new Set(Object.values(slots).map((s) => s.file))].sort();
+  const files = [...new Set(Object.values(slots).flatMap((s) => [s.file, s.file_mobile]).filter(Boolean))].sort();
   const missing = files.filter((f) => !existsSync(join(SRC, f)));
   if (missing.length) throw new Error(`images: missing in ${SRC}: ${missing.join(", ")}`);
   mkdirSync(GEN, { recursive: true });
@@ -96,18 +101,27 @@ const srcset = (f, ext, prefix) => manifest[f].widths.map((w) => `${prefix}${out
 const fallback = (f) => manifest[f].widths.filter((w) => w <= 1280).pop() || manifest[f].widths[0];
 const attr = (s) => String(s).replace(/&(?!(?:amp|lt|gt|quot|rsquo|#\d+);)/g, "&amp;").replace(/"/g, "&quot;");
 
+/* The media query file_mobile answers. Matches the focal_mobile CSS. */
+const PHONE = "(max-width: 767px)";
+
 /* The <picture> for a slot. prefix is "../" for pages one folder down. */
 export function picture(n, { hero = false, prefix = "" } = {}) {
   const s = slot(n);
   const f = s.file;
   const m = manifest[f];
   const sizes = layouts[s.layout];
+  /* Phone sources first: the browser takes the first <source> that matches.
+     width and height on them keep the box reserved for the phone photo. */
+  const fm = s.file_mobile;
+  const phone = fm
+    ? ["webp", "jpg"].map((ext) => `<source media="${PHONE}"${ext === "webp" ? ` type="image/webp"` : ""} srcset="${srcset(fm, ext, prefix)}" sizes="${sizes}" width="${manifest[fm].width}" height="${manifest[fm].height}">`).join("")
+    : "";
   const style = [
     s.focal && s.focal !== "50% 50%" ? `--focal: ${s.focal};` : "",
     s.focal_mobile ? `--focal-m: ${s.focal_mobile};` : "",
   ].filter(Boolean).join(" ");
   const load = hero ? ` fetchpriority="high"` : ` loading="lazy" decoding="async"`;
-  return `<picture>` +
+  return `<picture>` + phone +
     `<source type="image/webp" srcset="${srcset(f, "webp", prefix)}" sizes="${sizes}">` +
     `<img src="${prefix}${out(f, fallback(f), "jpg")}" srcset="${srcset(f, "jpg", prefix)}" sizes="${sizes}" alt="${attr(s.alt)}" width="${m.width}" height="${m.height}"${load} data-slot="${n}"${style ? ` style="${style}"` : ""}>` +
     `</picture>`;
@@ -117,7 +131,11 @@ export function picture(n, { hero = false, prefix = "" } = {}) {
    CSS is parsed. type= keeps a browser without WebP from fetching it. */
 export function preload(n, { prefix = "" } = {}) {
   const s = slot(n);
-  return `<link rel="preload" as="image" type="image/webp" imagesrcset="${srcset(s.file, "webp", prefix)}" imagesizes="${layouts[s.layout]}" fetchpriority="high">`;
+  const link = (f, media) => `<link rel="preload" as="image" type="image/webp" imagesrcset="${srcset(f, "webp", prefix)}" imagesizes="${layouts[s.layout]}"${media ? ` media="${media}"` : ""} fetchpriority="high">`;
+  /* With a phone photo, one preload per breakpoint, so a phone never
+     downloads the desktop photo and a desktop never downloads the phone one. */
+  if (s.file_mobile) return link(s.file_mobile, PHONE) + "\n" + link(s.file, "(min-width: 768px)");
+  return link(s.file);
 }
 
 /* The 1280 JPG as an absolute URL against the production domain. build.mjs
