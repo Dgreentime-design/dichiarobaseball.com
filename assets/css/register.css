@@ -186,6 +186,12 @@
 
 /* --- Layout -------------------------------------------------------------- */
 
+/* Every panel starts hidden while register.js loads the program, so the
+   footer used to paint at the top and then jump a whole form's height (CLS
+   0.844). Until a panel shows, main holds the screen and the footer starts
+   below the fold. Once one shows this no longer applies. */
+main:has(> .step-panel):not(:has(> .step-panel:not([hidden]))) { min-height: 100vh; }
+
 .reg { padding: var(--band-y) var(--gutter); background: var(--c-bone); }
 .reg__inner {
   max-width: var(--container); margin-inline: auto;

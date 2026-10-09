@@ -7,8 +7,9 @@
    program page. The image is a full-bleed background at every width, under
    the same dark overlay, with the copy on top of it, left aligned. Only the
    layout reflows: on a phone the copy sits lower in the frame and the
-   buttons stack. Each page can set --hero-focus to keep its subject in
-   frame when a landscape image is cropped to a tall phone screen.        */
+   buttons stack. The slot's focal point in data/images.json keeps its subject
+   in frame when a landscape image is cropped to a tall phone screen
+   (--hero-focus on the section still works for the Instructors page).        */
 
 .hero {
   position: relative; display: grid;
@@ -17,7 +18,8 @@
 }
 
 .hero__media { position: absolute; inset: 0; border-radius: 0; aspect-ratio: auto; }
-.hero__media img { object-position: var(--hero-focus, 50% 50%); }
+.hero__media img { object-position: var(--focal, var(--hero-focus, 50% 50%)); }
+@media (max-width: 767px) { .hero__media img { object-position: var(--focal-m, var(--focal, var(--hero-focus, 50% 50%))); } }
 /* The overlay is dark where the copy is and lets the photograph through
    everywhere else. On a wide screen the copy is a column on the left, so the
    scrim runs left to right and holds its darkest value to the end of the

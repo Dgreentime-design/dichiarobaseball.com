@@ -9,20 +9,13 @@
 <link rel="icon" href="../assets/img/favicon.png" sizes="any">
 <link rel="apple-touch-icon" href="../assets/img/favicon.png">
 
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;600;700;900&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<!-- Fonts are self-hosted (assets/fonts, declared in assets/css/fonts.css).
+     The two latin files carry every weight used above the fold. -->
+<link rel="preload" href="../assets/fonts/archivo-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="../assets/fonts/jetbrains-mono-latin.woff2" as="font" type="font/woff2" crossorigin>
 
-<link rel="stylesheet" href="../assets/css/tokens.css">
-<link rel="stylesheet" href="../assets/css/base.css">
-<link rel="stylesheet" href="../assets/css/components.css">
-<link rel="stylesheet" href="../assets/css/home.css">
-<link rel="stylesheet" href="../assets/css/camps.css">
-<link rel="stylesheet" href="../assets/css/pages.css">
-<link rel="stylesheet" href="../assets/css/register.css">
-<link rel="stylesheet" href="../assets/css/instructors.css">
-<link rel="stylesheet" href="../assets/css/legal.css">
-<link rel="stylesheet" href="../assets/css/program.css">
+<!-- One stylesheet, built by build.mjs from the files in assets/css/. -->
+<link rel="stylesheet" href="../assets/css/site.min.css?v=afb2f98b">
 
 <!-- Analytics. Vercel Web Analytics: no cookies, so no consent banner. It
      records nothing until it is enabled in the Vercel dashboard (project,
@@ -41,12 +34,13 @@
 <meta property="og:description" content="Little League Training Camp, Winter 2027. Ages 6-12, 9 Sundays from Jan 3, 2027 to Feb 28, 2027, 2:30pm-4:00pm. $350. Fair Lawn, NJ.">
 <meta name="twitter:title" content="Little League Training Camp, Winter 2027 · DiChiaro Baseball &amp; Softball Academy">
 <meta name="twitter:description" content="Little League Training Camp, Winter 2027. Ages 6-12, 9 Sundays from Jan 3, 2027 to Feb 28, 2027, 2:30pm-4:00pm. $350. Fair Lawn, NJ.">
-<meta name="twitter:image" content="https://dichiarobaseball.com/assets/img/dbsa-07-little-league.jpg">
+<meta name="twitter:image" content="https://dichiarobaseball.com/assets/img/gen/dbsa-07-little-league-1280-12c6ea1d.jpg">
 <link rel="canonical" href="https://dichiarobaseball.com/programs/little-league-winter-2027.html">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://dichiarobaseball.com/programs/little-league-winter-2027.html">
-<meta property="og:image" content="https://dichiarobaseball.com/assets/img/dbsa-07-little-league.jpg">
+<meta property="og:image" content="https://dichiarobaseball.com/assets/img/gen/dbsa-07-little-league-1280-12c6ea1d.jpg">
 <meta name="twitter:card" content="summary_large_image">
+<link rel="preload" as="image" type="image/webp" imagesrcset="../assets/img/gen/dbsa-07-little-league-480-12c6ea1d.webp 480w, ../assets/img/gen/dbsa-07-little-league-800-12c6ea1d.webp 800w, ../assets/img/gen/dbsa-07-little-league-1280-12c6ea1d.webp 1280w, ../assets/img/gen/dbsa-07-little-league-1920-12c6ea1d.webp 1920w" imagesizes="100vw" fetchpriority="high">
 
 <meta name="robots" content="noindex, nofollow">
 
@@ -162,9 +156,9 @@
 <!-- ===================================================================== -->
 <!-- Block 01 · Hero · required                                            -->
 <!-- ===================================================================== -->
-<section class="hero" style="--hero-focus: 76% 50%;">
+<section class="hero">
   <div class="hero__media media media--16x9 media--note">
-    <img src="../assets/img/dbsa-07-little-league.jpg" alt="" width="1920" height="1080" fetchpriority="high">
+    <picture><source type="image/webp" srcset="../assets/img/gen/dbsa-07-little-league-480-12c6ea1d.webp 480w, ../assets/img/gen/dbsa-07-little-league-800-12c6ea1d.webp 800w, ../assets/img/gen/dbsa-07-little-league-1280-12c6ea1d.webp 1280w, ../assets/img/gen/dbsa-07-little-league-1920-12c6ea1d.webp 1920w" sizes="100vw"><img src="../assets/img/gen/dbsa-07-little-league-1280-12c6ea1d.jpg" srcset="../assets/img/gen/dbsa-07-little-league-480-12c6ea1d.jpg 480w, ../assets/img/gen/dbsa-07-little-league-800-12c6ea1d.jpg 800w, ../assets/img/gen/dbsa-07-little-league-1280-12c6ea1d.jpg 1280w, ../assets/img/gen/dbsa-07-little-league-1920-12c6ea1d.jpg 1920w" sizes="100vw" alt="" width="1920" height="1080" fetchpriority="high" data-slot="19" style="--focal: 76% 50%;"></picture>
     <span class="media__label">dbsa-07 · Little League camp on the turf</span>
   </div>
 

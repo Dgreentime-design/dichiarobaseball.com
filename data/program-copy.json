@@ -3,15 +3,13 @@
     "what": "Written copy for the generated program pages, keyed by program slug. Facts (dates, times, prices, ages, options, skills) come from data/programs.json and never from here.",
     "rule": "A key that is missing leaves its section or line out of the page. Nothing is filled in. Strings are HTML.",
     "skills": "Descriptions are keyed by the skill name exactly as it appears in the program's teaches list. A skill with no description shows its name only.",
-    "image": "The hero image is an asset choice, not copy. The five programs without copy use the photo their homepage or camps card already uses.",
+    "image": "The hero image is an asset choice, not copy: image.slot is its slot in data/images.json, which holds the file, alt and focal point. label is the placeholder caption shown only if the file fails to load.",
     "tokens": "Copy may use tokens filled from the data at build time, so a count or a month can never drift from the schedule: {sessions} {home} {away} (counts as words, {Home} capitalised), {away_months}, {day}, {Day}, {home_time}, {away_time}. Venue session counts are generated, never written."
   },
   "infield-camp-2026-27": {
     "crumb": "Infield Camp",
     "image": {
-      "src": "assets/img/dbsa-04-fielding-turf.jpg",
-      "width": 2000,
-      "height": 1144,
+      "slot": 21,
       "label": "dbsa-04 · Infield camp, ground ball mid-play"
     },
     "title_html": "Lou DiChiaro&rsquo;s<br>Infield Camp",
@@ -85,10 +83,7 @@
     },
     "instructor": {
       "image": {
-        "src": "assets/img/dbsa-09-lou-coaching.jpg",
-        "alt": "Lou DiChiaro standing with a softball player in front of the academy logo",
-        "width": 2000,
-        "height": 2000,
+        "slot": 22,
         "label": "dbsa-09 · Lou mid-instruction"
       },
       "eyebrow": "Who teaches it",
@@ -125,8 +120,7 @@
           "title": "The academy",
           "when": "{Day}s {home_time}",
           "map": {
-            "src": "assets/img/dbsa-18-map-fair-lawn.png",
-            "alt": "Map showing the academy on Pollitt Drive in Fair Lawn",
+            "slot": 23,
             "label": "dbsa-18 · Map, pin on Pollitt Drive"
           }
         },
@@ -134,8 +128,7 @@
           "title": "Superdome Sports Center",
           "when": "{Day}s {away_time}, both groups",
           "map": {
-            "src": "assets/img/dbsa-18-map-fair-lawn.png",
-            "alt": "Map showing the Superdome Sports Center in Waldwick",
+            "slot": 24,
             "label": "dbsa-18 · Map, pin on Hopper Avenue"
           }
         }
@@ -174,68 +167,49 @@
   },
   "little-league-fall-2026": {
     "image": {
-      "src": "assets/img/dbsa-07-little-league.jpg",
-      "width": 1920,
-      "height": 1080,
-      "label": "dbsa-07 · Little League camp on the turf",
-      "focus": "76% 50%"
+      "slot": 18,
+      "label": "dbsa-07 · Little League camp on the turf"
     }
   },
   "little-league-winter-2027": {
     "image": {
-      "src": "assets/img/dbsa-07-little-league.jpg",
-      "width": 1920,
-      "height": 1080,
-      "label": "dbsa-07 · Little League camp on the turf",
-      "focus": "76% 50%"
+      "slot": 19,
+      "label": "dbsa-07 · Little League camp on the turf"
     }
   },
   "little-league-march-2027": {
     "image": {
-      "src": "assets/img/dbsa-07-little-league.jpg",
-      "width": 1920,
-      "height": 1080,
-      "label": "dbsa-07 · Little League camp on the turf",
-      "focus": "76% 50%"
+      "slot": 20,
+      "label": "dbsa-07 · Little League camp on the turf"
     }
   },
   "hit-night-fall-2026": {
     "image": {
-      "src": "assets/img/dbsa-03-hitting-cage.jpg",
-      "width": 1920,
-      "height": 1080,
+      "slot": 25,
       "label": "dbsa-03 · Hit Night, the cage"
     }
   },
   "hit-night-winter-2027": {
     "image": {
-      "src": "assets/img/dbsa-03-hitting-cage.jpg",
-      "width": 1920,
-      "height": 1080,
+      "slot": 26,
       "label": "dbsa-03 · Hit Night, the cage"
     }
   },
   "iha-softball-winter-2027": {
     "image": {
-      "src": "assets/img/dbsa-01-facility-in-use.jpg",
-      "width": 2000,
-      "height": 1130,
+      "slot": 27,
       "label": "dbsa-01 · A team at fielding drills on the turf"
     }
   },
   "fair-lawn-hs-softball-2027": {
     "image": {
-      "src": "assets/img/dbsa-06-group-semi-private.jpg",
-      "width": 2000,
-      "height": 1115,
+      "slot": 28,
       "label": "dbsa-06 · Coach kneeling in front of the group"
     }
   },
   "old-tappan-hs-2026-27": {
     "image": {
-      "src": "assets/img/dbsa-03-hitting-cage.jpg",
-      "width": 1920,
-      "height": 1080,
+      "slot": 29,
       "label": "dbsa-03 · Hitter mid swing in the cage"
     }
   }

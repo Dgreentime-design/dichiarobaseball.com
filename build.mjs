@@ -8,6 +8,9 @@
       prototype dead-ends in a 404.
    3. Generates one page and one calendar file per public program, from
       pages/_program.html, data/programs.json and data/program-copy.json.
+   4. Builds the sized images for every slot in data/images.json and
+      resolves {{img N}} tokens into <picture> (see build-images.mjs).
+   5. Writes one combined, minified stylesheet, assets/css/site.min.css.
 
    Three things are shared by every page: the header, the mobile menu and
    the footer. They live once, in partials/, so a change to the navigation
@@ -18,7 +21,9 @@
 
 import { readFileSync, writeFileSync, readdirSync, existsSync, mkdirSync } from "node:fs";
 import { join } from "node:path";
+import { createHash } from "node:crypto";
 import { ABOUT_TOPICS } from "./api/_lib/topics.js";
+import { generate as generateImages, resolveImages, imageUrl } from "./build-images.mjs";
 
 const PAGES = "pages";
 const PARTIALS = "partials";
@@ -85,12 +90,50 @@ const LEGAL_FILES = new Set(
     : []
 );
 
+/* --- Images ------------------------------------------------------------- */
+
+console.log("Images");
+const imageRun = await generateImages();
+console.log(`  ${imageRun.total} originals, ${imageRun.built} rebuilt`);
+
+/* --- One stylesheet ------------------------------------------------------
+
+   The ten stylesheets and the self-hosted fonts, in the order the head
+   used to load them, as one minified file: one render-blocking request
+   instead of eleven plus Google Fonts. Edit the files in assets/css/, never
+   site.min.css. The hash in the link makes a changed file reach browsers
+   at once, past the week-long cache on /assets/. */
+const CSS_ORDER = ["fonts", "tokens", "base", "components", "home", "camps", "pages", "register", "instructors", "legal", "program"];
+function minifyCss(css) {
+  let out = "", i = 0;
+  while (i < css.length) {
+    const ch = css[i];
+    if (ch === '"' || ch === "'") {
+      let j = i + 1;
+      while (j < css.length && css[j] !== ch) j += css[j] === "\\" ? 2 : 1;
+      out += css.slice(i, j + 1); i = j + 1; continue;
+    }
+    if (ch === "/" && css[i + 1] === "*") { const end = css.indexOf("*/", i + 2); i = end < 0 ? css.length : end + 2; continue; }
+    if (/\s/.test(ch)) {
+      while (i < css.length && /\s/.test(css[i])) i++;
+      if (out && !/[{};, ]$/.test(out) && !/^[{};,]/.test(css[i] || "")) out += " ";
+      continue;
+    }
+    out += ch; i++;
+  }
+  return out.trim() + "\n";
+}
+const CSS = minifyCss(CSS_ORDER.map((n) => readFileSync(join("assets", "css", n + ".css"), "utf8")).join("\n"));
+writeFileSync(join("assets", "css", "site.min.css"), CSS);
+const CSS_HREF = `assets/css/site.min.css?v=${createHash("sha1").update(CSS).digest("hex").slice(0, 8)}`;
+console.log(`  assets/css/site.min.css, ${(CSS.length / 1024).toFixed(1)} KB`);
+
 const cache = new Map();
 function partial(name) {
   if (cache.has(name)) return cache.get(name);
   const path = join(PARTIALS, name + ".html");
   if (!existsSync(path)) throw new Error(`Missing partial: ${name}`);
-  const body = readFileSync(path, "utf8").trimEnd();
+  const body = readFileSync(path, "utf8").trimEnd().replaceAll("{{css_href}}", CSS_HREF);
   cache.set(name, body);
   return body;
 }
@@ -450,7 +493,7 @@ for (const file of readdirSync(PAGES).filter(f => f.endsWith(".html") && !f.star
     .replaceAll("{{about_topics}}", JSON.stringify(ABOUT_TOPICS).replace(/<\//g, "<\\/"))
     .replaceAll("{{calendar_links}}", JSON.stringify(Object.fromEntries(programs.programs
       .filter((p) => p.status === "live").map((p) => [p.slug, calendarLinks(p.slug)]))).replace(/<\//g, "<\\/"));
-  write(file, html);
+  write(file, resolveImages(html, { origin: PROD_ORIGIN }));
   pages++;
 }
 
@@ -649,9 +692,9 @@ function heroBlock(p, c, f) {
 <!-- ===================================================================== -->
 <!-- Block 01 · Hero · required                                            -->
 <!-- ===================================================================== -->
-<section class="hero"${img.focus ? ` style="--hero-focus: ${img.focus};"` : ""}>
+<section class="hero">
   <div class="hero__media media media--16x9 media--note">
-    <img src="${img.src}" alt="" width="${img.width}" height="${img.height}" fetchpriority="high">
+    {{img ${img.slot} hero}}
     <span class="media__label">${img.label}</span>
   </div>
 
@@ -872,7 +915,7 @@ function instructorBlock(c) {
 <section class="band band--surface" aria-labelledby="who-teaches-title">
   <div class="container instructor-split">
     <div class="media media--4x5">
-      <img src="${k.image.src}" alt="${k.image.alt}" width="${k.image.width}" height="${k.image.height}" loading="lazy">
+      {{img ${k.image.slot}}}
       <span class="media__label">${k.image.label}</span>
     </div>
 
@@ -915,7 +958,7 @@ function venuesBlock(p, c) {
     return `
       <article class="venue">
         <div class="media media--16x9">
-          <img src="${vc.map.src}" alt="${vc.map.alt}" width="1200" height="800" loading="lazy">
+          {{img ${vc.map.slot}}}
           <span class="media__label">${vc.map.label}</span>
         </div>
         <div class="venue__body">
@@ -1072,7 +1115,7 @@ if (PUBLIC.length && existsSync(join(PAGES, "_program.html"))) {
     const c = COPY[p.slug] || {};
     const file = `${PROGRAM_DIR}/${p.slug}.html`;
     const f = { register: signUpUrl(p).replace(/&/g, "&amp;"), gated: !!p.gated, ics: `${PROGRAM_DIR}/${p.slug}.ics` };
-    if (!c.image) throw new Error(`build: ${p.slug} has no hero image in data/program-copy.json`);
+    if (!c.image || !c.image.slot) throw new Error(`build: ${p.slug} has no hero image slot in data/program-copy.json`);
     const blocks = [heroBlock(p, c, f), groupsBlock(p, c, f), skillsBlock(p, c), scheduleBlock(p, c, f),
       pricingBlock(p, c, f), instructorBlock(c), venuesBlock(p, c), faqBlock(c), registerBlock(p, c, f)].join("");
     const name = typo(p.name);
@@ -1080,10 +1123,10 @@ if (PUBLIC.length && existsSync(join(PAGES, "_program.html"))) {
       .replace("{{blocks}}", () => blocks)
       .replaceAll("{{title}}", () => `${name}, ${esc(p.season)} · DiChiaro Baseball &amp; Softball Academy`)
       .replaceAll("{{description}}", () => programDescription(p))
-      .replaceAll("{{og_image}}", () => c.image.src)
+      .replaceAll("{{og_image}}", () => imageUrl(c.image.slot, PROD_ORIGIN))
       .replaceAll("{{file}}", () => file));
     PROGRAM_PAGE[file] = p.slug;
-    write(file, upOne(html));
+    write(file, upOne(resolveImages(html, { origin: PROD_ORIGIN, prefix: "../" })));
     writeFileSync(f.ics, icsFor(p));
     console.log("  built", f.ics);
   }

@@ -9,20 +9,13 @@
 <link rel="icon" href="assets/img/favicon.png" sizes="any">
 <link rel="apple-touch-icon" href="assets/img/favicon.png">
 
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;600;700;900&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<!-- Fonts are self-hosted (assets/fonts, declared in assets/css/fonts.css).
+     The two latin files carry every weight used above the fold. -->
+<link rel="preload" href="assets/fonts/archivo-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="assets/fonts/jetbrains-mono-latin.woff2" as="font" type="font/woff2" crossorigin>
 
-<link rel="stylesheet" href="assets/css/tokens.css">
-<link rel="stylesheet" href="assets/css/base.css">
-<link rel="stylesheet" href="assets/css/components.css">
-<link rel="stylesheet" href="assets/css/home.css">
-<link rel="stylesheet" href="assets/css/camps.css">
-<link rel="stylesheet" href="assets/css/pages.css">
-<link rel="stylesheet" href="assets/css/register.css">
-<link rel="stylesheet" href="assets/css/instructors.css">
-<link rel="stylesheet" href="assets/css/legal.css">
-<link rel="stylesheet" href="assets/css/program.css">
+<!-- One stylesheet, built by build.mjs from the files in assets/css/. -->
+<link rel="stylesheet" href="assets/css/site.min.css?v=afb2f98b">
 
 <!-- Analytics. Vercel Web Analytics: no cookies, so no consent banner. It
      records nothing until it is enabled in the Vercel dashboard (project,
@@ -41,12 +34,13 @@
 <meta property="og:description" content="Private and semi-private baseball and softball lessons in Fair Lawn, New Jersey. Hitting, fielding, catching and pitching, seven days a week, year round.">
 <meta name="twitter:title" content="Lessons · DiChiaro Baseball &amp; Softball Academy">
 <meta name="twitter:description" content="Private and semi-private baseball and softball lessons in Fair Lawn, New Jersey. Hitting, fielding, catching and pitching, seven days a week, year round.">
-<meta name="twitter:image" content="https://dichiarobaseball.com/assets/img/dbsa-03-hitting-cage.jpg">
+<meta name="twitter:image" content="https://dichiarobaseball.com/assets/img/gen/dbsa-03-hitting-cage-1280-16e19a34.jpg">
 <link rel="canonical" href="https://dichiarobaseball.com/lessons.html">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://dichiarobaseball.com/lessons.html">
-<meta property="og:image" content="https://dichiarobaseball.com/assets/img/dbsa-03-hitting-cage.jpg">
+<meta property="og:image" content="https://dichiarobaseball.com/assets/img/gen/dbsa-03-hitting-cage-1280-16e19a34.jpg">
 <meta name="twitter:card" content="summary_large_image">
+<link rel="preload" as="image" type="image/webp" imagesrcset="assets/img/gen/dbsa-03-hitting-cage-480-16e19a34.webp 480w, assets/img/gen/dbsa-03-hitting-cage-800-16e19a34.webp 800w, assets/img/gen/dbsa-03-hitting-cage-1280-16e19a34.webp 1280w, assets/img/gen/dbsa-03-hitting-cage-1920-16e19a34.webp 1920w" imagesizes="100vw" fetchpriority="high">
 
 <meta name="robots" content="noindex, nofollow">
 </head>
@@ -156,7 +150,7 @@
 
 <section class="hero">
   <div class="hero__media media media--16x9 media--note">
-    <img src="assets/img/dbsa-03-hitting-cage.jpg" alt="" width="2400" height="1600" fetchpriority="high">
+    <picture><source type="image/webp" srcset="assets/img/gen/dbsa-03-hitting-cage-480-16e19a34.webp 480w, assets/img/gen/dbsa-03-hitting-cage-800-16e19a34.webp 800w, assets/img/gen/dbsa-03-hitting-cage-1280-16e19a34.webp 1280w, assets/img/gen/dbsa-03-hitting-cage-1920-16e19a34.webp 1920w" sizes="100vw"><img src="assets/img/gen/dbsa-03-hitting-cage-1280-16e19a34.jpg" srcset="assets/img/gen/dbsa-03-hitting-cage-480-16e19a34.jpg 480w, assets/img/gen/dbsa-03-hitting-cage-800-16e19a34.jpg 800w, assets/img/gen/dbsa-03-hitting-cage-1280-16e19a34.jpg 1280w, assets/img/gen/dbsa-03-hitting-cage-1920-16e19a34.jpg 1920w" sizes="100vw" alt="" width="1920" height="1080" fetchpriority="high" data-slot="30"></picture>
     <span class="media__label">dbsa-03 · Hitter mid swing in the cage, ball just off the bat</span>
   </div>
 
@@ -188,7 +182,7 @@
 
       <article class="rate-card">
         <div class="media media--16x9">
-          <img src="assets/img/dbsa-03-hitting-cage.jpg" alt="A hitter mid swing in the cage with the ball just off the bat" width="2400" height="1600" loading="lazy">
+          <picture><source type="image/webp" srcset="assets/img/gen/dbsa-03-hitting-cage-480-16e19a34.webp 480w, assets/img/gen/dbsa-03-hitting-cage-800-16e19a34.webp 800w, assets/img/gen/dbsa-03-hitting-cage-1280-16e19a34.webp 1280w, assets/img/gen/dbsa-03-hitting-cage-1920-16e19a34.webp 1920w" sizes="(min-width: 1344px) 626px, (min-width: 900px) 48vw, 100vw"><img src="assets/img/gen/dbsa-03-hitting-cage-1280-16e19a34.jpg" srcset="assets/img/gen/dbsa-03-hitting-cage-480-16e19a34.jpg 480w, assets/img/gen/dbsa-03-hitting-cage-800-16e19a34.jpg 800w, assets/img/gen/dbsa-03-hitting-cage-1280-16e19a34.jpg 1280w, assets/img/gen/dbsa-03-hitting-cage-1920-16e19a34.jpg 1920w" sizes="(min-width: 1344px) 626px, (min-width: 900px) 48vw, 100vw" alt="A hitter mid swing in the cage with the ball just off the bat" width="1920" height="1080" loading="lazy" decoding="async" data-slot="31"></picture>
           <span class="media__label">dbsa-03 · Hitter mid swing in the cage, ball just off the bat</span>
         </div>
         <div class="rate-card__body">
@@ -240,7 +234,7 @@
 
       <article class="rate-card">
         <div class="media media--16x9">
-          <img src="assets/img/dbsa-05-pitching-mound.jpg" alt="A pitcher at release with the mound and net behind" width="2400" height="1600" loading="lazy">
+          <picture><source type="image/webp" srcset="assets/img/gen/dbsa-05-pitching-mound-480-dea43ee6.webp 480w, assets/img/gen/dbsa-05-pitching-mound-800-dea43ee6.webp 800w, assets/img/gen/dbsa-05-pitching-mound-1280-dea43ee6.webp 1280w" sizes="(min-width: 1344px) 626px, (min-width: 900px) 48vw, 100vw"><img src="assets/img/gen/dbsa-05-pitching-mound-1280-dea43ee6.jpg" srcset="assets/img/gen/dbsa-05-pitching-mound-480-dea43ee6.jpg 480w, assets/img/gen/dbsa-05-pitching-mound-800-dea43ee6.jpg 800w, assets/img/gen/dbsa-05-pitching-mound-1280-dea43ee6.jpg 1280w" sizes="(min-width: 1344px) 626px, (min-width: 900px) 48vw, 100vw" alt="A pitcher at release with the mound and net behind" width="1600" height="1212" loading="lazy" decoding="async" data-slot="32"></picture>
           <span class="media__label">dbsa-05 · Pitcher at release, mound and net behind</span>
         </div>
         <div class="rate-card__body">
@@ -291,7 +285,7 @@
     <!-- Semi-private -->
     <article class="wide-card" id="semi-private">
       <div class="media">
-        <img src="assets/img/dbsa-06-group-semi-private.jpg" alt="Three players working with one coach, mid rep" width="2400" height="1600" loading="lazy">
+        <picture><source type="image/webp" srcset="assets/img/gen/dbsa-06-group-semi-private-480-274832b3.webp 480w, assets/img/gen/dbsa-06-group-semi-private-800-274832b3.webp 800w, assets/img/gen/dbsa-06-group-semi-private-1280-274832b3.webp 1280w, assets/img/gen/dbsa-06-group-semi-private-1920-274832b3.webp 1920w" sizes="(min-width: 1344px) 1280px, calc(100vw - 40px)"><img src="assets/img/gen/dbsa-06-group-semi-private-1280-274832b3.jpg" srcset="assets/img/gen/dbsa-06-group-semi-private-480-274832b3.jpg 480w, assets/img/gen/dbsa-06-group-semi-private-800-274832b3.jpg 800w, assets/img/gen/dbsa-06-group-semi-private-1280-274832b3.jpg 1280w, assets/img/gen/dbsa-06-group-semi-private-1920-274832b3.jpg 1920w" sizes="(min-width: 1344px) 1280px, calc(100vw - 40px)" alt="Three players working with one coach, mid rep" width="2000" height="1115" loading="lazy" decoding="async" data-slot="33"></picture>
         <span class="media__label">dbsa-06 · Three players working with one coach, mid rep</span>
       </div>
       <div class="wide-card__body">

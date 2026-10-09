@@ -1,6 +1,28 @@
 # Image map
 
-Round 16, 9 October 2026. Measured on the review preview at 1440 and 390. One row per image slot, numbered so you can say "slot 7: use photo X". Rendered size is the image box in CSS pixels; the current file's own size is in brackets.
+Round 16, 9 October 2026, with the swap steps added in round 17. Measured on the review preview at 1440 and 390. One row per image slot, numbered so you can say "slot 7: use photo X". Rendered size is the image box in CSS pixels; the current file's own size is in brackets.
+
+## How to swap a photo
+
+Since round 17 every image on the site (slots 1-47) is read from
+`data/images.json` by slot number. Slots 48-54 (Instructors) are not in the
+registry yet; that page still names its files directly.
+
+1. Put the new original in `assets/img/src/` (JPG, sRGB, at least the export
+   size below; it is never served as is).
+2. In `data/images.json`, change that slot's `file` to the new name. Change
+   `alt` if the picture says something different, and `focal` (CSS
+   object-position, "50% 50%" is centred) if the subject is off centre. Add
+   `focal_mobile` for a different crop on phones (up to 767px wide).
+3. Run `npm run build`. It writes the sized WebP and JPG files to
+   `assets/img/gen/` (only for originals that changed), rebuilds every page
+   that uses the slot, and the files are committed with the pages. Vercel
+   never resizes: a swap that was not built locally fails the deploy.
+
+`npm run verify` fails if a slot points at a missing file. It lists any
+photo used twice on one page; that becomes a failure after the photo round.
+
+## Slots
 
 | # | Page | Section | Current file | Rendered size at 1440 / 390 (px) | Aspect ratio | Crop or focal note | Alt text |
 |---|---|---|---|---|---|---|---|

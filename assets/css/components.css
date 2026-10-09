@@ -109,7 +109,12 @@
   background: var(--c-panel);
   border-radius: var(--r-2);
 }
-.media img { width: 100%; height: 100%; object-fit: cover; }
+.media img { width: 100%; height: 100%; object-fit: cover; object-position: var(--focal, 50% 50%); }
+/* Each image is a <picture> from data/images.json. display: contents keeps
+   the <img> sized by .media exactly as before. --focal and --focal-m (the
+   phone crop, up to 767px) come from the slot's focal and focal_mobile. */
+.media picture { display: contents; }
+@media (max-width: 767px) { .media img { object-position: var(--focal-m, var(--focal, 50% 50%)); } }
 .media__label {
   display: none;
   position: absolute; inset: 0;

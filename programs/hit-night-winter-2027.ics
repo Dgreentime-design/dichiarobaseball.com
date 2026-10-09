@@ -6,7 +6,7 @@ METHOD:PUBLISH
 X-WR-CALNAME:Monday Hit Night\, Winter 2027
 BEGIN:VEVENT
 UID:hit-night-winter-2027-2027-01-04@dichiarobaseball.com
-DTSTAMP:20261008T000000Z
+DTSTAMP:20261009T000000Z
 DTSTART:20270105T003000Z
 DTEND:20270105T023000Z
 SUMMARY:Monday Hit Night
@@ -20,7 +20,7 @@ URL:https://dichiarobaseball.com/programs/hit-night-winter-2027.html
 END:VEVENT
 BEGIN:VEVENT
 UID:hit-night-winter-2027-2027-01-11@dichiarobaseball.com
-DTSTAMP:20261008T000000Z
+DTSTAMP:20261009T000000Z
 DTSTART:20270112T003000Z
 DTEND:20270112T023000Z
 SUMMARY:Monday Hit Night
@@ -34,7 +34,7 @@ URL:https://dichiarobaseball.com/programs/hit-night-winter-2027.html
 END:VEVENT
 BEGIN:VEVENT
 UID:hit-night-winter-2027-2027-01-18@dichiarobaseball.com
-DTSTAMP:20261008T000000Z
+DTSTAMP:20261009T000000Z
 DTSTART:20270119T003000Z
 DTEND:20270119T023000Z
 SUMMARY:Monday Hit Night
@@ -48,7 +48,7 @@ URL:https://dichiarobaseball.com/programs/hit-night-winter-2027.html
 END:VEVENT
 BEGIN:VEVENT
 UID:hit-night-winter-2027-2027-01-25@dichiarobaseball.com
-DTSTAMP:20261008T000000Z
+DTSTAMP:20261009T000000Z
 DTSTART:20270126T003000Z
 DTEND:20270126T023000Z
 SUMMARY:Monday Hit Night
@@ -62,7 +62,7 @@ URL:https://dichiarobaseball.com/programs/hit-night-winter-2027.html
 END:VEVENT
 BEGIN:VEVENT
 UID:hit-night-winter-2027-2027-02-01@dichiarobaseball.com
-DTSTAMP:20261008T000000Z
+DTSTAMP:20261009T000000Z
 DTSTART:20270202T003000Z
 DTEND:20270202T023000Z
 SUMMARY:Monday Hit Night
@@ -76,7 +76,7 @@ URL:https://dichiarobaseball.com/programs/hit-night-winter-2027.html
 END:VEVENT
 BEGIN:VEVENT
 UID:hit-night-winter-2027-2027-02-08@dichiarobaseball.com
-DTSTAMP:20261008T000000Z
+DTSTAMP:20261009T000000Z
 DTSTART:20270209T003000Z
 DTEND:20270209T023000Z
 SUMMARY:Monday Hit Night
@@ -90,7 +90,7 @@ URL:https://dichiarobaseball.com/programs/hit-night-winter-2027.html
 END:VEVENT
 BEGIN:VEVENT
 UID:hit-night-winter-2027-2027-02-15@dichiarobaseball.com
-DTSTAMP:20261008T000000Z
+DTSTAMP:20261009T000000Z
 DTSTART:20270216T003000Z
 DTEND:20270216T023000Z
 SUMMARY:Monday Hit Night
@@ -104,7 +104,7 @@ URL:https://dichiarobaseball.com/programs/hit-night-winter-2027.html
 END:VEVENT
 BEGIN:VEVENT
 UID:hit-night-winter-2027-2027-02-22@dichiarobaseball.com
-DTSTAMP:20261008T000000Z
+DTSTAMP:20261009T000000Z
 DTSTART:20270223T003000Z
 DTEND:20270223T023000Z
 SUMMARY:Monday Hit Night
@@ -118,7 +118,7 @@ URL:https://dichiarobaseball.com/programs/hit-night-winter-2027.html
 END:VEVENT
 BEGIN:VEVENT
 UID:hit-night-winter-2027-2027-03-01@dichiarobaseball.com
-DTSTAMP:20261008T000000Z
+DTSTAMP:20261009T000000Z
 DTSTART:20270302T003000Z
 DTEND:20270302T023000Z
 SUMMARY:Monday Hit Night
@@ -132,7 +132,7 @@ URL:https://dichiarobaseball.com/programs/hit-night-winter-2027.html
 END:VEVENT
 BEGIN:VEVENT
 UID:hit-night-winter-2027-2027-03-08@dichiarobaseball.com
-DTSTAMP:20261008T000000Z
+DTSTAMP:20261009T000000Z
 DTSTART:20270309T003000Z
 DTEND:20270309T023000Z
 SUMMARY:Monday Hit Night
@@ -146,7 +146,7 @@ URL:https://dichiarobaseball.com/programs/hit-night-winter-2027.html
 END:VEVENT
 BEGIN:VEVENT
 UID:hit-night-winter-2027-2027-03-15@dichiarobaseball.com
-DTSTAMP:20261008T000000Z
+DTSTAMP:20261009T000000Z
 DTSTART:20270315T233000Z
 DTEND:20270316T013000Z
 SUMMARY:Monday Hit Night
@@ -160,7 +160,7 @@ URL:https://dichiarobaseball.com/programs/hit-night-winter-2027.html
 END:VEVENT
 BEGIN:VEVENT
 UID:hit-night-winter-2027-2027-03-22@dichiarobaseball.com
-DTSTAMP:20261008T000000Z
+DTSTAMP:20261009T000000Z
 DTSTART:20270322T233000Z
 DTEND:20270323T013000Z
 SUMMARY:Monday Hit Night
@@ -174,7 +174,7 @@ URL:https://dichiarobaseball.com/programs/hit-night-winter-2027.html
 END:VEVENT
 BEGIN:VEVENT
 UID:hit-night-winter-2027-2027-03-29@dichiarobaseball.com
-DTSTAMP:20261008T000000Z
+DTSTAMP:20261009T000000Z
 DTSTART:20270329T233000Z
 DTEND:20270330T013000Z
 SUMMARY:Monday Hit Night
@@ -188,7 +188,7 @@ URL:https://dichiarobaseball.com/programs/hit-night-winter-2027.html
 END:VEVENT
 BEGIN:VEVENT
 UID:hit-night-winter-2027-2027-04-05@dichiarobaseball.com
-DTSTAMP:20261008T000000Z
+DTSTAMP:20261009T000000Z
 DTSTART:20270405T233000Z
 DTEND:20270406T013000Z
 SUMMARY:Monday Hit Night
@@ -202,7 +202,7 @@ URL:https://dichiarobaseball.com/programs/hit-night-winter-2027.html
 END:VEVENT
 BEGIN:VEVENT
 UID:hit-night-winter-2027-2027-04-12@dichiarobaseball.com
-DTSTAMP:20261008T000000Z
+DTSTAMP:20261009T000000Z
 DTSTART:20270412T233000Z
 DTEND:20270413T013000Z
 SUMMARY:Monday Hit Night
@@ -216,7 +216,7 @@ URL:https://dichiarobaseball.com/programs/hit-night-winter-2027.html
 END:VEVENT
 BEGIN:VEVENT
 UID:hit-night-winter-2027-2027-04-19@dichiarobaseball.com
-DTSTAMP:20261008T000000Z
+DTSTAMP:20261009T000000Z
 DTSTART:20270419T233000Z
 DTEND:20270420T013000Z
 SUMMARY:Monday Hit Night
@@ -230,7 +230,7 @@ URL:https://dichiarobaseball.com/programs/hit-night-winter-2027.html
 END:VEVENT
 BEGIN:VEVENT
 UID:hit-night-winter-2027-2027-04-26@dichiarobaseball.com
-DTSTAMP:20261008T000000Z
+DTSTAMP:20261009T000000Z
 DTSTART:20270426T233000Z
 DTEND:20270427T013000Z
 SUMMARY:Monday Hit Night
@@ -244,7 +244,7 @@ URL:https://dichiarobaseball.com/programs/hit-night-winter-2027.html
 END:VEVENT
 BEGIN:VEVENT
 UID:hit-night-winter-2027-2027-05-03@dichiarobaseball.com
-DTSTAMP:20261008T000000Z
+DTSTAMP:20261009T000000Z
 DTSTART:20270503T233000Z
 DTEND:20270504T013000Z
 SUMMARY:Monday Hit Night
@@ -258,7 +258,7 @@ URL:https://dichiarobaseball.com/programs/hit-night-winter-2027.html
 END:VEVENT
 BEGIN:VEVENT
 UID:hit-night-winter-2027-2027-05-10@dichiarobaseball.com
-DTSTAMP:20261008T000000Z
+DTSTAMP:20261009T000000Z
 DTSTART:20270510T233000Z
 DTEND:20270511T013000Z
 SUMMARY:Monday Hit Night
@@ -272,7 +272,7 @@ URL:https://dichiarobaseball.com/programs/hit-night-winter-2027.html
 END:VEVENT
 BEGIN:VEVENT
 UID:hit-night-winter-2027-2027-05-17@dichiarobaseball.com
-DTSTAMP:20261008T000000Z
+DTSTAMP:20261009T000000Z
 DTSTART:20270517T233000Z
 DTEND:20270518T013000Z
 SUMMARY:Monday Hit Night
@@ -286,7 +286,7 @@ URL:https://dichiarobaseball.com/programs/hit-night-winter-2027.html
 END:VEVENT
 BEGIN:VEVENT
 UID:hit-night-winter-2027-2027-05-24@dichiarobaseball.com
-DTSTAMP:20261008T000000Z
+DTSTAMP:20261009T000000Z
 DTSTART:20270524T233000Z
 DTEND:20270525T013000Z
 SUMMARY:Monday Hit Night
@@ -300,7 +300,7 @@ URL:https://dichiarobaseball.com/programs/hit-night-winter-2027.html
 END:VEVENT
 BEGIN:VEVENT
 UID:hit-night-winter-2027-2027-06-07@dichiarobaseball.com
-DTSTAMP:20261008T000000Z
+DTSTAMP:20261009T000000Z
 DTSTART:20270607T233000Z
 DTEND:20270608T013000Z
 SUMMARY:Monday Hit Night
@@ -314,7 +314,7 @@ URL:https://dichiarobaseball.com/programs/hit-night-winter-2027.html
 END:VEVENT
 BEGIN:VEVENT
 UID:hit-night-winter-2027-2027-06-14@dichiarobaseball.com
-DTSTAMP:20261008T000000Z
+DTSTAMP:20261009T000000Z
 DTSTART:20270614T233000Z
 DTEND:20270615T013000Z
 SUMMARY:Monday Hit Night
@@ -328,7 +328,7 @@ URL:https://dichiarobaseball.com/programs/hit-night-winter-2027.html
 END:VEVENT
 BEGIN:VEVENT
 UID:hit-night-winter-2027-2027-06-21@dichiarobaseball.com
-DTSTAMP:20261008T000000Z
+DTSTAMP:20261009T000000Z
 DTSTART:20270621T233000Z
 DTEND:20270622T013000Z
 SUMMARY:Monday Hit Night
@@ -342,7 +342,7 @@ URL:https://dichiarobaseball.com/programs/hit-night-winter-2027.html
 END:VEVENT
 BEGIN:VEVENT
 UID:hit-night-winter-2027-2027-06-28@dichiarobaseball.com
-DTSTAMP:20261008T000000Z
+DTSTAMP:20261009T000000Z
 DTSTART:20270628T233000Z
 DTEND:20270629T013000Z
 SUMMARY:Monday Hit Night

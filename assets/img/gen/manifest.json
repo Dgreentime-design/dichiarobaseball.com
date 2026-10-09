@@ -1,0 +1,109 @@
+{
+  "dbsa-01-facility-in-use.jpg": {
+    "hash": "669f4b73",
+    "width": 2000,
+    "height": 1130,
+    "widths": [
+      480,
+      800,
+      1280,
+      1920
+    ]
+  },
+  "dbsa-02-facility-empty.jpg": {
+    "hash": "bb961f9a",
+    "width": 1920,
+    "height": 1080,
+    "widths": [
+      480,
+      800,
+      1280,
+      1920
+    ]
+  },
+  "dbsa-03-hitting-cage.jpg": {
+    "hash": "16e19a34",
+    "width": 1920,
+    "height": 1080,
+    "widths": [
+      480,
+      800,
+      1280,
+      1920
+    ]
+  },
+  "dbsa-04-fielding-turf.jpg": {
+    "hash": "4cdf5316",
+    "width": 2000,
+    "height": 1144,
+    "widths": [
+      480,
+      800,
+      1280,
+      1920
+    ]
+  },
+  "dbsa-05-pitching-mound.jpg": {
+    "hash": "dea43ee6",
+    "width": 1600,
+    "height": 1212,
+    "widths": [
+      480,
+      800,
+      1280
+    ]
+  },
+  "dbsa-06-group-semi-private.jpg": {
+    "hash": "274832b3",
+    "width": 2000,
+    "height": 1115,
+    "widths": [
+      480,
+      800,
+      1280,
+      1920
+    ]
+  },
+  "dbsa-07-little-league.jpg": {
+    "hash": "12c6ea1d",
+    "width": 1920,
+    "height": 1080,
+    "widths": [
+      480,
+      800,
+      1280,
+      1920
+    ]
+  },
+  "dbsa-08-hittrax-screen.jpg": {
+    "hash": "82e0de4b",
+    "width": 1920,
+    "height": 1249,
+    "widths": [
+      480,
+      800,
+      1280,
+      1920
+    ]
+  },
+  "dbsa-09-lou-coaching.jpg": {
+    "hash": "f952f61a",
+    "width": 1800,
+    "height": 2400,
+    "widths": [
+      480,
+      800,
+      1280
+    ]
+  },
+  "dbsa-18-map-fair-lawn.png": {
+    "hash": "bcc18de0",
+    "width": 1600,
+    "height": 1067,
+    "widths": [
+      480,
+      800,
+      1280
+    ]
+  }
+}

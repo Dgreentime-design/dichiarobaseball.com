@@ -9,20 +9,13 @@
 <link rel="icon" href="assets/img/favicon.png" sizes="any">
 <link rel="apple-touch-icon" href="assets/img/favicon.png">
 
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;600;700;900&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<!-- Fonts are self-hosted (assets/fonts, declared in assets/css/fonts.css).
+     The two latin files carry every weight used above the fold. -->
+<link rel="preload" href="assets/fonts/archivo-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="assets/fonts/jetbrains-mono-latin.woff2" as="font" type="font/woff2" crossorigin>
 
-<link rel="stylesheet" href="assets/css/tokens.css">
-<link rel="stylesheet" href="assets/css/base.css">
-<link rel="stylesheet" href="assets/css/components.css">
-<link rel="stylesheet" href="assets/css/home.css">
-<link rel="stylesheet" href="assets/css/camps.css">
-<link rel="stylesheet" href="assets/css/pages.css">
-<link rel="stylesheet" href="assets/css/register.css">
-<link rel="stylesheet" href="assets/css/instructors.css">
-<link rel="stylesheet" href="assets/css/legal.css">
-<link rel="stylesheet" href="assets/css/program.css">
+<!-- One stylesheet, built by build.mjs from the files in assets/css/. -->
+<link rel="stylesheet" href="assets/css/site.min.css?v=afb2f98b">
 
 <!-- Analytics. Vercel Web Analytics: no cookies, so no consent banner. It
      records nothing until it is enabled in the Vercel dashboard (project,
@@ -41,12 +34,13 @@
 <meta property="og:description" content="Lou DiChiaro has been teaching hitting and fielding since 2000. The academy he built in Fair Lawn runs seven days a week, year round.">
 <meta name="twitter:title" content="About · DiChiaro Baseball &amp; Softball Academy">
 <meta name="twitter:description" content="Lou DiChiaro has been teaching hitting and fielding since 2000. The academy he built in Fair Lawn runs seven days a week, year round.">
-<meta name="twitter:image" content="https://dichiarobaseball.com/assets/img/dbsa-01-facility-in-use.jpg">
+<meta name="twitter:image" content="https://dichiarobaseball.com/assets/img/gen/dbsa-01-facility-in-use-1280-669f4b73.jpg">
 <link rel="canonical" href="https://dichiarobaseball.com/about.html">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://dichiarobaseball.com/about.html">
-<meta property="og:image" content="https://dichiarobaseball.com/assets/img/dbsa-01-facility-in-use.jpg">
+<meta property="og:image" content="https://dichiarobaseball.com/assets/img/gen/dbsa-01-facility-in-use-1280-669f4b73.jpg">
 <meta name="twitter:card" content="summary_large_image">
+<link rel="preload" as="image" type="image/webp" imagesrcset="assets/img/gen/dbsa-01-facility-in-use-480-669f4b73.webp 480w, assets/img/gen/dbsa-01-facility-in-use-800-669f4b73.webp 800w, assets/img/gen/dbsa-01-facility-in-use-1280-669f4b73.webp 1280w, assets/img/gen/dbsa-01-facility-in-use-1920-669f4b73.webp 1920w" imagesizes="(min-width: 1344px) 1280px, calc(100vw - 40px)" fetchpriority="high">
 
 <meta name="robots" content="noindex, nofollow">
 </head>
@@ -168,7 +162,7 @@
     </div>
 
     <div class="media media--3x1">
-      <img src="assets/img/dbsa-01-facility-in-use.jpg" alt="The full academy room from the back corner with the nets up and players working" width="2400" height="1600" fetchpriority="high">
+      <picture><source type="image/webp" srcset="assets/img/gen/dbsa-01-facility-in-use-480-669f4b73.webp 480w, assets/img/gen/dbsa-01-facility-in-use-800-669f4b73.webp 800w, assets/img/gen/dbsa-01-facility-in-use-1280-669f4b73.webp 1280w, assets/img/gen/dbsa-01-facility-in-use-1920-669f4b73.webp 1920w" sizes="(min-width: 1344px) 1280px, calc(100vw - 40px)"><img src="assets/img/gen/dbsa-01-facility-in-use-1280-669f4b73.jpg" srcset="assets/img/gen/dbsa-01-facility-in-use-480-669f4b73.jpg 480w, assets/img/gen/dbsa-01-facility-in-use-800-669f4b73.jpg 800w, assets/img/gen/dbsa-01-facility-in-use-1280-669f4b73.jpg 1280w, assets/img/gen/dbsa-01-facility-in-use-1920-669f4b73.jpg 1920w" sizes="(min-width: 1344px) 1280px, calc(100vw - 40px)" alt="The full academy room from the back corner with the nets up and players working" width="2000" height="1130" fetchpriority="high" data-slot="40"></picture>
       <span class="media__label">dbsa-01 · The full room from the back corner. Nets up, cages lit, players working</span>
     </div>
   </div>
@@ -283,15 +277,15 @@
 
     <div class="gallery">
       <div class="media media--16x9">
-        <img src="assets/img/dbsa-03-hitting-cage.jpg" alt="A batting cage down the line with the ball in flight" width="2400" height="1600" loading="lazy">
+        <picture><source type="image/webp" srcset="assets/img/gen/dbsa-03-hitting-cage-480-16e19a34.webp 480w, assets/img/gen/dbsa-03-hitting-cage-800-16e19a34.webp 800w, assets/img/gen/dbsa-03-hitting-cage-1280-16e19a34.webp 1280w, assets/img/gen/dbsa-03-hitting-cage-1920-16e19a34.webp 1920w" sizes="(min-width: 1344px) 412px, (min-width: 768px) 31vw, 100vw"><img src="assets/img/gen/dbsa-03-hitting-cage-1280-16e19a34.jpg" srcset="assets/img/gen/dbsa-03-hitting-cage-480-16e19a34.jpg 480w, assets/img/gen/dbsa-03-hitting-cage-800-16e19a34.jpg 800w, assets/img/gen/dbsa-03-hitting-cage-1280-16e19a34.jpg 1280w, assets/img/gen/dbsa-03-hitting-cage-1920-16e19a34.jpg 1920w" sizes="(min-width: 1344px) 412px, (min-width: 768px) 31vw, 100vw" alt="A batting cage down the line with the ball in flight" width="1920" height="1080" loading="lazy" decoding="async" data-slot="41"></picture>
         <span class="media__label">dbsa-03 · Down the line, ball in flight</span>
       </div>
       <div class="media media--16x9">
-        <img src="assets/img/dbsa-04-fielding-turf.jpg" alt="A ground ball rep on the turf with a coach hitting fungo" width="2400" height="1600" loading="lazy">
+        <picture><source type="image/webp" srcset="assets/img/gen/dbsa-04-fielding-turf-480-4cdf5316.webp 480w, assets/img/gen/dbsa-04-fielding-turf-800-4cdf5316.webp 800w, assets/img/gen/dbsa-04-fielding-turf-1280-4cdf5316.webp 1280w, assets/img/gen/dbsa-04-fielding-turf-1920-4cdf5316.webp 1920w" sizes="(min-width: 1344px) 412px, (min-width: 768px) 31vw, 100vw"><img src="assets/img/gen/dbsa-04-fielding-turf-1280-4cdf5316.jpg" srcset="assets/img/gen/dbsa-04-fielding-turf-480-4cdf5316.jpg 480w, assets/img/gen/dbsa-04-fielding-turf-800-4cdf5316.jpg 800w, assets/img/gen/dbsa-04-fielding-turf-1280-4cdf5316.jpg 1280w, assets/img/gen/dbsa-04-fielding-turf-1920-4cdf5316.jpg 1920w" sizes="(min-width: 1344px) 412px, (min-width: 768px) 31vw, 100vw" alt="A ground ball rep on the turf with a coach hitting fungo" width="2000" height="1144" loading="lazy" decoding="async" data-slot="42"></picture>
         <span class="media__label">dbsa-04 · Ground ball rep, coach fungo</span>
       </div>
       <div class="media media--16x9">
-        <img src="assets/img/dbsa-08-hittrax-screen.jpg" alt="The HitTrax screen showing a live spray chart" width="2400" height="1800" loading="lazy">
+        <picture><source type="image/webp" srcset="assets/img/gen/dbsa-08-hittrax-screen-480-82e0de4b.webp 480w, assets/img/gen/dbsa-08-hittrax-screen-800-82e0de4b.webp 800w, assets/img/gen/dbsa-08-hittrax-screen-1280-82e0de4b.webp 1280w, assets/img/gen/dbsa-08-hittrax-screen-1920-82e0de4b.webp 1920w" sizes="(min-width: 1344px) 412px, (min-width: 768px) 31vw, 100vw"><img src="assets/img/gen/dbsa-08-hittrax-screen-1280-82e0de4b.jpg" srcset="assets/img/gen/dbsa-08-hittrax-screen-480-82e0de4b.jpg 480w, assets/img/gen/dbsa-08-hittrax-screen-800-82e0de4b.jpg 800w, assets/img/gen/dbsa-08-hittrax-screen-1280-82e0de4b.jpg 1280w, assets/img/gen/dbsa-08-hittrax-screen-1920-82e0de4b.jpg 1920w" sizes="(min-width: 1344px) 412px, (min-width: 768px) 31vw, 100vw" alt="The HitTrax screen showing a live spray chart" width="1920" height="1249" loading="lazy" decoding="async" data-slot="43"></picture>
         <span class="media__label">dbsa-08 · Screen with a live spray chart</span>
       </div>
     </div>
@@ -329,7 +323,7 @@
       </div>
 
       <div class="media media--4x5">
-        <img src="assets/img/dbsa-09-lou-coaching.jpg" alt="Lou DiChiaro standing with a softball player in front of the academy logo" width="2000" height="2000" loading="lazy">
+        <picture><source type="image/webp" srcset="assets/img/gen/dbsa-09-lou-coaching-480-f952f61a.webp 480w, assets/img/gen/dbsa-09-lou-coaching-800-f952f61a.webp 800w, assets/img/gen/dbsa-09-lou-coaching-1280-f952f61a.webp 1280w" sizes="(min-width: 1024px) 480px, 100vw"><img src="assets/img/gen/dbsa-09-lou-coaching-1280-f952f61a.jpg" srcset="assets/img/gen/dbsa-09-lou-coaching-480-f952f61a.jpg 480w, assets/img/gen/dbsa-09-lou-coaching-800-f952f61a.jpg 800w, assets/img/gen/dbsa-09-lou-coaching-1280-f952f61a.jpg 1280w" sizes="(min-width: 1024px) 480px, 100vw" alt="Lou DiChiaro standing with a softball player in front of the academy logo" width="1800" height="2400" loading="lazy" decoding="async" data-slot="44"></picture>
         <span class="media__label">dbsa-09 · Lou mid instruction with a player</span>
       </div>
     </div>
@@ -367,7 +361,7 @@
     </div>
 
     <div class="media media--4x3">
-      <img src="assets/img/dbsa-18-map-fair-lawn.png" alt="Map showing the academy on Pollitt Drive in Fair Lawn" width="1200" height="800" loading="lazy">
+      <picture><source type="image/webp" srcset="assets/img/gen/dbsa-18-map-fair-lawn-480-bcc18de0.webp 480w, assets/img/gen/dbsa-18-map-fair-lawn-800-bcc18de0.webp 800w, assets/img/gen/dbsa-18-map-fair-lawn-1280-bcc18de0.webp 1280w" sizes="(min-width: 1344px) 720px, (min-width: 1024px) calc(93vw - 570px), 100vw"><img src="assets/img/gen/dbsa-18-map-fair-lawn-1280-bcc18de0.jpg" srcset="assets/img/gen/dbsa-18-map-fair-lawn-480-bcc18de0.jpg 480w, assets/img/gen/dbsa-18-map-fair-lawn-800-bcc18de0.jpg 800w, assets/img/gen/dbsa-18-map-fair-lawn-1280-bcc18de0.jpg 1280w" sizes="(min-width: 1344px) 720px, (min-width: 1024px) calc(93vw - 570px), 100vw" alt="Map showing the academy on Pollitt Drive in Fair Lawn" width="1600" height="1067" loading="lazy" decoding="async" data-slot="45"></picture>
       <span class="media__label">dbsa-18 · Static map tile, pin on Pollitt Drive, tap opens directions</span>
     </div>
   </div>

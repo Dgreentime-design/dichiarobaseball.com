@@ -9,20 +9,13 @@
 <link rel="icon" href="../assets/img/favicon.png" sizes="any">
 <link rel="apple-touch-icon" href="../assets/img/favicon.png">
 
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;600;700;900&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<!-- Fonts are self-hosted (assets/fonts, declared in assets/css/fonts.css).
+     The two latin files carry every weight used above the fold. -->
+<link rel="preload" href="../assets/fonts/archivo-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="../assets/fonts/jetbrains-mono-latin.woff2" as="font" type="font/woff2" crossorigin>
 
-<link rel="stylesheet" href="../assets/css/tokens.css">
-<link rel="stylesheet" href="../assets/css/base.css">
-<link rel="stylesheet" href="../assets/css/components.css">
-<link rel="stylesheet" href="../assets/css/home.css">
-<link rel="stylesheet" href="../assets/css/camps.css">
-<link rel="stylesheet" href="../assets/css/pages.css">
-<link rel="stylesheet" href="../assets/css/register.css">
-<link rel="stylesheet" href="../assets/css/instructors.css">
-<link rel="stylesheet" href="../assets/css/legal.css">
-<link rel="stylesheet" href="../assets/css/program.css">
+<!-- One stylesheet, built by build.mjs from the files in assets/css/. -->
+<link rel="stylesheet" href="../assets/css/site.min.css?v=afb2f98b">
 
 <!-- Analytics. Vercel Web Analytics: no cookies, so no consent banner. It
      records nothing until it is enabled in the Vercel dashboard (project,
@@ -41,12 +34,13 @@
 <meta property="og:description" content="Monday Hit Night, Fall 2026. Ages 10-18, 16 Mondays from Sep 14, 2026 to Dec 28, 2026, 7:00pm-9:00pm. From $30. Fair Lawn, NJ.">
 <meta name="twitter:title" content="Monday Hit Night, Fall 2026 · DiChiaro Baseball &amp; Softball Academy">
 <meta name="twitter:description" content="Monday Hit Night, Fall 2026. Ages 10-18, 16 Mondays from Sep 14, 2026 to Dec 28, 2026, 7:00pm-9:00pm. From $30. Fair Lawn, NJ.">
-<meta name="twitter:image" content="https://dichiarobaseball.com/assets/img/dbsa-03-hitting-cage.jpg">
+<meta name="twitter:image" content="https://dichiarobaseball.com/assets/img/gen/dbsa-03-hitting-cage-1280-16e19a34.jpg">
 <link rel="canonical" href="https://dichiarobaseball.com/programs/hit-night-fall-2026.html">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://dichiarobaseball.com/programs/hit-night-fall-2026.html">
-<meta property="og:image" content="https://dichiarobaseball.com/assets/img/dbsa-03-hitting-cage.jpg">
+<meta property="og:image" content="https://dichiarobaseball.com/assets/img/gen/dbsa-03-hitting-cage-1280-16e19a34.jpg">
 <meta name="twitter:card" content="summary_large_image">
+<link rel="preload" as="image" type="image/webp" imagesrcset="../assets/img/gen/dbsa-03-hitting-cage-480-16e19a34.webp 480w, ../assets/img/gen/dbsa-03-hitting-cage-800-16e19a34.webp 800w, ../assets/img/gen/dbsa-03-hitting-cage-1280-16e19a34.webp 1280w, ../assets/img/gen/dbsa-03-hitting-cage-1920-16e19a34.webp 1920w" imagesizes="100vw" fetchpriority="high">
 
 <meta name="robots" content="noindex, nofollow">
 
@@ -164,7 +158,7 @@
 <!-- ===================================================================== -->
 <section class="hero">
   <div class="hero__media media media--16x9 media--note">
-    <img src="../assets/img/dbsa-03-hitting-cage.jpg" alt="" width="1920" height="1080" fetchpriority="high">
+    <picture><source type="image/webp" srcset="../assets/img/gen/dbsa-03-hitting-cage-480-16e19a34.webp 480w, ../assets/img/gen/dbsa-03-hitting-cage-800-16e19a34.webp 800w, ../assets/img/gen/dbsa-03-hitting-cage-1280-16e19a34.webp 1280w, ../assets/img/gen/dbsa-03-hitting-cage-1920-16e19a34.webp 1920w" sizes="100vw"><img src="../assets/img/gen/dbsa-03-hitting-cage-1280-16e19a34.jpg" srcset="../assets/img/gen/dbsa-03-hitting-cage-480-16e19a34.jpg 480w, ../assets/img/gen/dbsa-03-hitting-cage-800-16e19a34.jpg 800w, ../assets/img/gen/dbsa-03-hitting-cage-1280-16e19a34.jpg 1280w, ../assets/img/gen/dbsa-03-hitting-cage-1920-16e19a34.jpg 1920w" sizes="100vw" alt="" width="1920" height="1080" fetchpriority="high" data-slot="25"></picture>
     <span class="media__label">dbsa-03 · Hit Night, the cage</span>
   </div>
 

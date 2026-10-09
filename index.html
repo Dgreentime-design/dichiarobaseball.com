@@ -9,20 +9,13 @@
 <link rel="icon" href="assets/img/favicon.png" sizes="any">
 <link rel="apple-touch-icon" href="assets/img/favicon.png">
 
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;600;700;900&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<!-- Fonts are self-hosted (assets/fonts, declared in assets/css/fonts.css).
+     The two latin files carry every weight used above the fold. -->
+<link rel="preload" href="assets/fonts/archivo-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="assets/fonts/jetbrains-mono-latin.woff2" as="font" type="font/woff2" crossorigin>
 
-<link rel="stylesheet" href="assets/css/tokens.css">
-<link rel="stylesheet" href="assets/css/base.css">
-<link rel="stylesheet" href="assets/css/components.css">
-<link rel="stylesheet" href="assets/css/home.css">
-<link rel="stylesheet" href="assets/css/camps.css">
-<link rel="stylesheet" href="assets/css/pages.css">
-<link rel="stylesheet" href="assets/css/register.css">
-<link rel="stylesheet" href="assets/css/instructors.css">
-<link rel="stylesheet" href="assets/css/legal.css">
-<link rel="stylesheet" href="assets/css/program.css">
+<!-- One stylesheet, built by build.mjs from the files in assets/css/. -->
+<link rel="stylesheet" href="assets/css/site.min.css?v=afb2f98b">
 
 <!-- Analytics. Vercel Web Analytics: no cookies, so no consent banner. It
      records nothing until it is enabled in the Vercel dashboard (project,
@@ -41,12 +34,13 @@
 <meta property="og:description" content="Year-round indoor baseball and softball instruction in Fair Lawn, New Jersey. Hitting, fielding and pitching for ages 6-18 in a 5,500 sq ft facility.">
 <meta name="twitter:title" content="DiChiaro Baseball &amp; Softball Academy · Fair Lawn, New Jersey">
 <meta name="twitter:description" content="Year-round indoor baseball and softball instruction in Fair Lawn, New Jersey. Hitting, fielding and pitching for ages 6-18 in a 5,500 sq ft facility.">
-<meta name="twitter:image" content="https://dichiarobaseball.com/assets/img/dbsa-01-facility-in-use.jpg">
+<meta name="twitter:image" content="https://dichiarobaseball.com/assets/img/gen/dbsa-01-facility-in-use-1280-669f4b73.jpg">
 <link rel="canonical" href="https://dichiarobaseball.com/">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://dichiarobaseball.com/">
-<meta property="og:image" content="https://dichiarobaseball.com/assets/img/dbsa-01-facility-in-use.jpg">
+<meta property="og:image" content="https://dichiarobaseball.com/assets/img/gen/dbsa-01-facility-in-use-1280-669f4b73.jpg">
 <meta name="twitter:card" content="summary_large_image">
+<link rel="preload" as="image" type="image/webp" imagesrcset="assets/img/gen/dbsa-07-little-league-480-12c6ea1d.webp 480w, assets/img/gen/dbsa-07-little-league-800-12c6ea1d.webp 800w, assets/img/gen/dbsa-07-little-league-1280-12c6ea1d.webp 1280w, assets/img/gen/dbsa-07-little-league-1920-12c6ea1d.webp 1920w" imagesizes="100vw" fetchpriority="high">
 
 <meta name="robots" content="noindex, nofollow">
 
@@ -162,9 +156,9 @@
 <!-- ===================================================================== -->
 <!-- Hero                                                                  -->
 <!-- ===================================================================== -->
-<section class="hero" style="--hero-focus: 76% 50%;">
+<section class="hero">
   <div class="hero__media media media--16x9 media--note">
-    <img src="assets/img/dbsa-07-little-league.jpg" alt="" width="1920" height="1080" fetchpriority="high">
+    <picture><source type="image/webp" srcset="assets/img/gen/dbsa-07-little-league-480-12c6ea1d.webp 480w, assets/img/gen/dbsa-07-little-league-800-12c6ea1d.webp 800w, assets/img/gen/dbsa-07-little-league-1280-12c6ea1d.webp 1280w, assets/img/gen/dbsa-07-little-league-1920-12c6ea1d.webp 1920w" sizes="100vw"><img src="assets/img/gen/dbsa-07-little-league-1280-12c6ea1d.jpg" srcset="assets/img/gen/dbsa-07-little-league-480-12c6ea1d.jpg 480w, assets/img/gen/dbsa-07-little-league-800-12c6ea1d.jpg 800w, assets/img/gen/dbsa-07-little-league-1280-12c6ea1d.jpg 1280w, assets/img/gen/dbsa-07-little-league-1920-12c6ea1d.jpg 1920w" sizes="100vw" alt="" width="1920" height="1080" fetchpriority="high" data-slot="1" style="--focal: 76% 50%;"></picture>
     <span class="media__label">dbsa-07 · Little League camp on the turf</span>
   </div>
 
@@ -223,7 +217,7 @@
       <article class="card">
         <div class="card__media">
           <div class="media media--16x9">
-            <img src="assets/img/dbsa-07-little-league.jpg" alt="Players working through a drill at the Little League training camp" width="2400" height="1600" loading="lazy">
+            <picture><source type="image/webp" srcset="assets/img/gen/dbsa-07-little-league-480-12c6ea1d.webp 480w, assets/img/gen/dbsa-07-little-league-800-12c6ea1d.webp 800w, assets/img/gen/dbsa-07-little-league-1280-12c6ea1d.webp 1280w, assets/img/gen/dbsa-07-little-league-1920-12c6ea1d.webp 1920w" sizes="(min-width: 1180px) 410px, (min-width: 760px) 50vw, 100vw"><img src="assets/img/gen/dbsa-07-little-league-1280-12c6ea1d.jpg" srcset="assets/img/gen/dbsa-07-little-league-480-12c6ea1d.jpg 480w, assets/img/gen/dbsa-07-little-league-800-12c6ea1d.jpg 800w, assets/img/gen/dbsa-07-little-league-1280-12c6ea1d.jpg 1280w, assets/img/gen/dbsa-07-little-league-1920-12c6ea1d.jpg 1920w" sizes="(min-width: 1180px) 410px, (min-width: 760px) 50vw, 100vw" alt="Players working through a drill at the Little League training camp" width="1920" height="1080" loading="lazy" decoding="async" data-slot="2"></picture>
             <span class="media__label">dbsa-07 · Little League camp, mid-instruction</span>
           </div>
           <span class="chip">Starts Oct 25</span>
@@ -249,7 +243,7 @@
       <article class="card">
         <div class="card__media">
           <div class="media media--16x9">
-            <img src="assets/img/dbsa-03-hitting-cage.jpg" alt="A hitter working in the cage during Monday Hit Night" width="2400" height="1600" loading="lazy">
+            <picture><source type="image/webp" srcset="assets/img/gen/dbsa-03-hitting-cage-480-16e19a34.webp 480w, assets/img/gen/dbsa-03-hitting-cage-800-16e19a34.webp 800w, assets/img/gen/dbsa-03-hitting-cage-1280-16e19a34.webp 1280w, assets/img/gen/dbsa-03-hitting-cage-1920-16e19a34.webp 1920w" sizes="(min-width: 1180px) 410px, (min-width: 760px) 50vw, 100vw"><img src="assets/img/gen/dbsa-03-hitting-cage-1280-16e19a34.jpg" srcset="assets/img/gen/dbsa-03-hitting-cage-480-16e19a34.jpg 480w, assets/img/gen/dbsa-03-hitting-cage-800-16e19a34.jpg 800w, assets/img/gen/dbsa-03-hitting-cage-1280-16e19a34.jpg 1280w, assets/img/gen/dbsa-03-hitting-cage-1920-16e19a34.jpg 1920w" sizes="(min-width: 1180px) 410px, (min-width: 760px) 50vw, 100vw" alt="A hitter working in the cage during Monday Hit Night" width="1920" height="1080" loading="lazy" decoding="async" data-slot="3"></picture>
             <span class="media__label">dbsa-03 · Hit Night, the cage at 8pm</span>
           </div>
           <span class="chip chip--red">4 spots left</span>
@@ -275,7 +269,7 @@
       <article class="card">
         <div class="card__media">
           <div class="media media--16x9">
-            <img src="assets/img/dbsa-04-fielding-turf.jpg" alt="An infielder fielding a ground ball on the turf" width="2400" height="1600" loading="lazy">
+            <picture><source type="image/webp" srcset="assets/img/gen/dbsa-04-fielding-turf-480-4cdf5316.webp 480w, assets/img/gen/dbsa-04-fielding-turf-800-4cdf5316.webp 800w, assets/img/gen/dbsa-04-fielding-turf-1280-4cdf5316.webp 1280w, assets/img/gen/dbsa-04-fielding-turf-1920-4cdf5316.webp 1920w" sizes="(min-width: 1180px) 410px, (min-width: 760px) 50vw, 100vw"><img src="assets/img/gen/dbsa-04-fielding-turf-1280-4cdf5316.jpg" srcset="assets/img/gen/dbsa-04-fielding-turf-480-4cdf5316.jpg 480w, assets/img/gen/dbsa-04-fielding-turf-800-4cdf5316.jpg 800w, assets/img/gen/dbsa-04-fielding-turf-1280-4cdf5316.jpg 1280w, assets/img/gen/dbsa-04-fielding-turf-1920-4cdf5316.jpg 1920w" sizes="(min-width: 1180px) 410px, (min-width: 760px) 50vw, 100vw" alt="An infielder fielding a ground ball on the turf" width="2000" height="1144" loading="lazy" decoding="async" data-slot="4"></picture>
             <span class="media__label">dbsa-04 · Infield camp, ground ball mid-play</span>
           </div>
           <span class="chip">Starts Nov 14</span>
@@ -307,7 +301,7 @@
 <!-- ===================================================================== -->
 <section class="hittrax" aria-labelledby="hittrax-title">
   <div class="hittrax__media media media--16x9 media--note">
-    <img src="assets/img/dbsa-08-hittrax-screen.jpg" alt="" width="2400" height="1800" loading="lazy">
+    <picture><source type="image/webp" srcset="assets/img/gen/dbsa-08-hittrax-screen-480-82e0de4b.webp 480w, assets/img/gen/dbsa-08-hittrax-screen-800-82e0de4b.webp 800w, assets/img/gen/dbsa-08-hittrax-screen-1280-82e0de4b.webp 1280w, assets/img/gen/dbsa-08-hittrax-screen-1920-82e0de4b.webp 1920w" sizes="100vw"><img src="assets/img/gen/dbsa-08-hittrax-screen-1280-82e0de4b.jpg" srcset="assets/img/gen/dbsa-08-hittrax-screen-480-82e0de4b.jpg 480w, assets/img/gen/dbsa-08-hittrax-screen-800-82e0de4b.jpg 800w, assets/img/gen/dbsa-08-hittrax-screen-1280-82e0de4b.jpg 1280w, assets/img/gen/dbsa-08-hittrax-screen-1920-82e0de4b.jpg 1920w" sizes="100vw" alt="" width="1920" height="1249" loading="lazy" decoding="async" data-slot="5"></picture>
     <span class="media__label">dbsa-08 · HitTrax with a hitter attached to it</span>
   </div>
 
@@ -346,7 +340,7 @@
 
       <article class="split">
         <div class="media">
-          <img src="assets/img/dbsa-06-group-semi-private.jpg" alt="Three players working with one coach in a semi-private lesson" width="2400" height="1600" loading="lazy">
+          <picture><source type="image/webp" srcset="assets/img/gen/dbsa-06-group-semi-private-480-274832b3.webp 480w, assets/img/gen/dbsa-06-group-semi-private-800-274832b3.webp 800w, assets/img/gen/dbsa-06-group-semi-private-1280-274832b3.webp 1280w, assets/img/gen/dbsa-06-group-semi-private-1920-274832b3.webp 1920w" sizes="(min-width: 640px) 220px, 100vw"><img src="assets/img/gen/dbsa-06-group-semi-private-1280-274832b3.jpg" srcset="assets/img/gen/dbsa-06-group-semi-private-480-274832b3.jpg 480w, assets/img/gen/dbsa-06-group-semi-private-800-274832b3.jpg 800w, assets/img/gen/dbsa-06-group-semi-private-1280-274832b3.jpg 1280w, assets/img/gen/dbsa-06-group-semi-private-1920-274832b3.jpg 1920w" sizes="(min-width: 640px) 220px, 100vw" alt="Three players working with one coach in a semi-private lesson" width="2000" height="1115" loading="lazy" decoding="async" data-slot="6"></picture>
           <span class="media__label">dbsa-06 · Three players with one coach, mid rep</span>
         </div>
         <div class="split__body">
@@ -363,7 +357,7 @@
 
       <article class="split">
         <div class="media">
-          <img src="assets/img/dbsa-01-facility-in-use.jpg" alt="The full academy floor with the batting nets up" width="2400" height="1600" loading="lazy">
+          <picture><source type="image/webp" srcset="assets/img/gen/dbsa-01-facility-in-use-480-669f4b73.webp 480w, assets/img/gen/dbsa-01-facility-in-use-800-669f4b73.webp 800w, assets/img/gen/dbsa-01-facility-in-use-1280-669f4b73.webp 1280w, assets/img/gen/dbsa-01-facility-in-use-1920-669f4b73.webp 1920w" sizes="(min-width: 640px) 220px, 100vw"><img src="assets/img/gen/dbsa-01-facility-in-use-1280-669f4b73.jpg" srcset="assets/img/gen/dbsa-01-facility-in-use-480-669f4b73.jpg 480w, assets/img/gen/dbsa-01-facility-in-use-800-669f4b73.jpg 800w, assets/img/gen/dbsa-01-facility-in-use-1280-669f4b73.jpg 1280w, assets/img/gen/dbsa-01-facility-in-use-1920-669f4b73.jpg 1920w" sizes="(min-width: 640px) 220px, 100vw" alt="The full academy floor with the batting nets up" width="2000" height="1130" loading="lazy" decoding="async" data-slot="7"></picture>
           <span class="media__label">dbsa-01 · The full room from the back corner, nets up</span>
         </div>
         <div class="split__body">
@@ -400,7 +394,7 @@
     </dl>
 
     <div class="why__media media media--3x1">
-      <img src="assets/img/dbsa-02-facility-empty.jpg" alt="A wide view of the empty academy floor with the lights on" width="2400" height="1600" loading="lazy">
+      <picture><source type="image/webp" srcset="assets/img/gen/dbsa-02-facility-empty-480-bb961f9a.webp 480w, assets/img/gen/dbsa-02-facility-empty-800-bb961f9a.webp 800w, assets/img/gen/dbsa-02-facility-empty-1280-bb961f9a.webp 1280w, assets/img/gen/dbsa-02-facility-empty-1920-bb961f9a.webp 1920w" sizes="(min-width: 1344px) 1280px, calc(100vw - 40px)"><img src="assets/img/gen/dbsa-02-facility-empty-1280-bb961f9a.jpg" srcset="assets/img/gen/dbsa-02-facility-empty-480-bb961f9a.jpg 480w, assets/img/gen/dbsa-02-facility-empty-800-bb961f9a.jpg 800w, assets/img/gen/dbsa-02-facility-empty-1280-bb961f9a.jpg 1280w, assets/img/gen/dbsa-02-facility-empty-1920-bb961f9a.jpg 1920w" sizes="(min-width: 1344px) 1280px, calc(100vw - 40px)" alt="A wide view of the empty academy floor with the lights on" width="1920" height="1080" loading="lazy" decoding="async" data-slot="8"></picture>
       <span class="media__label">dbsa-02 · Two wides of the empty room with the lights on</span>
     </div>
   </div>
@@ -418,7 +412,7 @@
     </div>
 
     <div class="lou__media media media--4x5">
-      <img src="assets/img/dbsa-09-lou-coaching.jpg" alt="Lou DiChiaro standing with a softball player in front of the academy logo" width="2000" height="2000" loading="lazy">
+      <picture><source type="image/webp" srcset="assets/img/gen/dbsa-09-lou-coaching-480-f952f61a.webp 480w, assets/img/gen/dbsa-09-lou-coaching-800-f952f61a.webp 800w, assets/img/gen/dbsa-09-lou-coaching-1280-f952f61a.webp 1280w" sizes="(min-width: 1024px) 440px, 100vw"><img src="assets/img/gen/dbsa-09-lou-coaching-1280-f952f61a.jpg" srcset="assets/img/gen/dbsa-09-lou-coaching-480-f952f61a.jpg 480w, assets/img/gen/dbsa-09-lou-coaching-800-f952f61a.jpg 800w, assets/img/gen/dbsa-09-lou-coaching-1280-f952f61a.jpg 1280w" sizes="(min-width: 1024px) 440px, 100vw" alt="Lou DiChiaro standing with a softball player in front of the academy logo" width="1800" height="2400" loading="lazy" decoding="async" data-slot="9"></picture>
       <span class="media__label">dbsa-09 · Lou mid instruction with a player</span>
     </div>
 

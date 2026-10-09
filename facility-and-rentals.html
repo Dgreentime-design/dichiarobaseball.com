@@ -9,20 +9,13 @@
 <link rel="icon" href="assets/img/favicon.png" sizes="any">
 <link rel="apple-touch-icon" href="assets/img/favicon.png">
 
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;600;700;900&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<!-- Fonts are self-hosted (assets/fonts, declared in assets/css/fonts.css).
+     The two latin files carry every weight used above the fold. -->
+<link rel="preload" href="assets/fonts/archivo-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="assets/fonts/jetbrains-mono-latin.woff2" as="font" type="font/woff2" crossorigin>
 
-<link rel="stylesheet" href="assets/css/tokens.css">
-<link rel="stylesheet" href="assets/css/base.css">
-<link rel="stylesheet" href="assets/css/components.css">
-<link rel="stylesheet" href="assets/css/home.css">
-<link rel="stylesheet" href="assets/css/camps.css">
-<link rel="stylesheet" href="assets/css/pages.css">
-<link rel="stylesheet" href="assets/css/register.css">
-<link rel="stylesheet" href="assets/css/instructors.css">
-<link rel="stylesheet" href="assets/css/legal.css">
-<link rel="stylesheet" href="assets/css/program.css">
+<!-- One stylesheet, built by build.mjs from the files in assets/css/. -->
+<link rel="stylesheet" href="assets/css/site.min.css?v=afb2f98b">
 
 <!-- Analytics. Vercel Web Analytics: no cookies, so no consent banner. It
      records nothing until it is enabled in the Vercel dashboard (project,
@@ -41,11 +34,11 @@
 <meta property="og:description" content="Rent a cage or the full 5,500 sq ft indoor facility in Fair Lawn, New Jersey. Cages from $35, team workouts by request, HitTrax sessions booked on their own.">
 <meta name="twitter:title" content="Facility &amp; rentals · DiChiaro Baseball &amp; Softball Academy">
 <meta name="twitter:description" content="Rent a cage or the full 5,500 sq ft indoor facility in Fair Lawn, New Jersey. Cages from $35, team workouts by request, HitTrax sessions booked on their own.">
-<meta name="twitter:image" content="https://dichiarobaseball.com/assets/img/dbsa-01-facility-in-use.jpg">
+<meta name="twitter:image" content="https://dichiarobaseball.com/assets/img/gen/dbsa-01-facility-in-use-1280-669f4b73.jpg">
 <link rel="canonical" href="https://dichiarobaseball.com/facility-and-rentals.html">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://dichiarobaseball.com/facility-and-rentals.html">
-<meta property="og:image" content="https://dichiarobaseball.com/assets/img/dbsa-01-facility-in-use.jpg">
+<meta property="og:image" content="https://dichiarobaseball.com/assets/img/gen/dbsa-01-facility-in-use-1280-669f4b73.jpg">
 <meta name="twitter:card" content="summary_large_image">
 
 <meta name="robots" content="noindex, nofollow">
@@ -183,7 +176,7 @@
 
       <article class="rate-card">
         <div class="media media--16x9">
-          <img src="assets/img/dbsa-03-hitting-cage.jpg" alt="A hitter mid swing in the cage with the ball just off the bat" width="2400" height="1600" loading="lazy">
+          <picture><source type="image/webp" srcset="assets/img/gen/dbsa-03-hitting-cage-480-16e19a34.webp 480w, assets/img/gen/dbsa-03-hitting-cage-800-16e19a34.webp 800w, assets/img/gen/dbsa-03-hitting-cage-1280-16e19a34.webp 1280w, assets/img/gen/dbsa-03-hitting-cage-1920-16e19a34.webp 1920w" sizes="(min-width: 1344px) 410px, (min-width: 1024px) 30vw, 100vw"><img src="assets/img/gen/dbsa-03-hitting-cage-1280-16e19a34.jpg" srcset="assets/img/gen/dbsa-03-hitting-cage-480-16e19a34.jpg 480w, assets/img/gen/dbsa-03-hitting-cage-800-16e19a34.jpg 800w, assets/img/gen/dbsa-03-hitting-cage-1280-16e19a34.jpg 1280w, assets/img/gen/dbsa-03-hitting-cage-1920-16e19a34.jpg 1920w" sizes="(min-width: 1344px) 410px, (min-width: 1024px) 30vw, 100vw" alt="A hitter mid swing in the cage with the ball just off the bat" width="1920" height="1080" loading="lazy" decoding="async" data-slot="34"></picture>
           <span class="media__label">dbsa-03 · Hitter mid swing in the cage, ball just off the bat</span>
         </div>
         <div class="rate-card__body">
@@ -207,7 +200,7 @@
 
       <article class="rate-card">
         <div class="media media--16x9">
-          <img src="assets/img/dbsa-01-facility-in-use.jpg" alt="The full floor in use with a team session running end to end" width="2400" height="1600" loading="lazy">
+          <picture><source type="image/webp" srcset="assets/img/gen/dbsa-01-facility-in-use-480-669f4b73.webp 480w, assets/img/gen/dbsa-01-facility-in-use-800-669f4b73.webp 800w, assets/img/gen/dbsa-01-facility-in-use-1280-669f4b73.webp 1280w, assets/img/gen/dbsa-01-facility-in-use-1920-669f4b73.webp 1920w" sizes="(min-width: 1344px) 410px, (min-width: 1024px) 30vw, 100vw"><img src="assets/img/gen/dbsa-01-facility-in-use-1280-669f4b73.jpg" srcset="assets/img/gen/dbsa-01-facility-in-use-480-669f4b73.jpg 480w, assets/img/gen/dbsa-01-facility-in-use-800-669f4b73.jpg 800w, assets/img/gen/dbsa-01-facility-in-use-1280-669f4b73.jpg 1280w, assets/img/gen/dbsa-01-facility-in-use-1920-669f4b73.jpg 1920w" sizes="(min-width: 1344px) 410px, (min-width: 1024px) 30vw, 100vw" alt="The full floor in use with a team session running end to end" width="2000" height="1130" loading="lazy" decoding="async" data-slot="35"></picture>
           <span class="media__label">dbsa-01 · Full floor in use, a team session running end to end</span>
         </div>
         <div class="rate-card__body">
@@ -231,7 +224,7 @@
 
       <article class="rate-card">
         <div class="media media--16x9">
-          <img src="assets/img/dbsa-08-hittrax-screen.jpg" alt="The HitTrax screen mid session with a spray chart visible" width="2400" height="1800" loading="lazy">
+          <picture><source type="image/webp" srcset="assets/img/gen/dbsa-08-hittrax-screen-480-82e0de4b.webp 480w, assets/img/gen/dbsa-08-hittrax-screen-800-82e0de4b.webp 800w, assets/img/gen/dbsa-08-hittrax-screen-1280-82e0de4b.webp 1280w, assets/img/gen/dbsa-08-hittrax-screen-1920-82e0de4b.webp 1920w" sizes="(min-width: 1344px) 410px, (min-width: 1024px) 30vw, 100vw"><img src="assets/img/gen/dbsa-08-hittrax-screen-1280-82e0de4b.jpg" srcset="assets/img/gen/dbsa-08-hittrax-screen-480-82e0de4b.jpg 480w, assets/img/gen/dbsa-08-hittrax-screen-800-82e0de4b.jpg 800w, assets/img/gen/dbsa-08-hittrax-screen-1280-82e0de4b.jpg 1280w, assets/img/gen/dbsa-08-hittrax-screen-1920-82e0de4b.jpg 1920w" sizes="(min-width: 1344px) 410px, (min-width: 1024px) 30vw, 100vw" alt="The HitTrax screen mid session with a spray chart visible" width="1920" height="1249" loading="lazy" decoding="async" data-slot="36"></picture>
           <span class="media__label">dbsa-08 · HitTrax screen mid session, spray chart visible</span>
         </div>
         <div class="rate-card__body">
@@ -263,7 +256,7 @@
 <section class="hero-light" aria-label="The facility in numbers">
   <div class="hero-light__inner">
     <div class="media media--3x1">
-      <img src="assets/img/dbsa-02-facility-empty.jpg" alt="The empty academy floor with the nets down and the turf visible end to end" width="2400" height="1600" loading="lazy">
+      <picture><source type="image/webp" srcset="assets/img/gen/dbsa-02-facility-empty-480-bb961f9a.webp 480w, assets/img/gen/dbsa-02-facility-empty-800-bb961f9a.webp 800w, assets/img/gen/dbsa-02-facility-empty-1280-bb961f9a.webp 1280w, assets/img/gen/dbsa-02-facility-empty-1920-bb961f9a.webp 1920w" sizes="(min-width: 1344px) 1280px, calc(100vw - 40px)"><img src="assets/img/gen/dbsa-02-facility-empty-1280-bb961f9a.jpg" srcset="assets/img/gen/dbsa-02-facility-empty-480-bb961f9a.jpg 480w, assets/img/gen/dbsa-02-facility-empty-800-bb961f9a.jpg 800w, assets/img/gen/dbsa-02-facility-empty-1280-bb961f9a.jpg 1280w, assets/img/gen/dbsa-02-facility-empty-1920-bb961f9a.jpg 1920w" sizes="(min-width: 1344px) 1280px, calc(100vw - 40px)" alt="The empty academy floor with the nets down and the turf visible end to end" width="1920" height="1080" loading="lazy" decoding="async" data-slot="37"></picture>
       <span class="media__label">dbsa-02 · Empty room, nets down, turf visible end to end</span>
     </div>
 
@@ -299,7 +292,7 @@
     </div>
 
     <div class="media media--1x1">
-      <img src="assets/img/dbsa-08-hittrax-screen.jpg" alt="The live HitTrax screen mid session with a player in front" width="2400" height="1800" loading="lazy">
+      <picture><source type="image/webp" srcset="assets/img/gen/dbsa-08-hittrax-screen-480-82e0de4b.webp 480w, assets/img/gen/dbsa-08-hittrax-screen-800-82e0de4b.webp 800w, assets/img/gen/dbsa-08-hittrax-screen-1280-82e0de4b.webp 1280w, assets/img/gen/dbsa-08-hittrax-screen-1920-82e0de4b.webp 1920w" sizes="(min-width: 1024px) 520px, 100vw"><img src="assets/img/gen/dbsa-08-hittrax-screen-1280-82e0de4b.jpg" srcset="assets/img/gen/dbsa-08-hittrax-screen-480-82e0de4b.jpg 480w, assets/img/gen/dbsa-08-hittrax-screen-800-82e0de4b.jpg 800w, assets/img/gen/dbsa-08-hittrax-screen-1280-82e0de4b.jpg 1280w, assets/img/gen/dbsa-08-hittrax-screen-1920-82e0de4b.jpg 1920w" sizes="(min-width: 1024px) 520px, 100vw" alt="The live HitTrax screen mid session with a player in front" width="1920" height="1249" loading="lazy" decoding="async" data-slot="38"></picture>
       <span class="media__label">dbsa-08 · The live screen mid-session, spray chart visible, player blurred in front</span>
     </div>
   </div>

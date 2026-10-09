@@ -23,10 +23,20 @@
         the description is 70 to 160 characters; and every number in the
         description also appears in the page body, so a share card cannot
         claim a count, price or date the page does not show.
+     8. Images. Every slot in data/images.json points at an original that
+        exists, with its sized files built. Every slot's sizes value covers
+        its rendered width at 1440, 768 and 390 without asking for more
+        than 25% extra. The same file twice on one page is listed; it
+        becomes a failure once DUPLICATES_FAIL is true (after the photo
+        round).
    ========================================================================== */
 
 import { chromium } from "playwright";
-import { readFileSync } from "node:fs";
+import { readFileSync, existsSync } from "node:fs";
+
+/* Turn on after the round that swaps the photos: until then the duplicates
+   are a list for Daniel, not a failure. */
+const DUPLICATES_FAIL = false;
 
 const BASE = (process.argv[2] || "http://localhost:8080").replace(/\/$/, "");
 const EXE = process.env.CHROME_PATH || undefined;
@@ -93,6 +103,23 @@ async function inspect(url, width) {
       });
       return out;
     }),
+    /* The width the sizes attribute asks for, against the width the image
+       is drawn at. Smaller is a blurry image, much larger is wasted bytes. */
+    sizes: Array.from(document.querySelectorAll("img[data-slot]")).map(i => {
+      let val = null;
+      for (const part of (i.getAttribute("sizes") || "").split(/,(?![^(]*\))/)) {
+        const m = part.trim().match(/^(\(.*\))\s+(.+)$/);
+        if (!m) { val = part.trim(); break; }
+        if (matchMedia(m[1]).matches) { val = m[2]; break; }
+      }
+      const d = document.createElement("div");
+      d.style.cssText = `position:fixed;left:0;top:0;height:1px;width:${val}`;
+      document.body.appendChild(d);
+      const asked = d.getBoundingClientRect().width;
+      d.remove();
+      const drawn = i.getBoundingClientRect().width;
+      return { slot: i.dataset.slot, drawn: Math.round(drawn), asked: Math.round(asked) };
+    }).filter(x => x.drawn > 0 && (x.asked < x.drawn - 1 || x.asked > x.drawn * 1.25 + 8)),
     overflow: document.documentElement.scrollWidth > window.innerWidth,
     small: Array.from(document.querySelectorAll("a, button")).filter(el => {
       const r = el.getBoundingClientRect();
@@ -168,6 +195,10 @@ while (queue.length) {
   if (stats.length) { fail(`stat strip: ${stats.length} problem(s)`); stats.slice(0, 4).forEach(s => console.log("          " + s)); }
   else pass("stat strips, no clipped figure, no empty slot");
 
+  const sizes = [["1440", d], ["768", t], ["390", m]].flatMap(([w, x]) => x.sizes.map(z => `slot ${z.slot} at ${w}: drawn ${z.drawn}px, sizes asks ${z.asked}px`));
+  if (sizes.length) { fail(`image sizes: ${sizes.length} problem(s)`); sizes.slice(0, 4).forEach(s => console.log("          " + s)); }
+  else pass("image sizes match the drawn width");
+
   const small = Array.from(new Set([...d.small, ...m.small]));
   if (small.length) fail("tap targets under 24px: " + small.join(", ")); else pass("tap targets");
 
@@ -237,6 +268,42 @@ for (const [kind, map] of [["title", titles], ["description", descriptions]]) {
 }
 await metaChecker.close();
 if (metaProblems === 0) pass(`${titles.size} pages: unique titles and descriptions, share tags match, 70 to 160 characters, every number on the page`);
+
+/* --- 8: the image registry ---------------------------------------------- */
+
+console.log("\nImages");
+const images = JSON.parse(readFileSync("data/images.json", "utf8"));
+const gen = existsSync("assets/img/gen/manifest.json") ? JSON.parse(readFileSync("assets/img/gen/manifest.json", "utf8")) : {};
+let imageProblems = 0;
+for (const [n, s] of Object.entries(images.slots)) {
+  if (!existsSync(`assets/img/src/${s.file}`)) { imageProblems++; fail(`slot ${n}: assets/img/src/${s.file} does not exist`); continue; }
+  const m = gen[s.file];
+  const built = m && m.widths.every(w => ["webp", "jpg"].every(ext => existsSync(`assets/img/gen/${s.file.replace(/\.[^.]+$/, "")}-${w}-${m.hash}.${ext}`)));
+  if (!built) { imageProblems++; fail(`slot ${n}: sized files for ${s.file} are not built, run npm run build`); }
+  if (!images._layouts[s.layout]) { imageProblems++; fail(`slot ${n}: layout "${s.layout}" is not in _layouts`); }
+}
+/* Read from the served pages, so this is what a visitor gets. */
+const pageChecker = await browser.newContext();
+const duplicates = [];
+let slotsSeen = 0;
+for (const file of Array.from(seen).filter((f) => f.endsWith(".html")).sort()) {
+  const html = await (await pageChecker.request.get(`${BASE}/${file}`)).text();
+  const used = new Map();
+  for (const [, n] of html.matchAll(/data-slot="(\d+)"/g)) {
+    slotsSeen++;
+    const s = images.slots[n];
+    if (!s) { imageProblems++; fail(`${file}: slot ${n} is not in data/images.json`); continue; }
+    if (used.has(s.file)) duplicates.push(`${file}: slot ${n} repeats ${s.file}, first used in slot ${used.get(s.file)}`);
+    else used.set(s.file, n);
+  }
+}
+await pageChecker.close();
+if (imageProblems === 0) pass(`${Object.keys(images.slots).length} slots, every original present and built, ${slotsSeen} images on the pages walked`);
+if (duplicates.length && DUPLICATES_FAIL) duplicates.forEach(x => fail("same photo twice: " + x));
+else if (duplicates.length) {
+  console.log(`  note  same photo twice on one page, ${duplicates.length}, for the photo round:`);
+  duplicates.forEach(x => console.log("          " + x));
+} else pass("no photo used twice on one page");
 
 await browser.close();
 console.log(`\n${failures === 0 ? "All checks passed." : failures + " failure(s)."}`);

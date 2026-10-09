@@ -9,20 +9,13 @@
 <link rel="icon" href="assets/img/favicon.png" sizes="any">
 <link rel="apple-touch-icon" href="assets/img/favicon.png">
 
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;600;700;900&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<!-- Fonts are self-hosted (assets/fonts, declared in assets/css/fonts.css).
+     The two latin files carry every weight used above the fold. -->
+<link rel="preload" href="assets/fonts/archivo-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="assets/fonts/jetbrains-mono-latin.woff2" as="font" type="font/woff2" crossorigin>
 
-<link rel="stylesheet" href="assets/css/tokens.css">
-<link rel="stylesheet" href="assets/css/base.css">
-<link rel="stylesheet" href="assets/css/components.css">
-<link rel="stylesheet" href="assets/css/home.css">
-<link rel="stylesheet" href="assets/css/camps.css">
-<link rel="stylesheet" href="assets/css/pages.css">
-<link rel="stylesheet" href="assets/css/register.css">
-<link rel="stylesheet" href="assets/css/instructors.css">
-<link rel="stylesheet" href="assets/css/legal.css">
-<link rel="stylesheet" href="assets/css/program.css">
+<!-- One stylesheet, built by build.mjs from the files in assets/css/. -->
+<link rel="stylesheet" href="assets/css/site.min.css?v=afb2f98b">
 
 <!-- Analytics. Vercel Web Analytics: no cookies, so no consent banner. It
      records nothing until it is enabled in the Vercel dashboard (project,
@@ -245,7 +238,7 @@
 
     <aside class="rail">
       <div class="media media--16x9">
-        <img src="assets/img/dbsa-18-map-fair-lawn.png" alt="Map showing the academy on Pollitt Drive in Fair Lawn" width="1200" height="800" loading="lazy">
+        <picture><source type="image/webp" srcset="assets/img/gen/dbsa-18-map-fair-lawn-480-bcc18de0.webp 480w, assets/img/gen/dbsa-18-map-fair-lawn-800-bcc18de0.webp 800w, assets/img/gen/dbsa-18-map-fair-lawn-1280-bcc18de0.webp 1280w" sizes="(min-width: 1024px) 440px, 100vw"><img src="assets/img/gen/dbsa-18-map-fair-lawn-1280-bcc18de0.jpg" srcset="assets/img/gen/dbsa-18-map-fair-lawn-480-bcc18de0.jpg 480w, assets/img/gen/dbsa-18-map-fair-lawn-800-bcc18de0.jpg 800w, assets/img/gen/dbsa-18-map-fair-lawn-1280-bcc18de0.jpg 1280w" sizes="(min-width: 1024px) 440px, 100vw" alt="Map showing the academy on Pollitt Drive in Fair Lawn" width="1600" height="1067" loading="lazy" decoding="async" data-slot="47"></picture>
         <span class="media__label">dbsa-18 · Static tile, pin on Pollitt Drive, tap opens directions</span>
       </div>
 
