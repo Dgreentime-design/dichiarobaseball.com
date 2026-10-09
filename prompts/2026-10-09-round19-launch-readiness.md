@@ -19,13 +19,24 @@ CLAUDE.md Step 0 commands. Push this prompt if not pushed. Expect 0 0.
    secret or a variable's value; names and environments only.
 5. Never use an em dash.
 
-## 1. Park the image work safely
+## 1. Lock the images for launch
 
-- Round 18b is cancelled. Do not run it.
-- Slot 1 (Home hero) goes back to `dbsa-07-little-league.jpg` with its
-  round 17 focal ("76% 50%"), so phones show a working hero at launch.
-  Keep slots 8 and 37 on the new facility photo; they work at every width.
-- Leave `dbsa-19` in `src/` for Daniel's weekend pass. Rebuild, verify.
+Round 18b ran and is accepted: phones get the turf photo in the Home hero
+(D and lights above the copy, LCP 1.7-2.3s, CLS 0), desktop keeps the
+coach. Keep all of it. Two fixes from its findings:
+
+1. **Slot 8 (Home band, "Fundamentals first")** goes back to
+   `dbsa-02-facility-empty.jpg` with its original alt ("A wide view of the
+   empty academy floor with the lights on") and focal "50% 50%".
+   `dbsa-05` may not be the academy, and Home already has a HitTrax band.
+   It's a different file from the phone hero, so no duplicate.
+2. **Slot 32 (Lessons > Pitching)** keeps its photo for now, but the alt
+   must describe what is actually in it, using 18b's wording: "A HitTrax
+   unit behind the cage net, with the turf and the mound in front". Add it
+   to the weekend photo list in `docs/review/image-map.md` as a slot to
+   replace.
+
+Rebuild, verify, and check Home at 390 and 1440 once.
 
 ## 2. How production actually builds
 
