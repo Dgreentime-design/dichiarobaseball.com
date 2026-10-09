@@ -25,10 +25,11 @@
     "1": {
       "page": "index.html",
       "section": "Hero",
-      "file": "dbsa-07-little-league.jpg",
+      "file": "dbsa-19-coach-fielding-drill.jpg",
       "alt": "",
-      "focal": "76% 50%",
-      "layout": "hero"
+      "focal": "70% 55%",
+      "layout": "hero",
+      "focal_mobile": "74% 50%"
     },
     "2": {
       "page": "index.html",
@@ -81,9 +82,9 @@
     "8": {
       "page": "index.html",
       "section": "Image band, Fundamentals first",
-      "file": "dbsa-02-facility-empty.jpg",
-      "alt": "A wide view of the empty academy floor with the lights on",
-      "focal": "50% 50%",
+      "file": "dbsa-20-facility-turf-wide.jpg",
+      "alt": "The academy floor from turf level, with batting cages down both sides and the DiChiaro logo on the far wall",
+      "focal": "50% 45%",
       "layout": "band"
     },
     "9": {
@@ -313,9 +314,9 @@
     "37": {
       "page": "facility-and-rentals.html",
       "section": "Image band",
-      "file": "dbsa-02-facility-empty.jpg",
-      "alt": "The empty academy floor with the nets down and the turf visible end to end",
-      "focal": "50% 50%",
+      "file": "dbsa-20-facility-turf-wide.jpg",
+      "alt": "The academy floor from turf level, with batting cages down both sides and the DiChiaro logo on the far wall",
+      "focal": "50% 45%",
       "layout": "band"
     },
     "38": {
