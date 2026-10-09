@@ -41,7 +41,7 @@ that becomes a failure after the photo round.
 | 5 | Home | Every swing, measured. | `dbsa-08-hittrax-screen.jpg` (1920x1249) | 1440x609 / 390x826 | 21:9 / 0.47:1 | centred; crop changes to 0.47:1 at 390 | (empty) |
 | 6 | Home | Lessons and rentals, all year. > Private and semi-private lessons | `dbsa-06-group-semi-private.jpg` (2000x1115) | 220x338 / 344x193 | 2:3 / 16:9 | centred; crop changes to 16:9 at 390 | Three players working with one coach in a semi-private lesson |
 | 7 | Home | Lessons and rentals, all year. > Cage and facility rentals | `dbsa-01-facility-in-use.jpg` (2000x1130) | 220x338 / 344x193 | 2:3 / 16:9 | centred; crop changes to 16:9 at 390 | The full academy floor with the batting nets up |
-| 8 | Home | Fundamentals first. Every level welcome. | `dbsa-05-pitching-mound.jpg` (1600x1212) | 1280x420 / 346x114 | 3.05:1 | centred (round 18b) | A pitcher at release with the mound and net behind |
+| 8 | Home | Fundamentals first. Every level welcome. | `dbsa-05-pitching-mound.jpg` (1600x1212) | 1280x420 / 346x114 | 3.05:1 | focal point 50% 70% (round 18b) | A HitTrax unit behind the cage net, with the turf and the mound in front |
 | 9 | Home | Lou DiChiaro | `dbsa-09-lou-coaching.jpg` (1800x2400) | 440x550 / 346x432 | 4:5 | centred | Lou DiChiaro standing with a softball player in front of the academy logo |
 | 10 | Camps | Camps and clinics for ages 6-18. | `dbsa-07-little-league.jpg` (1920x1080) | 1440x660 / 390x620 | 2.18:1 / 0.63:1 | centred; crop changes to 0.63:1 at 390 | (empty) |
 | 11 | Camps | Program cards > Little League Training Camp | `dbsa-07-little-league.jpg` (1920x1080) | 626x352 / 344x193 | 16:9 | centred | A young player mid swing with a coach kneeling beside him |
