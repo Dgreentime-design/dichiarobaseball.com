@@ -10,17 +10,6 @@
       1920
     ]
   },
-  "dbsa-02-facility-empty.jpg": {
-    "hash": "bb961f9a",
-    "width": 1920,
-    "height": 1080,
-    "widths": [
-      480,
-      800,
-      1280,
-      1920
-    ]
-  },
   "dbsa-03-hitting-cage.jpg": {
     "hash": "16e19a34",
     "width": 1920,
@@ -104,6 +93,27 @@
       480,
       800,
       1280
+    ]
+  },
+  "dbsa-19-coach-fielding-drill.jpg": {
+    "hash": "a96b09af",
+    "width": 1428,
+    "height": 816,
+    "widths": [
+      480,
+      800,
+      1280
+    ]
+  },
+  "dbsa-20-facility-turf-wide.jpg": {
+    "hash": "8486feab",
+    "width": 2528,
+    "height": 1904,
+    "widths": [
+      480,
+      800,
+      1280,
+      1920
     ]
   }
 }
