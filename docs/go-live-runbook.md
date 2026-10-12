@@ -51,7 +51,7 @@ its own, so the variables must already be there or that build runs without them.
    **Check:** Vercel, **Deployments**: the top row says Production and turns
    Ready within a few minutes. Open it, **Building**: the log line under
    "Machine layer" reads `origin https://dichiarobaseball.com (production)`
-   and `sitemap 21 of 24 pages`.
+   and `sitemap 18 of 24 pages` (the three team program pages are noindex).
 
 ## 2:00pm, Daniel: Clover webhook and secret, one sitting
 
@@ -89,7 +89,7 @@ its own, so the variables must already be there or that build runs without them.
 | Owner | Step | How to check it worked |
 |---|---|---|
 | Claude Code | Home on `https://dichiarobaseball.com`; `http://` and `www` redirect to it | 200 over HTTPS, one redirect each |
-| Claude Code | `node scripts/check-deployed.mjs https://dichiarobaseball.com` | Passes: routes, canonicals, robots allows, sitemap 21 URLs |
+| Claude Code | `node scripts/check-deployed.mjs https://dichiarobaseball.com` | Passes: routes, canonicals, robots allows, sitemap 18 URLs |
 | Claude Code | 5 random old Framer URLs | Each 301 to its page, then 200 |
 | Daniel | Clover, Hosted Checkout, **TEST URL** | "verification succeeded". Claude Code deletes the `UNMATCHED-` row it leaves |
 | Claude Code | One Contact message marked TEST | Row in `Enquiries`; Daniel confirms the alert at info@; row deleted |

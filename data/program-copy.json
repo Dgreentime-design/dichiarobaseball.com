@@ -66,12 +66,6 @@
           "note": "One charge when you register",
           "cta": "Register and pay in full",
           "plan": "full"
-        },
-        "two-payments": {
-          "label": "Two payments",
-          "body": "Same total, no interest, no fee.",
-          "cta": "Register and pay in two",
-          "plan": "two"
         }
       },
       "included": [

@@ -8,7 +8,8 @@
    in, follows each one, and checks the registration page renders the
    program with that slug in data/programs.json. Then checks that a slug
    that does not exist, and no slug at all, show "we could not find that
-   program" and render no program.
+   program" and render no program, and that each unlisted team program,
+   linked from nowhere, still registers from its own link.
    ========================================================================== */
 
 import { chromium } from "playwright";
@@ -72,10 +73,29 @@ for (const l of links) {
   else ok(`${where}: "${shown.line}"${shown.option ? `, option ${shown.option} preselected` : ""}`);
 }
 
+/* --- Unlisted ----------------------------------------------------------- */
+
+/* A team program (round 22) is linked from nowhere on the site, so the
+   crawl above never reaches it. Its own link is the one Michael sends the
+   team, and it has to register. */
+console.log("\nUnlisted");
+for (const p of DATA.programs.filter((x) => x.unlisted && x.status === "live")) {
+  await page.goto(`${BASE}/register.html?program=${p.slug}`, { waitUntil: "networkidle" });
+  const shown = await page.evaluate(() => ({
+    line: (document.querySelector("[data-line-name]") || {}).textContent || "",
+    missing: !document.querySelector("[data-program-missing]").hidden,
+    step1: !document.querySelector('[data-step="1"]').hidden
+  }));
+  const want = `${p.name}, ${p.season}`;
+  if (shown.missing || !shown.step1) fail(`register.html?program=${p.slug}: showed not-found`);
+  else if (shown.line !== want) fail(`register.html?program=${p.slug}: rendered "${shown.line}", expected "${want}"`);
+  else ok(`register.html?program=${p.slug}: "${shown.line}"`);
+}
+
 /* --- Not found ----------------------------------------------------------- */
 
 console.log("\nNot found");
-for (const q of ["?program=does-not-exist", "", "?program=infield-camp", "?program=iha-softball-winter-2027"]) {
+for (const q of ["?program=does-not-exist", "", "?program=infield-camp"]) {
   await page.goto(`${BASE}/register.html${q}`, { waitUntil: "networkidle" });
   const r = await page.evaluate(() => ({
     missing: !document.querySelector("[data-program-missing]").hidden,

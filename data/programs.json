@@ -54,7 +54,8 @@
       "source": "Meeting notes, 21 September. Families can add up to four players in one session.",
       "pricing": "Total is the sum per player. Whether a code applies per player or once per registration is the per_player flag on the code.",
       "waiver": "One waiver per player, not one per registration."
-    }
+    },
+    "unlisted": "A team program, round 22 (12 Oct 2026). Sold on its own page at programs/<slug>.html, which Michael sends to the team, but noindex, out of the sitemap and llms.txt, and linked from nowhere on the site."
   },
   "programs": [
     {
@@ -274,22 +275,6 @@
           "id": "full",
           "label": "Pay in full",
           "price": 950,
-          "rates": []
-        },
-        {
-          "id": "two-payments",
-          "label": "Two payments",
-          "price": 950,
-          "schedule": [
-            {
-              "amount": 475,
-              "when": "at registration"
-            },
-            {
-              "amount": 475,
-              "when": "2027-01-01"
-            }
-          ],
           "rates": []
         }
       ],
@@ -579,7 +564,8 @@
       ],
       "ages": "IHA squad",
       "status": "live",
-      "gated": true,
+      "gated": false,
+      "unlisted": true,
       "full": false,
       "summary": "Hitting and fielding for the IHA squad. Nine Mondays.",
       "teaches": [
@@ -624,7 +610,8 @@
       ],
       "ages": "Fair Lawn HS squad",
       "status": "live",
-      "gated": true,
+      "gated": false,
+      "unlisted": true,
       "full": false,
       "summary": "Hitting and fielding for the Fair Lawn HS squad. Eight Wednesdays.",
       "teaches": [
@@ -671,7 +658,8 @@
       ],
       "ages": "Old Tappan HS squad",
       "status": "live",
-      "gated": true,
+      "gated": false,
+      "unlisted": true,
       "full": false,
       "summary": "Fifteen Sundays of hitting for the Old Tappan squad.",
       "teaches": [

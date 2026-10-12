@@ -13,7 +13,7 @@
      4. robots.txt matches: a blanket disallow off the real domain.
      5. sitemap.xml is well formed and every URL in it is on this origin
         and responds 200.
-     6. llms.txt is served and names no gated program.
+     6. llms.txt is served and names no gated or unlisted program.
      7. Security headers from vercel.json arrived.
    ========================================================================== */
 
@@ -36,7 +36,7 @@ const ROUTES = [
 ];
 
 const data = JSON.parse(readFileSync("data/programs.json", "utf8"));
-const gated = data.programs.filter((p) => p.gated).map((p) => p.name);
+const gated = data.programs.filter((p) => p.gated || p.unlisted).map((p) => p.name);
 
 let failures = 0;
 const fail = (m) => { failures++; console.log("  FAIL  " + m); };
@@ -154,8 +154,8 @@ console.log("\nllms.txt");
   else {
     ok(`served, ${body.split("\n").length} lines`);
     const leaked = gated.filter((n) => body.includes(n));
-    if (leaked.length) fail(`names gated program(s): ${leaked.join(", ")}`);
-    else ok(`no gated program named (${gated.length} withheld)`);
+    if (leaked.length) fail(`names gated or unlisted program(s): ${leaked.join(", ")}`);
+    else ok(`no gated or unlisted program named (${gated.length} withheld)`);
     const off = Array.from(body.matchAll(/\]\((https?:\/\/[^)]+)\)/g))
       .map((m) => m[1]).filter((u) => !u.startsWith(BASE));
     if (off.length) fail(`${off.length} link(s) on another origin, first ${off[0]}`);

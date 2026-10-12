@@ -223,6 +223,37 @@ const programs = existsSync(join("data", "programs.json"))
   : { _meta: {}, programs: [] };
 
 const VENUES = (programs._meta && programs._meta.venues) || {};
+
+/* An unlisted program is a team's own block (round 22). Its page works and
+   sells, at programs/<slug>.html, so Michael can send the team its link, and
+   that is the only way in: noindex, so out of the sitemap and llms.txt, and
+   left out of every list, card and feed the rest of the site is built from. */
+const UNLISTED = new Set(programs.programs.filter((p) => p.unlisted).map((p) => p.slug));
+for (const slug of UNLISTED) ALWAYS_NOINDEX.add(`programs/${slug}.html`);
+const LISTED = programs.programs.filter((p) => !UNLISTED.has(p.slug));
+
+/* A price on a hand-written card, from the data: {{price <slug> <option>}}. */
+function dataPrice(slug, id) {
+  const p = programs.programs.find((x) => x.slug === slug);
+  const o = p && p.options.find((x) => x.id === id);
+  if (!o) throw new Error(`build: {{price ${slug} ${id}}} names no option in data/programs.json`);
+  return "$" + Number(o.price).toLocaleString("en-US");
+}
+
+/* "Last 4 sessions at the Superdome, 8am to 10am": a program's combined
+   sessions, from schedule.combined, when they are its last dates. Used on
+   the program page and, as {{superdome <slug>}}, on the hand-written cards. */
+function superdomeLine(p) {
+  const s = (p && p.schedule) || {};
+  const c = s.combined;
+  if (!c || !c.dates || !c.dates.length) return "";
+  if ((s.dates || []).slice(-c.dates.length).join() !== c.dates.join()) {
+    throw new Error(`build: ${p.slug} has combined sessions that are not its last dates`);
+  }
+  const short = (t) => t.trim().replace(/:00(?=\s*[ap]m)/i, "").replace(/\s+/g, "");
+  const [from, to] = c.time.split(/\s*[-–]\s*/);
+  return `Last ${c.dates.length} sessions at the Superdome, ${short(from)} to ${short(to)}`;
+}
 const PHONE = "+1-201-773-6858";
 
 /* --- Add to calendar -------------------------------------------------------
@@ -307,7 +338,7 @@ function facilityNode() {
     "@type": "SportsActivityLocation",
     "@id": FACILITY_ID,
     name: f.name || "DiChiaro Baseball & Softball Academy",
-    description: "Year-round indoor baseball and softball instruction in Fair Lawn, New Jersey. Hitting, fielding and pitching for ages 6-18.",
+    description: "Year-round indoor baseball and softball instruction in Fair Lawn, New Jersey. Hitting, fielding and pitching for ages 6 and up.",
     url: `${ORIGIN}/`,
     telephone: PHONE,
     email: EMAIL,
@@ -545,8 +576,18 @@ for (const file of readdirSync(PAGES).filter(f => f.endsWith(".html") && !f.star
     .replace(/\{\{card_count\}\}/g, (_, i, src) => ["No", "One", "Two", "Three", "Four", "Five", "Six", "Seven", "Eight",
       "Nine", "Ten", "Eleven", "Twelve"][(src.match(/<article class="card[ "]/g) || []).length] || String((src.match(/<article class="card[ "]/g) || []).length))
     .replaceAll("{{about_topics}}", JSON.stringify(ABOUT_TOPICS).replace(/<\//g, "<\\/"))
+    .replace(/\{\{price ([a-z0-9-]+) ([a-z0-9-]+)\}\}/g, (_, slug, id) => dataPrice(slug, id))
+    .replace(/\{\{superdome ([a-z0-9-]+)\}\}/g, (_, slug) => {
+      const line = superdomeLine(programs.programs.find((p) => p.slug === slug));
+      if (!line) throw new Error(`build: {{superdome ${slug}}} has no combined sessions in data/programs.json`);
+      return line;
+    })
+    /* An unlisted program keeps its category, not its name: register.js
+       takes the name from the program it loads. */
     .replaceAll("{{ga_items}}", () => gaJson(Object.fromEntries(programs.programs
-      .filter((p) => p.status === "live").map((p) => [p.slug, { item_name: `${p.name}, ${p.season}`, item_category: gaCategory(p) }]))))
+      .filter((p) => p.status === "live").map((p) => [p.slug, UNLISTED.has(p.slug)
+        ? { item_category: gaCategory(p) }
+        : { item_name: `${p.name}, ${p.season}`, item_category: gaCategory(p) }]))))
     .replaceAll("{{calendar_links}}", JSON.stringify(Object.fromEntries(programs.programs
       .filter((p) => p.status === "live").map((p) => [p.slug, calendarLinks(p.slug)]))).replace(/<\//g, "<\\/"));
   write(file, resolveImages(html, { origin: PROD_ORIGIN }));
@@ -870,7 +911,7 @@ function scheduleBlock(p, c, f) {
   const key = (s.groups && s.groups.length)
     ? s.groups.map((g) => `      <li>${esc(g.label)} &nbsp;·&nbsp; ${compact(g.time)}</li>`)
     : [`      <li>${esc(shortPlace(facility.address))} &nbsp;·&nbsp; ${compact(s.time)}${s.time_change ? `, then ${compact(s.time_change.time)} from ${usDate(s.time_change.from)}` : ""}</li>`];
-  if (s.combined) key.push(`      <li class="is-away">${esc(s.combined.label)} &nbsp;·&nbsp; ${compact(s.combined.time)}</li>`);
+  if (s.combined) key.push(`      <li class="is-away">${esc(superdomeLine(p) || `${s.combined.label} · ${compact(s.combined.time)}`)}</li>`);
   const lede = (c.schedule && c.schedule.lede)
     ? `\n    <p class="sec-head__lede body-l schedule__lede">\n      ${fill(c.schedule.lede, factsFor(p))}\n    </p>` : "";
   return `
@@ -902,15 +943,17 @@ ${key.join("\n")}
 
 function pricingBlock(p, c, f) {
   const opts = openOptions(p);
-  if (opts.length < 2) return "";
   const k = c.pricing || {};
+  /* One option shows a price band only when the copy writes one for it, as
+     the Infield Camp's does since its two-payment plan was removed. */
+  if (opts.length < 2 && !(opts.length === 1 && k.plans && k.plans[opts[0].id])) return "";
   const plans = k.plans || {};
   const min = Math.min(...opts.map((o) => o.price));
   const vars = { price: money(min), per_session: money(Math.round(min / p.schedule.dates.length)) };
   const reg = (plan) => f.register + (plan && !f.gated ? `&amp;plan=${plan}` : "");
   let body;
-  if (opts.length === 2) {
-    body = `    <div class="plans">` + opts.map((o) => {
+  if (opts.length <= 2) {
+    body = `    <div class="plans${opts.length === 1 ? " plans--one" : ""}">` + opts.map((o) => {
       const pc = plans[o.id] || {};
       const sched = o.schedule && o.schedule.length > 1 ? o.schedule : null;
       const amount = sched ? money(sched[0].amount) : money(o.price);
@@ -951,7 +994,7 @@ ${opts.map((o) => `          <div class="rate-row">
 <section class="band band--bone" aria-labelledby="price-title">
   <div class="container">
     <div class="sec-head">
-      <p class="eyebrow">${word(opts.length)} ways to pay</p>
+      <p class="eyebrow">${opts.length === 1 ? "One price" : `${word(opts.length)} ways to pay`}</p>
       <h2 class="display-l" id="price-title">${k.title ? fill(k.title, vars) : `From ${money(min)}.`}</h2>${lede}
     </div>
 
@@ -1202,7 +1245,7 @@ if (PUBLIC.length && existsSync(join(PAGES, "_program.html"))) {
   };
   const map = Object.fromEntries([
     ...Object.entries(LEGACY).filter(([, to]) => PUBLIC.some((p) => p.slug === to)),
-    ...PUBLIC.map((p) => [p.slug, p.slug]),
+    ...PUBLIC.filter((p) => !UNLISTED.has(p.slug)).map((p) => [p.slug, p.slug]),
   ]);
   write("program.html", `<!doctype html>
 <html lang="en">
@@ -1263,8 +1306,8 @@ writeFileSync("llms.txt", [
   "",
   "> Year-round indoor baseball and softball instruction in Fair Lawn, New",
   "> Jersey. Lou DiChiaro has taught Bergen County players for twenty-five",
-  "> years. Hitting, fielding and pitching for ages 6-18, in a",
-  "> 5,500 sq ft facility built for it.",
+  "> years. Hitting, fielding and pitching for ages 6 and up, in a",
+  "> 6,500 sq ft facility built for it.",
   "",
   `Address: ${(VENUES.facility && VENUES.facility.address) || ""}`,
   `Phone: ${PHONE}`,
@@ -1276,12 +1319,13 @@ writeFileSync("llms.txt", [
   "",
   "## Programs",
   "",
-  /* Open programs only. A gated program is not listed on any page of the
+  /* Open, listed programs only. An unlisted one is left out with the rest
+     of the site (see UNLISTED). A gated program is not listed on any page of the
      site, so listing it here would publish, to the crawlers this file
      exists for, exactly what the gate is there to withhold. Read from the
      data rather than by name, because which programs are gated is still
      provisional. */
-  ...programs.programs.filter((p) => !p.gated).map((p) => {
+  ...LISTED.filter((p) => !p.gated).map((p) => {
     const when = (p.schedule && p.schedule.dates && p.schedule.dates.length)
       ? `${p.schedule.dates[0]} to ${p.schedule.dates[p.schedule.dates.length - 1]}, ${p.schedule.day || ""}`.trim()
       : "dates to confirm";

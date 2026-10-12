@@ -139,30 +139,6 @@
       "focal": "50% 50%",
       "layout": "card-2"
     },
-    "15": {
-      "page": "camps-and-clinics.html",
-      "section": "Program cards > IHA Softball",
-      "file": "dbsa-01-facility-in-use.jpg",
-      "alt": "A team working through fielding drills on the academy turf",
-      "focal": "50% 50%",
-      "layout": "card-2"
-    },
-    "16": {
-      "page": "camps-and-clinics.html",
-      "section": "Program cards > Fair Lawn HS Softball",
-      "file": "dbsa-06-group-semi-private.jpg",
-      "alt": "A coach kneeling on the turf in front of a group of players",
-      "focal": "50% 50%",
-      "layout": "card-2"
-    },
-    "17": {
-      "page": "camps-and-clinics.html",
-      "section": "Program cards > Old Tappan HS",
-      "file": "dbsa-03-hitting-cage.jpg",
-      "alt": "A hitter mid swing in the cage with the HitTrax screen behind",
-      "focal": "50% 50%",
-      "layout": "card-2"
-    },
     "18": {
       "page": "programs/little-league-fall-2026.html",
       "section": "Hero",
@@ -402,6 +378,14 @@
       "alt": "Map showing the academy on Pollitt Drive in Fair Lawn",
       "focal": "50% 50%",
       "layout": "map-contact"
+    },
+    "55": {
+      "page": "camps-and-clinics.html",
+      "section": "Program cards > Little League Training Camp (winter)",
+      "file": "dbsa-07-little-league.jpg",
+      "alt": "Players working through a drill at the Little League training camp",
+      "focal": "50% 50%",
+      "layout": "card-2"
     }
   }
 }
