@@ -186,7 +186,7 @@
         "blocks": [
           {
             "t": "p",
-            "text": "Only the services that make the booking work."
+            "text": "Only the services that run the site and the bookings."
           },
           {
             "t": "ul",
