@@ -1,23 +1,23 @@
-# Go-live runbook, Monday 12 October 2026, 1:00pm Eastern
+# Go-live runbook, Monday 12 October 2026, 2:00pm Eastern
 
 One page, in order. Each step has an owner and a check. If a check fails,
 stop at that step and tell Claude Code; do not move on. Vercel project:
 **dichiarobaseball.com-rgr6** (the only one left). Written 9 October, round 19.
 
-**Have these in hand before 12:00** (Vercel cannot show you secret values it
+**Have these in hand before 1:45pm** (Vercel cannot show you secret values it
 already holds, so they cannot be copied from Preview): the Airtable personal
 access token, the Clover private API token and the Clover merchant ID. If a
 variable lets you tick Production on its existing Preview entry, that works
 too.
 
-## Before 12:00
+## Before 1:45pm
 
 | Owner | Step | How to check it worked |
 |---|---|---|
 | Claude Code | Final preview check: `verify`, `check:payments`, `check:enquiry`, the 34 old Framer paths, Home at 390 and 1440 | All pass, reported with the preview link |
 | Daniel | Approve the preview | Say "go" |
 
-## 12:00 to 12:30, Daniel: variables, then merge
+## 1:45pm, Daniel: variables, then merge
 
 Set the variables **before** merging. The merge starts a Production build on
 its own, so the variables must already be there or that build runs without them.
@@ -39,7 +39,7 @@ its own, so the variables must already be there or that build runs without them.
    | `ENQUIRIES_TABLE_NAME` | `Enquiries` |
    | `SITE_ORIGIN` | `https://dichiarobaseball.com` exactly, no slash at the end |
 
-   `CLOVER_WEBHOOK_SECRET` comes at 12:30. Never add `MOCK_WEBHOOK_SECRET` to Production.
+   `CLOVER_WEBHOOK_SECRET` comes at 2:00pm. Never add `MOCK_WEBHOOK_SECRET` to Production.
    **Check:** the list shows all nine names with "Production".
 2. **GitHub:** github.com/Dgreentime-design/dichiarobaseball.com, **Pull
    requests**, **New pull request**, base `main`, compare `review`, **Create
@@ -50,7 +50,7 @@ its own, so the variables must already be there or that build runs without them.
    "Machine layer" reads `origin https://dichiarobaseball.com (production)`
    and `sitemap 21 of 24 pages`.
 
-## 12:30, Daniel: Clover webhook and secret, one sitting
+## 2:00pm, Daniel: Clover webhook and secret, one sitting
 
 1. **Clover:** clover.com, sign in, **Settings**, **Ecommerce**, **Hosted
    Checkout** (the screen used on 1 October: Webhook URL, signing secret,
@@ -61,9 +61,9 @@ its own, so the variables must already be there or that build runs without them.
 3. **Vercel:** **Deployments**, top Production row, **...**, **Redeploy**,
    **Redeploy**.
    **Check:** the new row is Ready. **Do not click TEST URL yet.** The domain
-   still points at Framer, so it fails until 13:00.
+   still points at Framer, so it fails until 2:20pm.
 
-## 12:45, Daniel: DNS (website records only)
+## 2:10pm, Daniel: DNS (website records only)
 
 1. **Vercel:** **Settings**, **Domains**, **Add**, `dichiarobaseball.com`. Pick
    the option that adds it **and redirects www to it**. The apex must be
@@ -81,7 +81,7 @@ its own, so the variables must already be there or that build runs without them.
 **Check:** Vercel, **Domains**, both names show Valid Configuration. TTL is
 15 minutes, so allow up to 30.
 
-## 13:00, live checks (Claude Code, Daniel where named)
+## 2:20pm, live checks (Claude Code, Daniel where named)
 
 | Owner | Step | How to check it worked |
 |---|---|---|
@@ -96,7 +96,7 @@ its own, so the variables must already be there or that build runs without them.
 If the payment is still "Confirming" after 2 minutes: **stop, do not pay
 again.** Clover does not resend a rejected webhook. Playbook, Troubleshooting.
 
-## After
+## 2:45pm, after launch
 
 - Daniel: Google Search Console, add property `dichiarobaseball.com` (Domain,
   verified with one TXT record at InMotion), **Sitemaps**, submit
