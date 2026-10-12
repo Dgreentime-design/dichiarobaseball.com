@@ -129,12 +129,34 @@ writeFileSync(join("assets", "css", "site.min.css"), CSS);
 const CSS_HREF = `assets/css/site.min.css?v=${createHash("sha1").update(CSS).digest("hex").slice(0, 8)}`;
 console.log(`  assets/css/site.min.css, ${(CSS.length / 1024).toFixed(1)} KB`);
 
+/* --- Google Analytics 4 ---------------------------------------------------
+
+   GA4_MEASUREMENT_ID turns the tag on, set in Vercel for Production and
+   Preview. Unset, nothing is written and the site behaves as before. The
+   script is async and its onload and onerror set window.dbsaGa, so
+   site.js can tell a loaded tag from a blocked one and never hold a
+   navigation for a tag that will not answer. Only a G- ID is accepted: the
+   value is written into every page. */
+const GA4_ID = (process.env.GA4_MEASUREMENT_ID || "").trim();
+const GA4_OK = /^G-[A-Z0-9]{4,20}$/.test(GA4_ID);
+if (GA4_ID && !GA4_OK) console.warn(`  GA4_MEASUREMENT_ID is not a G- measurement ID, so no tag is written`);
+const GA4_CONFIG = {
+  send_page_view: true,
+  allow_google_signals: false,
+  allow_ad_personalization_signals: false,
+  ...(IS_PROD ? {} : { debug_mode: true }),
+};
+const GA4_SNIPPET = GA4_OK
+  ? `<script async src="https://www.googletagmanager.com/gtag/js?id=${GA4_ID}" onload="window.dbsaGa='ready'" onerror="window.dbsaGa='blocked'"></script>
+<script>window.dataLayer = window.dataLayer || []; function gtag() { dataLayer.push(arguments); } gtag("js", new Date()); gtag("config", "${GA4_ID}", ${JSON.stringify(GA4_CONFIG)});</script>`
+  : "";
+
 const cache = new Map();
 function partial(name) {
   if (cache.has(name)) return cache.get(name);
   const path = join(PARTIALS, name + ".html");
   if (!existsSync(path)) throw new Error(`Missing partial: ${name}`);
-  const body = readFileSync(path, "utf8").trimEnd().replaceAll("{{css_href}}", CSS_HREF);
+  const body = readFileSync(path, "utf8").trimEnd().replaceAll("{{css_href}}", CSS_HREF).replaceAll("{{ga4}}", GA4_SNIPPET);
   cache.set(name, body);
   return body;
 }
@@ -215,6 +237,26 @@ const CALENDAR_ORIGIN = (
   process.env.SITE_ORIGIN ||
   (process.env.VERCEL_BRANCH_URL ? `https://${process.env.VERCEL_BRANCH_URL}` : ORIGIN)
 ).replace(/\/+$/, "");
+
+/* --- What analytics is told about a program --------------------------------
+
+   The ecommerce item for GA4: the slug, the title, the sport and the
+   lowest price on sale, the same "from" price the page shows. Facts only,
+   from data/programs.json; nothing about a family. */
+const gaCategory = (p) => {
+  const s = [].concat(p.sport || []);
+  return s.includes("baseball") && s.includes("softball") ? "both" : s[0] || "both";
+};
+function gaItem(p) {
+  const opts = openOptions(p).length ? openOptions(p) : p.options;
+  return {
+    item_id: p.slug,
+    item_name: `${p.name}, ${p.season}`,
+    item_category: gaCategory(p),
+    price: Math.min(...opts.map((o) => o.price)),
+  };
+}
+const gaJson = (v) => JSON.stringify(v).replace(/</g, "\\u003c");
 
 /* Apple Calendar, and Outlook on the desktop, take the file itself: `ics`
    is the path from the site root, made relative by the page. */
@@ -503,6 +545,8 @@ for (const file of readdirSync(PAGES).filter(f => f.endsWith(".html") && !f.star
     .replace(/\{\{card_count\}\}/g, (_, i, src) => ["No", "One", "Two", "Three", "Four", "Five", "Six", "Seven", "Eight",
       "Nine", "Ten", "Eleven", "Twelve"][(src.match(/<article class="card[ "]/g) || []).length] || String((src.match(/<article class="card[ "]/g) || []).length))
     .replaceAll("{{about_topics}}", JSON.stringify(ABOUT_TOPICS).replace(/<\//g, "<\\/"))
+    .replaceAll("{{ga_items}}", () => gaJson(Object.fromEntries(programs.programs
+      .filter((p) => p.status === "live").map((p) => [p.slug, { item_name: `${p.name}, ${p.season}`, item_category: gaCategory(p) }]))))
     .replaceAll("{{calendar_links}}", JSON.stringify(Object.fromEntries(programs.programs
       .filter((p) => p.status === "live").map((p) => [p.slug, calendarLinks(p.slug)]))).replace(/<\//g, "<\\/"));
   write(file, resolveImages(html, { origin: PROD_ORIGIN }));
@@ -1133,9 +1177,13 @@ if (PUBLIC.length && existsSync(join(PAGES, "_program.html"))) {
     const name = typo(p.name);
     const html = resolvePartials(template
       .replace("{{blocks}}", () => blocks)
-      .replaceAll("{{title}}", () => `${name}, ${esc(p.season)} · DiChiaro Baseball &amp; Softball Academy`)
+      /* The short brand, as the social links say it: a program title with
+         the full academy name runs 66 to 90 characters and is cut off in
+         search results before the brand is read. */
+      .replaceAll("{{title}}", () => `${name}, ${esc(p.season)} · DiChiaro Academy`)
       .replaceAll("{{description}}", () => programDescription(p))
       .replaceAll("{{og_image}}", () => imageUrl(c.image.slot, PROD_ORIGIN))
+      .replaceAll("{{ga_item}}", () => gaJson(gaItem(p)))
       .replaceAll("{{file}}", () => file));
     PROGRAM_PAGE[file] = p.slug;
     write(file, upOne(resolveImages(html, { origin: PROD_ORIGIN, prefix: "../" })));

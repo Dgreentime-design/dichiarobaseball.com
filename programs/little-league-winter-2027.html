@@ -24,15 +24,18 @@
 <script>window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };</script>
 <script defer src="/_vercel/insights/script.js"></script>
 
-<!-- GOOGLE ANALYTICS SLOT. Empty on purpose. Paste the GA4 tag here once
-     Michael gives Daniel access to the property, and not before. A GA tag
-     sets cookies, so adding it also needs a consent decision. -->
+<!-- GOOGLE ANALYTICS SLOT. build.mjs writes the GA4 tag here when the
+     GA4_MEASUREMENT_ID variable is set, and nothing when it is not. Google
+     signals and ad personalisation are off; previews and local builds add
+     debug_mode so their traffic stays out of real reports. Events go through
+     window.dbsaTrack in site.js. The privacy policy's cookies section says so. -->
 
-<title>Little League Training Camp, Winter 2027 · DiChiaro Baseball &amp; Softball Academy</title>
+
+<title>Little League Training Camp, Winter 2027 · DiChiaro Academy</title>
 <meta name="description" content="Little League Training Camp, Winter 2027. Ages 6-12, 9 Sundays from Jan 3, 2027 to Feb 28, 2027, 2:30pm-4:00pm. $350. Fair Lawn, NJ.">
-<meta property="og:title" content="Little League Training Camp, Winter 2027 · DiChiaro Baseball &amp; Softball Academy">
+<meta property="og:title" content="Little League Training Camp, Winter 2027 · DiChiaro Academy">
 <meta property="og:description" content="Little League Training Camp, Winter 2027. Ages 6-12, 9 Sundays from Jan 3, 2027 to Feb 28, 2027, 2:30pm-4:00pm. $350. Fair Lawn, NJ.">
-<meta name="twitter:title" content="Little League Training Camp, Winter 2027 · DiChiaro Baseball &amp; Softball Academy">
+<meta name="twitter:title" content="Little League Training Camp, Winter 2027 · DiChiaro Academy">
 <meta name="twitter:description" content="Little League Training Camp, Winter 2027. Ages 6-12, 9 Sundays from Jan 3, 2027 to Feb 28, 2027, 2:30pm-4:00pm. $350. Fair Lawn, NJ.">
 <meta name="twitter:image" content="https://dichiarobaseball.com/assets/img/gen/dbsa-07-little-league-1280-12c6ea1d.jpg">
 <link rel="canonical" href="https://dichiarobaseball.com/programs/little-league-winter-2027.html">
@@ -40,6 +43,7 @@
 <meta property="og:url" content="https://dichiarobaseball.com/programs/little-league-winter-2027.html">
 <meta property="og:image" content="https://dichiarobaseball.com/assets/img/gen/dbsa-07-little-league-1280-12c6ea1d.jpg">
 <meta name="twitter:card" content="summary_large_image">
+<script type="application/json" id="ga-item">{"item_id":"little-league-winter-2027","item_name":"Little League Training Camp, Winter 2027","item_category":"both","price":350}</script>
 <link rel="preload" as="image" type="image/webp" imagesrcset="../assets/img/gen/dbsa-07-little-league-480-12c6ea1d.webp 480w, ../assets/img/gen/dbsa-07-little-league-800-12c6ea1d.webp 800w, ../assets/img/gen/dbsa-07-little-league-1280-12c6ea1d.webp 1280w, ../assets/img/gen/dbsa-07-little-league-1920-12c6ea1d.webp 1920w" imagesizes="100vw" fetchpriority="high">
 
 <meta name="robots" content="noindex, nofollow">

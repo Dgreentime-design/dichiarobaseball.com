@@ -21,6 +21,9 @@
 <script>window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };</script>
 <script defer src="/_vercel/insights/script.js"></script>
 
-<!-- GOOGLE ANALYTICS SLOT. Empty on purpose. Paste the GA4 tag here once
-     Michael gives Daniel access to the property, and not before. A GA tag
-     sets cookies, so adding it also needs a consent decision. -->
+<!-- GOOGLE ANALYTICS SLOT. build.mjs writes the GA4 tag here when the
+     GA4_MEASUREMENT_ID variable is set, and nothing when it is not. Google
+     signals and ad personalisation are off; previews and local builds add
+     debug_mode so their traffic stays out of real reports. Events go through
+     window.dbsaTrack in site.js. The privacy policy's cookies section says so. -->
+{{ga4}}

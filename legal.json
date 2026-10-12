@@ -125,7 +125,7 @@
     "eyebrow": "Privacy",
     "title": "Privacy policy",
     "lede": "We collect what we need to run a booking and nothing else. We do not sell data, and we never see your card number.",
-    "updated": "Last updated Oct 8, 2026",
+    "updated": "Last updated Oct 12, 2026",
     "description": "What DiChiaro Baseball &amp; Softball Academy collects, why, how long it is kept, and what a parent can ask to have removed.",
     "sections": [
       {
@@ -245,7 +245,7 @@
         "blocks": [
           {
             "t": "p",
-            "text": "The site sets no cookies. A booking in progress is kept in your browser&rsquo;s session storage, which clears when you close the tab. Visits are counted with Vercel Web Analytics, which sets no cookies."
+            "text": "We use Google Analytics to understand how families use the site, such as which programs they look at and where a registration gets stuck. It sets cookies that count visits without telling us who you are, and we have turned off Google&rsquo;s advertising features. We never send your name, email or your player&rsquo;s details to Google. You can opt out with Google&rsquo;s browser add-on at <a href=\"https://tools.google.com/dlpage/gaoptout\">tools.google.com/dlpage/gaoptout</a>. A booking in progress is kept in your browser&rsquo;s session storage, which clears when you close the tab. We also count visits with Vercel Web Analytics, which sets no cookies."
           }
         ]
       },

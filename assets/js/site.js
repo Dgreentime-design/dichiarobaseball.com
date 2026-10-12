@@ -6,6 +6,51 @@
 (function () {
   "use strict";
 
+  /* --- Analytics ---------------------------------------------------------
+     Every GA4 event goes through window.dbsaTrack(name, params, done). It
+     does nothing when the tag is not on the page and swallows any error,
+     so analytics can never change what a page does. Params are opaque IDs,
+     program slugs, prices, steps and error categories, never anything a
+     family typed.
+
+     done, when given, is called exactly once: when GA confirms the event,
+     after 800ms, or at once if the tag is missing, blocked or not loaded
+     yet (window.dbsaGa is set by the tag's onload and onerror). Use it
+     only to hold a navigation that would otherwise drop the event. */
+
+  window.dbsaTrack = function (name, params, done) {
+    var called = false;
+    var finish = function () {
+      if (called) return;
+      called = true;
+      if (done) { try { done(); } catch (e) { /* the caller's own code */ } }
+    };
+    try {
+      if (typeof window.gtag !== "function") { finish(); return; }
+      var p = {};
+      for (var k in params) if (Object.prototype.hasOwnProperty.call(params, k)) p[k] = params[k];
+      if (done && window.dbsaGa === "ready") {
+        p.transport_type = "beacon";
+        p.event_callback = finish;
+        setTimeout(finish, 800);
+        window.gtag("event", name, p);
+        return;
+      }
+      window.gtag("event", name, p);
+    } catch (e) { /* analytics never breaks the page */ }
+    finish();
+  };
+
+  /* view_item on a program page: the build writes the program's slug,
+     title, sport and "from" price into #ga-item. */
+  try {
+    var gaItem = document.getElementById("ga-item");
+    if (gaItem) {
+      var item = JSON.parse(gaItem.textContent);
+      window.dbsaTrack("view_item", { currency: "USD", value: item.price, items: [Object.assign({ quantity: 1 }, item)] });
+    }
+  } catch (e) { /* no item, no event */ }
+
   /* --- Image placeholders -----------------------------------------------
      Until the final photography lands, an image file that is not on disk
      falls back to the labelled placeholder from the Figma comps rather
@@ -284,6 +329,8 @@
           done.querySelector("[data-enquiry-ref]").textContent = data.reference;
           form.parentNode.replaceChild(done, form);
           done.querySelector("h3").focus();
+          /* The form's name only, never what was written in it. */
+          window.dbsaTrack("generate_lead", { form: form.getAttribute("data-enquiry-form") });
         })
         .catch(function () {
           button.disabled = false;

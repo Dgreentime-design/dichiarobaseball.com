@@ -24,9 +24,12 @@
 <script>window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };</script>
 <script defer src="/_vercel/insights/script.js"></script>
 
-<!-- GOOGLE ANALYTICS SLOT. Empty on purpose. Paste the GA4 tag here once
-     Michael gives Daniel access to the property, and not before. A GA tag
-     sets cookies, so adding it also needs a consent decision. -->
+<!-- GOOGLE ANALYTICS SLOT. build.mjs writes the GA4 tag here when the
+     GA4_MEASUREMENT_ID variable is set, and nothing when it is not. Google
+     signals and ad personalisation are off; previews and local builds add
+     debug_mode so their traffic stays out of real reports. Events go through
+     window.dbsaTrack in site.js. The privacy policy's cookies section says so. -->
+
 
 <title>Privacy policy · DiChiaro Baseball &amp; Softball Academy</title>
 <meta name="description" content="What DiChiaro Baseball &amp; Softball Academy collects, why, how long it is kept, and what a parent can ask to have removed.">
@@ -38,6 +41,7 @@
 <meta name="twitter:description" content="What DiChiaro Baseball &amp; Softball Academy collects, why, how long it is kept, and what a parent can ask to have removed.">
 <meta name="twitter:image" content="https://dichiarobaseball.com/assets/img/dbsa-01-facility-in-use.jpg">
 <link rel="canonical" href="https://dichiarobaseball.com/privacy-policy.html">
+<meta property="og:url" content="https://dichiarobaseball.com/privacy-policy.html">
 
 <meta name="robots" content="noindex, nofollow">
 </head>
@@ -151,7 +155,7 @@
       <p class="eyebrow">Privacy</p>
       <h1 class="display-l">Privacy policy</h1>
       <p class="legal-hero__lede body-l">We collect what we need to run a booking and nothing else. We do not sell data, and we never see your card number.</p>
-      <p class="legal-hero__date">Last updated Oct 8, 2026</p>
+      <p class="legal-hero__date">Last updated Oct 12, 2026</p>
     </div>
   </div>
 </section>
@@ -228,7 +232,7 @@
 
       <section id="cookies">
         <h2 class="heading-l"><span class="num">08</span><span>Cookies</span></h2>
-        <p>The site sets no cookies. A booking in progress is kept in your browser&rsquo;s session storage, which clears when you close the tab. Visits are counted with Vercel Web Analytics, which sets no cookies.</p>
+        <p>We use Google Analytics to understand how families use the site, such as which programs they look at and where a registration gets stuck. It sets cookies that count visits without telling us who you are, and we have turned off Google&rsquo;s advertising features. We never send your name, email or your player&rsquo;s details to Google. You can opt out with Google&rsquo;s browser add-on at <a href="https://tools.google.com/dlpage/gaoptout">tools.google.com/dlpage/gaoptout</a>. A booking in progress is kept in your browser&rsquo;s session storage, which clears when you close the tab. We also count visits with Vercel Web Analytics, which sets no cookies.</p>
       </section>
 
       <section id="contacting-us">

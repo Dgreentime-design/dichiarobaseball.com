@@ -88,6 +88,72 @@
     return o.later.map(function (l) { return money(l.amountCents) + " on " + longYear(l.when); }).join(", ");
   }
 
+  /* --- Analytics ---------------------------------------------------------
+     The checkout funnel, in GA4's ecommerce events, through dbsaTrack in
+     site.js. Every call sits beside the money path, never inside a
+     decision: a blocked or broken tag changes nothing here. Params are the
+     program slug and title, the amount due now, the step, the payment
+     method, the registration ID (DBSA- and ten random characters, nothing
+     from the family) and error categories. Never a name, email, phone,
+     date of birth, grade or anything typed. */
+
+  var gaItems = {};
+  try { gaItems = JSON.parse(document.getElementById("ga-items").textContent) || {}; } catch (e) { gaItems = {}; }
+
+  function track(name, params, done) {
+    if (window.dbsaTrack) window.dbsaTrack(name, params, done);
+    else if (done) done();
+  }
+
+  /* currency, value and items for the cart on screen: the chosen option's
+     amount due now, or the lowest one before an option is chosen. One
+     player per registration. */
+  function cart(extra, amountCents) {
+    var out = {};
+    try {
+      var p = state.program;
+      if (p) {
+        var meta = gaItems[p.slug] || {};
+        var cents = typeof amountCents === "number" ? amountCents
+          : state.option ? state.option.dueNowCents
+          : Math.min.apply(null, p.options.map(function (o) { return o.dueNowCents; }));
+        out.currency = "USD";
+        out.value = cents / 100;
+        out.items = [{ item_id: p.slug, item_name: meta.item_name || p.name + ", " + p.season,
+          item_category: meta.item_category || "both", price: cents / 100, quantity: 1 }];
+      }
+    } catch (e) { out = {}; }
+    for (var k in extra) out[k] = extra[k];
+    return out;
+  }
+
+  /* Once per key per browser session, so a reload does not count twice. */
+  function once(key) {
+    try {
+      if (sessionStorage.getItem(key)) return false;
+      sessionStorage.setItem(key, "1");
+    } catch (e) { /* storage blocked: GA still dedupes a purchase on transaction_id */ }
+    return true;
+  }
+
+  function purchased(id, method, amountCents, programLabel) {
+    if (!id || !once("dbsa-ga-purchase:" + id)) return;
+    var params = cart({ transaction_id: id, payment_type: method }, amountCents);
+    if (!params.items && typeof amountCents === "number") {
+      /* Back from payment in a browser that did not start the registration:
+         the program is known only by its label. */
+      params.currency = "USD";
+      params.value = amountCents / 100;
+      params.items = [{ item_name: programLabel || "Registration", price: amountCents / 100, quantity: 1 }];
+    }
+    track("purchase", params);
+  }
+
+  function unconfirmed(id, reason) {
+    if (!id || !once("dbsa-ga-unconfirmed:" + id + ":" + reason)) return;
+    track("checkout_unconfirmed", cart({ transaction_id: id, reason: reason, transport_type: "beacon" }));
+  }
+
   /* --- Rendering --------------------------------------------------------- */
 
   function setAll(sel, text) {
@@ -239,8 +305,10 @@
         Array.prototype.forEach.call(document.querySelectorAll("[data-player-name]"), function (el) {
           el.textContent = state.player;
         });
+        track("checkout_progress", cart({ step: 1, step_name: "players" }));
         go(2);
       } else if (n === 2) {
+        track("checkout_progress", cart({ step: 2, step_name: "waiver" }));
         go(3);
       } else {
         submit(form);
@@ -496,6 +564,9 @@
     if (button.disabled) return;
     button.disabled = true;
 
+    track("checkout_progress", cart({ step: 3, step_name: "review" }));
+    track("add_payment_info", cart({ payment_type: state.method }));
+
     var payload = {
       programSlug: state.program.slug,
       optionId: state.option.id,
@@ -525,19 +596,33 @@
     })
       .then(function (res) {
         return res.json().catch(function () { return {}; }).then(function (data) {
-          if (!res.ok) throw new Error(data.error || "Something went wrong.");
+          if (!res.ok) {
+            var failed = new Error(data.error || "Something went wrong.");
+            failed.status = res.status;
+            throw failed;
+          }
           return data;
         });
       })
       .then(function (data) {
         if (data.redirectUrl) {
           remember({ id: data.registrationId, player: state.player, program: state.program.slug, option: state.option.id });
-          window.location.assign(data.redirectUrl);
+          /* Sent before leaving for the payment page, and the navigation
+             waits for it at most 800ms; at once if the tag is blocked. */
+          track("checkout_redirect", cart({ transaction_id: data.registrationId }), function () {
+            window.location.assign(data.redirectUrl);
+          });
           return;
         }
         finish(state.method, { id: data.registrationId, amountCents: data.amountCents });
+        /* At the facility and by check, the registration is confirmed now. */
+        purchased(data.registrationId, state.method, data.amountCents);
       })
       .catch(function (err) {
+        track("checkout_error", {
+          error_step: err instanceof TypeError ? "network" : err.status >= 400 && err.status < 500 ? "validation" : "server",
+          http_status: err.status || 0
+        });
         button.disabled = false;
         var message = err instanceof TypeError ? "We could not reach the server." : err.message;
         showError(form, /charged/.test(message) ? message : message + " Nothing has been charged.");
@@ -592,11 +677,15 @@
         if (!delayed && waited >= DELAY_MS) {
           delayed = true;
           finish("delayed", { id: id, amountCents: lastAmount });
+          unconfirmed(id, "timeout");
         }
         setTimeout(poll, waited < DELAY_MS ? Math.min(2000, DELAY_MS - waited) : 5000);
       };
       var lastAmount;
+      var settled = false;
       finish("confirming", { id: id });
+      /* Leaving while still confirming is the drop-off after Clover. */
+      window.addEventListener("pagehide", function () { if (!settled) unconfirmed(id, "pending"); });
 
       function poll() {
         fetch("/api/registration/" + encodeURIComponent(id) + "/status", { cache: "no-store" })
@@ -610,10 +699,14 @@
           .then(function (data) {
             var ctx = { id: id, amountCents: data.amountCents, programLabel: data.program, optionLabel: data.option };
             if (data.status === "confirmed") {
+              settled = true;
               remember(null);
               finish(data.paymentMethod || "online", ctx);
+              purchased(id, data.paymentMethod || "online", data.amountCents, data.program);
             } else if (data.status === "failed" || data.status === "unknown") {
+              settled = true;
               finish(data.status, ctx);
+              if (data.status === "failed") unconfirmed(id, "failed");
             } else {
               lastAmount = data.amountCents;
               set("[data-due-amount]", moneyExact(data.amountCents));
@@ -656,6 +749,7 @@
         .then(function (program) {
           if (!program) { missing(); return; }
           useProgram(program, PLANS[params.get("plan")] || null);
+          if (once("dbsa-ga-begin:" + program.slug)) track("begin_checkout", cart({}));
           var hash = (window.location.hash || "").match(/^#step-([1-3])$/);
           if (hash) state.step = Number(hash[1]);
           renderStep(false);
