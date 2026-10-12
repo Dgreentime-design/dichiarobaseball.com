@@ -26,9 +26,9 @@
 <!-- ===================================================================== -->
 <!-- Hero                                                                  -->
 <!-- ===================================================================== -->
-<section class="hero" style="--hero-focus: 82% 50%;">
+<section class="hero">
   <div class="hero__media media media--16x9 media--note">
-    <img src="assets/img/dbsa-01-facility-in-use.jpg" alt="" width="2400" height="1600" fetchpriority="high">
+    {{img 48 hero}}
     <span class="media__label">shot list 05 &middot; the staff together on the turf</span>
   </div>
 
@@ -202,14 +202,9 @@
 
       <article class="person person--pending" id="gianna-sarlo" data-person data-tags="">
         <div class="person__media">
-          <!-- No photograph has been supplied for Gianna, so the card does not
-               ask for one. media--empty is set here rather than left to the
-               error handler in site.js: the handler produces the same labelled
-               placeholder, but only after a request has 404ed, which puts a
-               real error in the server logs for a file that is missing by
-               design. Add the <img> back when the academy supplies the photo. -->
-          <div class="media media--4x3 media--empty">
-            <span class="media__label">dbsa-19-portrait-gianna-sarlo · Head and shoulders, net behind</span>
+          <div class="media media--4x3">
+            {{img 56}}
+            <span class="media__label">dbsa-29-portrait-gianna-sarlo · Head and shoulders, the D behind</span>
           </div>
         </div>
 
@@ -441,24 +436,6 @@
   </p>
 
   <div class="container">
-    <div class="build-note">
-      <p class="meta">Needs confirming with Michael</p>
-      <p>
-        This page matches the current dichiarobaseball.com staff list exactly, which is
-        seven names. Two consequences worth a conversation. Gianna Sarlo is on the live
-        site but the academy has not supplied a bio sheet, so her card is built and empty
-        rather than filled with something invented, and she carries no discipline so she
-        appears only under All seven. Diana Schraer and Sam Keating have full bio sheets
-        and appear on the Lessons page as the softball pitching instructors, but are not
-        on the live staff list, so they are not here. If they are on staff, adding them
-        also gets back a third Hall of Fame induction and two dedicated softball pitching
-        specialists, which nothing on the current site mentions.
-      </p>
-      <p>
-        Separately, a count in a headline goes stale the moment the roster changes.
-        Recommend dropping the number once the roster is settled.
-      </p>
-    </div>
     <!-- Where the closing "Pick the instructor." band was (round 22) -->
     <p class="chip-row__action">
       <a class="arrow-link" href="lessons.html"><span>Book a private lesson</span><span aria-hidden="true">&rarr;</span></a>

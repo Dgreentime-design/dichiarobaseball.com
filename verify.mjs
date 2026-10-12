@@ -34,9 +34,9 @@
 import { chromium } from "playwright";
 import { readFileSync, existsSync } from "node:fs";
 
-/* Turn on after the round that swaps the photos: until then the duplicates
-   are a list for Daniel, not a failure. */
-const DUPLICATES_FAIL = false;
+/* On since round 23, the photo round: the same photo twice on one page is
+   a failure, not a list for Daniel. */
+const DUPLICATES_FAIL = true;
 
 const BASE = (process.argv[2] || "http://localhost:8080").replace(/\/$/, "");
 const EXE = process.env.CHROME_PATH || undefined;
