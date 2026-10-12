@@ -15,7 +15,8 @@
    visible and the bar is still readable, so nothing is lost.            */
 
 .filters {
-  position: sticky; top: 0; z-index: 40;
+  position: sticky; top: var(--header-h); z-index: 40;
+  transition: top var(--dur-reveal) var(--ease-reveal);
   background: var(--c-bone);
   border-bottom: 1px solid var(--c-line);
   padding: 20px var(--gutter);

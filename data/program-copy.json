@@ -1,0 +1,210 @@
+{
+  "_meta": {
+    "what": "Written copy for the generated program pages, keyed by program slug. Facts (dates, times, prices, ages, options, skills) come from data/programs.json and never from here.",
+    "rule": "A key that is missing leaves its section or line out of the page. Nothing is filled in. Strings are HTML.",
+    "skills": "Descriptions are keyed by the skill name exactly as it appears in the program's teaches list. A skill with no description shows its name only.",
+    "image": "The hero image is an asset choice, not copy: image.slot is its slot in data/images.json, which holds the file, alt and focal point. label is the placeholder caption shown only if the file fails to load.",
+    "tokens": "Copy may use tokens filled from the data at build time, so a count or a month can never drift from the schedule: {sessions} {home} {away} (counts as words, {Home} capitalised), {away_months}, {day}, {Day}, {home_time}, {away_time}. Venue session counts are generated, never written."
+  },
+  "infield-camp-2026-27": {
+    "crumb": "Infield Camp",
+    "image": {
+      "slot": 21,
+      "label": "dbsa-04 · Infield camp, ground ball mid-play"
+    },
+    "title_html": "Lou DiChiaro&rsquo;s<br>Infield Camp",
+    "hero_sub": "Fifteen Saturdays of infield, taught by Lou himself.",
+    "register_label": "Register for this camp",
+    "groups": {
+      "eyebrow": "Two groups",
+      "title": "Split by age, same coach.",
+      "lede": "Same {sessions} {Day}s, same instructor, split by age so the drills land at the right level. Both groups combine for the {away} Superdome sessions in {away_months}.",
+      "cards": {
+        "grades-4-8": {
+          "chip": "Six places left",
+          "chip_class": "chip--turf",
+          "body": "Fundamentals first, then position work.",
+          "cta": {
+            "label": "Register for grades 4-8",
+            "href": "register.html?program=infield-camp-2026-27&amp;group=grades-4-8"
+          }
+        },
+        "high-school": {
+          "chip": "Full",
+          "body": "Game speed: double plays, relays and reads.",
+          "cta": {
+            "label": "Full &nbsp;·&nbsp; Call about openings",
+            "href": "tel:+12017736858",
+            "class": "btn--outline"
+          }
+        }
+      }
+    },
+    "skills": {
+      "eyebrow": "What Lou actually teaches",
+      "descriptions": {
+        "Correct approach to ground balls": "Reading the hop before it happens, and getting the feet there early.",
+        "Proper footwork": "The three steps that turn a hard chance into a routine one.",
+        "Proper throwing mechanics": "Grip, transfer and release, from every angle a game will ask for.",
+        "Position specifics": "What the job actually is at short, at second, at third.",
+        "Double plays": "The feed, the turn and the finish, both sides of the bag.",
+        "Slow rollers": "Charging, barehanding, and throwing on the run.",
+        "Different ground ball angles": "Balls that are never hit straight at you, which is most of them.",
+        "Relays": "Where to be, when to turn, and who is calling it.",
+        "Soft hand drills": "The drill Lou is known for."
+      }
+    },
+    "schedule": {
+      "lede": "No session is a surprise. {Home} at Pollitt Drive, then {away} combined mornings at the Superdome in {away_months}."
+    },
+    "pricing": {
+      "title": "{price} for the winter.",
+      "lede": "About {per_session} a Saturday, everything included.",
+      "plans": {
+        "full": {
+          "label": "Pay in full",
+          "note": "One charge when you register",
+          "cta": "Register and pay in full",
+          "plan": "full"
+        }
+      },
+      "included": [
+        "All fifteen sessions",
+        "Both venues",
+        "Balls, screens and machines",
+        "Refund up to 14 days before"
+      ]
+    },
+    "instructor": {
+      "image": {
+        "slot": 22,
+        "label": "dbsa-09 · Lou mid-instruction"
+      },
+      "eyebrow": "Who teaches it",
+      "name": "Lou DiChiaro",
+      "body": "Infield is Lou&rsquo;s position. He has taught it here since 2000.",
+      "credits": [
+        [
+          "1980-83",
+          "Seton Hall University. Four-year starter, 1983 captain"
+        ],
+        [
+          "1983",
+          "Drafted 19th round, Baltimore Orioles"
+        ],
+        [
+          "2008-13",
+          "Don Bosco Prep assistant varsity. 2008 National Champions"
+        ],
+        [
+          "2021 onward",
+          "Old Tappan High School assistant varsity"
+        ]
+      ],
+      "quote": {
+        "text": "&ldquo;If you want real instruction done the right way, Lou is your guy.&rdquo;",
+        "cite": "Ed Blankmeyer, St. John&rsquo;s University"
+      }
+    },
+    "venues": {
+      "eyebrow": "Where it happens",
+      "title": "Two venues, one camp.",
+      "cards": {
+        "facility": {
+          "title": "The academy",
+          "when": "{Day}s {home_time}",
+          "map": {
+            "slot": 23,
+            "label": "dbsa-18 · Map, pin on Pollitt Drive"
+          }
+        },
+        "superdome": {
+          "title": "Superdome Sports Center",
+          "when": "{Day}s {away_time}, both groups",
+          "map": {
+            "slot": 24,
+            "label": "dbsa-18 · Map, pin on Hopper Avenue"
+          }
+        }
+      }
+    },
+    "faq": [
+      [
+        "What if we miss a Saturday?",
+        "Sessions can&rsquo;t be carried over, but tell us ahead and Lou will catch the player up."
+      ],
+      [
+        "Does my player need their own gear?",
+        "Bring a glove. We supply bats, helmets and the rest. Turf shoes or sneakers, no metal cleats."
+      ],
+      [
+        "Baseball and softball together?",
+        "Yes. The infield work is the same and the groups train side by side."
+      ],
+      [
+        "Can we watch?",
+        "Yes, there&rsquo;s seating along the netting. We ask that the coaching stays with Lou."
+      ],
+      [
+        "What if it is full when we try?",
+        "Call us and we&rsquo;ll tell you if a place opens."
+      ]
+    ],
+    "register_band": {
+      "title_html": "Six places left in<br>grades 4-8.",
+      "body": "Registration takes about three minutes.",
+      "cta": {
+        "label": "Register for grades 4-8",
+        "href": "register.html?program=infield-camp-2026-27&amp;group=grades-4-8"
+      }
+    }
+  },
+  "little-league-fall-2026": {
+    "image": {
+      "slot": 18,
+      "label": "dbsa-07 · Little League camp on the turf"
+    }
+  },
+  "little-league-winter-2027": {
+    "image": {
+      "slot": 19,
+      "label": "dbsa-07 · Little League camp on the turf"
+    }
+  },
+  "little-league-march-2027": {
+    "image": {
+      "slot": 20,
+      "label": "dbsa-07 · Little League camp on the turf"
+    }
+  },
+  "hit-night-fall-2026": {
+    "image": {
+      "slot": 25,
+      "label": "dbsa-03 · Hit Night, the cage"
+    }
+  },
+  "hit-night-winter-2027": {
+    "image": {
+      "slot": 26,
+      "label": "dbsa-03 · Hit Night, the cage"
+    }
+  },
+  "iha-softball-winter-2027": {
+    "image": {
+      "slot": 27,
+      "label": "dbsa-01 · A team at fielding drills on the turf"
+    }
+  },
+  "fair-lawn-hs-softball-2027": {
+    "image": {
+      "slot": 28,
+      "label": "dbsa-06 · Coach kneeling in front of the group"
+    }
+  },
+  "old-tappan-hs-2026-27": {
+    "image": {
+      "slot": 29,
+      "label": "dbsa-03 · Hitter mid swing in the cage"
+    }
+  }
+}

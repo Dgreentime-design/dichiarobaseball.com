@@ -1,6 +1,6 @@
 {
   "_meta": {
-    "source": "Extracted from the nine academy flyers, 29 September 2026.",
+    "source": "Re-baselined from Michael's nine flyers, assets/flyers/<slug>.pdf, 7 October 2026. Extracted first on 29 September 2026.",
     "verified": "All 116 session dates checked against the calendar. Every one falls on the stated weekday.",
     "venues": {
       "facility": {
@@ -26,7 +26,8 @@
     "structure": {
       "shape": "program -> options[] -> rates[]",
       "why": "A program does not have a price. Its purchasable options do. Hit Night Winter has seven options because the package price changes with the number of Mondays in the month, and the old program-level price could not express that.",
-      "rule": "The standard price on an option is the only price the site ever renders. A rate is revealed by a code, server side, and never appears in any public payload."
+      "rule": "The standard price on an option is the only price the site ever renders. A rate is revealed by a code, server side, and never appears in any public payload.",
+      "dates": "An option with its own dates (a monthly package) covers only those sessions. It can be bought while any of them is still to come, on the page, in the register flow and at checkout. An option without dates covers the program's dates."
     },
     "codes": {
       "shape": {
@@ -46,21 +47,15 @@
         "Constant time comparison. Rate limited to 5 attempts per minute per IP. Every attempt logged with a hashed IP.",
         "No rate, discount or code ever appears in page HTML, JSON, the sitemap or any queryable API."
       ],
-      "known": [
-        {
-          "label": "Ridgewood residents",
-          "type": "percent_off",
-          "value": 10,
-          "source": "Meeting notes, 21 September. Percentage, not a fixed price."
-        }
-      ]
+      "known": "Not recorded here. This file is served publicly, so no real code, rate or town name may appear in it. Known rates stay in the meeting notes they came from until the code system exists to hold them privately."
     },
     "multi_player": {
       "max": 4,
       "source": "Meeting notes, 21 September. Families can add up to four players in one session.",
       "pricing": "Total is the sum per player. Whether a code applies per player or once per registration is the per_player flag on the code.",
       "waiver": "One waiver per player, not one per registration."
-    }
+    },
+    "unlisted": "A team program, round 22 (12 Oct 2026). Sold on its own page at programs/<slug>.html, which Michael sends to the team, but noindex, out of the sitemap and llms.txt, and linked from nowhere on the site."
   },
   "programs": [
     {
@@ -74,6 +69,7 @@
       "ages": "6 to 12",
       "status": "live",
       "gated": false,
+      "full": false,
       "summary": "Eight Sundays of fundamentals. Throwing, fielding, hitting and base running, taught slowly enough that the habits actually stick.",
       "teaches": [
         "Hitting drills",
@@ -108,7 +104,7 @@
           "rates": []
         }
       ],
-      "flyer": "Little League Fall 2026.pdf",
+      "flyer": "little-league-fall-2026.pdf",
       "zip": "camps"
     },
     {
@@ -122,6 +118,7 @@
       "ages": "6 to 12",
       "status": "live",
       "gated": false,
+      "full": false,
       "summary": "Nine Sundays of fundamentals through the winter.",
       "teaches": [
         "Hitting drills",
@@ -157,7 +154,7 @@
           "rates": []
         }
       ],
-      "flyer": "Little League Winter 2027.pdf",
+      "flyer": "little-league-winter-2027.pdf",
       "zip": "live"
     },
     {
@@ -171,6 +168,7 @@
       "ages": "6 to 12",
       "status": "live",
       "gated": false,
+      "full": false,
       "summary": "A shorter four-Sunday block in March.",
       "teaches": [
         "Hitting drills",
@@ -201,7 +199,7 @@
           "rates": []
         }
       ],
-      "flyer": "Little League March 2027.pdf",
+      "flyer": "little-league-march-2027.pdf",
       "zip": "live"
     },
     {
@@ -215,6 +213,7 @@
       "ages": "Grades 4 to 8 and high school",
       "status": "live",
       "gated": false,
+      "full": false,
       "summary": "Fifteen Saturdays of nothing but infield. Ground ball approach, footwork, double plays, slow rollers and relays.",
       "teaches": [
         "Correct approach to ground balls",
@@ -249,7 +248,8 @@
           "dates": [
             "2027-02-13",
             "2027-02-20",
-            "2027-02-27"
+            "2027-02-27",
+            "2027-03-06"
           ]
         },
         "dates": [
@@ -276,28 +276,12 @@
           "label": "Pay in full",
           "price": 950,
           "rates": []
-        },
-        {
-          "id": "two-payments",
-          "label": "Two payments",
-          "price": 950,
-          "schedule": [
-            {
-              "amount": 475,
-              "when": "at registration"
-            },
-            {
-              "amount": 475,
-              "when": "2027-01-01"
-            }
-          ],
-          "rates": []
         }
       ],
-      "flyer": "Dichiaro Infield Camp-'26-27.pdf",
+      "flyer": "infield-camp-2026-27.pdf",
       "zip": "camps",
-      "needs_confirming": [
-        "Flyer lists Feb 6 under the facility dates and Feb 13, 20, 27 as combined Superdome sessions. The site currently shows four Superdome dates including Feb 6. Confirm which."
+      "resolved": [
+        "7 Oct 2026, from the flyer: Feb 6 is at the academy. The combined Superdome sessions are Feb 13, 20, 27 and Mar 6, 8am-10am. Eleven academy sessions, four at the Superdome."
       ]
     },
     {
@@ -311,6 +295,7 @@
       "ages": "10 to 18",
       "status": "live",
       "gated": false,
+      "full": false,
       "summary": "One hour of high-rep hitting against live pitching and machines. Drop in for a session or buy the month.",
       "teaches": [
         "Professional instruction",
@@ -365,28 +350,52 @@
           "id": "sept",
           "label": "September package, 3 sessions",
           "price": 75,
+          "dates": [
+            "2026-09-14",
+            "2026-09-21",
+            "2026-09-28"
+          ],
           "rates": []
         },
         {
           "id": "oct",
           "label": "October package, 4 sessions",
           "price": 100,
+          "dates": [
+            "2026-10-05",
+            "2026-10-12",
+            "2026-10-19",
+            "2026-10-26"
+          ],
           "rates": []
         },
         {
           "id": "nov",
           "label": "November package, 5 sessions",
           "price": 125,
+          "dates": [
+            "2026-11-02",
+            "2026-11-09",
+            "2026-11-16",
+            "2026-11-23",
+            "2026-11-30"
+          ],
           "rates": []
         },
         {
           "id": "dec",
           "label": "December package, 4 sessions",
           "price": 100,
+          "dates": [
+            "2026-12-07",
+            "2026-12-14",
+            "2026-12-21",
+            "2026-12-28"
+          ],
           "rates": []
         }
       ],
-      "flyer": "Hit Night-Fall 2026.pdf",
+      "flyer": "hit-night-fall-2026.pdf",
       "zip": "camps",
       "needs_confirming": [
         "FLYER PRICING ERROR. The registration section prints November at $25 and December at $125. The schedule and the $25-a-session package rate make those $125 and $100. Prices above follow the schedule, not the registration box. Confirm before this flyer goes out again."
@@ -403,6 +412,7 @@
       "ages": "10 to 18",
       "status": "live",
       "gated": false,
+      "full": false,
       "summary": "The same format running January through June.",
       "teaches": [
         "Professional instruction",
@@ -466,44 +476,83 @@
           "id": "jan",
           "label": "January package, 4 sessions",
           "price": 100,
+          "dates": [
+            "2027-01-04",
+            "2027-01-11",
+            "2027-01-18",
+            "2027-01-25"
+          ],
           "rates": []
         },
         {
           "id": "feb",
           "label": "February package, 4 sessions",
           "price": 100,
+          "dates": [
+            "2027-02-01",
+            "2027-02-08",
+            "2027-02-15",
+            "2027-02-22"
+          ],
           "rates": []
         },
         {
           "id": "mar",
           "label": "March package, 5 sessions",
           "price": 125,
+          "dates": [
+            "2027-03-01",
+            "2027-03-08",
+            "2027-03-15",
+            "2027-03-22",
+            "2027-03-29"
+          ],
           "rates": []
         },
         {
           "id": "apr",
           "label": "April package, 4 sessions",
           "price": 100,
+          "dates": [
+            "2027-04-05",
+            "2027-04-12",
+            "2027-04-19",
+            "2027-04-26"
+          ],
           "rates": []
         },
         {
           "id": "may",
           "label": "May package, 4 sessions",
           "price": 100,
+          "dates": [
+            "2027-05-03",
+            "2027-05-10",
+            "2027-05-17",
+            "2027-05-24"
+          ],
           "rates": []
         },
         {
           "id": "jun",
           "label": "June package, 4 sessions",
           "price": 100,
+          "dates": [
+            "2027-06-07",
+            "2027-06-14",
+            "2027-06-21",
+            "2027-06-28"
+          ],
           "rates": []
         }
       ],
-      "flyer": "Hit Night-Winter 2027.pdf",
+      "flyer": "hit-night-winter-2027.pdf",
       "zip": "camps",
       "needs_confirming": [
-        "Flyer has a typo in the March dates, printed as 'March 1, 8l, 15, 22, 29'.",
-        "Start times move 30 minutes later than the Fall season. Confirm that is intended."
+        "Flyer has a typo in the March dates, printed as 'March 1, 8l, 15, 22, 29'."
+      ],
+      "resolved": [
+        "7 Oct 2026, from the flyer: winter times are Softball 7:30-8:30pm and Baseball 8:30-9:30pm, 30 minutes later than fall."
       ]
     },
     {
@@ -515,7 +564,9 @@
       ],
       "ages": "IHA squad",
       "status": "live",
-      "gated": true,
+      "gated": false,
+      "unlisted": true,
+      "full": false,
       "summary": "Hitting and fielding for the IHA squad. Nine Mondays.",
       "teaches": [
         "Hitting drills",
@@ -547,7 +598,7 @@
           "rates": []
         }
       ],
-      "flyer": "Dichiaro Programs-IHA  Winter '27.pdf",
+      "flyer": "iha-softball-winter-2027.pdf",
       "zip": "live"
     },
     {
@@ -559,7 +610,9 @@
       ],
       "ages": "Fair Lawn HS squad",
       "status": "live",
-      "gated": true,
+      "gated": false,
+      "unlisted": true,
+      "full": false,
       "summary": "Hitting and fielding for the Fair Lawn HS squad. Eight Wednesdays.",
       "teaches": [
         "Hitting drills",
@@ -590,7 +643,7 @@
           "rates": []
         }
       ],
-      "flyer": "Fair Lawn Softball_2027.pdf",
+      "flyer": "fair-lawn-hs-softball-2027.pdf",
       "zip": "live",
       "needs_confirming": [
         "This flyer has no photo and video consent paragraph. IHA, Little League, Infield and Hit Night all do."
@@ -605,7 +658,9 @@
       ],
       "ages": "Old Tappan HS squad",
       "status": "live",
-      "gated": true,
+      "gated": false,
+      "unlisted": true,
+      "full": false,
       "summary": "Fifteen Sundays of hitting for the Old Tappan squad.",
       "teaches": [
         "Hitting drills",
@@ -647,11 +702,13 @@
           "rates": []
         }
       ],
-      "flyer": "Old Tappan HS_2026-27.pdf",
+      "flyer": "old-tappan-hs-2026-27.pdf",
       "zip": "live",
       "needs_confirming": [
-        "This flyer has no photo and video consent paragraph.",
-        "Session time changes from 4:00pm to 7:00pm starting 3 January. The site needs to show both."
+        "This flyer has no photo and video consent paragraph."
+      ],
+      "resolved": [
+        "7 Oct 2026, from the flyer: 4:00pm-5:30pm, then 7:00pm-8:30pm from 3 January. The program page shows both."
       ]
     }
   ]

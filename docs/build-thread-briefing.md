@@ -1,0 +1,638 @@
+# Build thread briefing
+
+DiChiaro Baseball & Softball Academy, dichiarobaseball.com.
+Current as of 9 October 2026.
+
+This is the handover document for a dedicated Claude Code build thread. It
+assumes no prior conversation. Read it, then read `CLAUDE.md` for the standing
+rules, then read whatever the round in flight points you at.
+
+Update the "Where things stand" section at the end of every phase so the next
+thread does not have to reconstruct it.
+
+---
+
+## 1. The project
+
+A year-round indoor baseball and softball academy in Fair Lawn, New Jersey.
+Lessons, camps and clinics, cage and facility rentals, for ages 6 to 18.
+
+- Founder and head instructor: Lou DiChiaro
+- Client contact: Michael
+- Facility: 18-01 Pollitt Drive, Fair Lawn, NJ 07410
+- Phone used across the site: (201) 773-6858
+- Go-live: Monday 12 October 2026, 1:00pm Eastern (`docs/go-live-runbook.md`)
+
+Built by Box to Box Design. Daniel is the designer, director and the only
+person who merges to `main`.
+
+The site replaces an existing Framer site. It is a hand-built static site so
+the academy is not paying a platform subscription to take registrations.
+
+## 2. What the site does
+
+Marketing pages plus a working registration and payment flow.
+
+- Ten pages, listed in section 4.
+- A parent picks a program, adds players, signs a waiver once a season, and
+  pays by card, at the facility, or by check.
+- Card payments go through Clover Hosted Checkout. Registrations are recorded
+  in Airtable.
+
+## 3. Repo and environments
+
+| | |
+|---|---|
+| Local path | `~/projects/dichiarobaseball.com` |
+| Remote | `Dgreentime-design/dichiarobaseball.com` |
+| Production branch | `main` (frozen behind `review`, Daniel merges) |
+| Working branch | `review` |
+| Vercel project | `dichiarobaseball.com-rgr6` |
+| Review preview | `https://dichiarobaseballcom-rgr6-git-review-box-to-box-product-design.vercel.app` |
+| Production preview | `https://dichiarobaseballcom-rgr6.vercel.app` (old, do not send to anyone) |
+| Live domain | `dichiarobaseball.com`, not yet pointed at Vercel |
+
+Deployment protection is off for Preview, so Clover and the client can reach
+it. The site is deliberately unindexed until cutover.
+
+## 4. Repo map
+
+    CLAUDE.md                     standing rules, read first
+    build.mjs                     resolves partials into flat HTML at the root
+    verify.mjs                    link, overflow, parity and route checks
+    vercel.json                   buildCommand, outputDirectory ".", headers
+    package.json                  scripts: build, start, verify, dev, check:payments
+
+    pages/                        SOURCE for every page. Edit here.
+      index.html                  homepage
+      camps-and-clinics.html      program listing with filters
+      program.html                program detail template, ?p=<slug>
+      lessons.html                private and semi-private lessons
+      facility-and-rentals.html   cages, full facility, HitTrax
+      instructors.html            the eight coach bios
+      about.html                  the academy
+      lous-journey.html           Lou's story
+      team-camps.html             team blocks plus enquiry form
+      contact.html                contact form and FAQ
+      register.html               the registration and payment flow
+      _legal.html                 template for the legal pages
+      _stub.html                  template for stub pages
+
+    partials/                     head, header, footer, menu, marquee
+    data/programs.json            THE pricing and program source of truth
+    legal.json                    legal page content. Off limits by default.
+    stubs.json                    stub page definitions
+
+    api/
+      checkout/session.js         creates a checkout session, prices server side
+      webhooks/clover.js          the only writer of a confirmed registration
+      registration/[id]/status.js polled by the confirming screen
+      programs/[slug].js          public program data for the register page
+      health.js
+      mock-checkout.js            the mock provider's fake payment page
+      _lib/
+        providers/index.js        selects mock or clover from PAYMENT_PROVIDER
+        providers/clover.js       Clover Hosted Checkout adapter
+        providers/mock.js         mock adapter
+        providers/signature.js    HMAC signing and verification
+        match.js                  matches a webhook to a registration BY VALUE
+        store.js                  Airtable read and write
+        programs.js               server-side pricing
+        guard.js                  refuses to start if mock meets production
+        http.js
+
+    scripts/                      check-payments, check-deployed, check-jsonld,
+                                  check-mock-guard, check-prototype,
+                                  check-register-links, dev-server
+
+    prompts/                      one file per round, committed before it runs
+    docs/                         this file, the playbook, the principles
+
+    build-images.mjs              image registry -> sized files and <picture>
+    data/images.json              one entry per image slot (1-47): file, alt, focal
+
+    assets/                       images and media
+      img/src/                    originals for the registry, never served as is
+      img/gen/                    generated WebP + JPG per width, committed
+      css/                        source stylesheets; site.min.css is built
+      fonts/                      self-hosted Archivo and JetBrains Mono WOFF2
+
+Generated HTML sits at the repo root (`index.html`, `about.html` and so on).
+**Never edit those by hand.** They are build output and they are committed.
+
+## 5. The money path, in one screen
+
+1. Parent opens `register.html?program=<slug>`. Prices come from
+   `/api/programs/<slug>`, which uses the same pricing function that charges.
+2. `POST /api/checkout/session` sends IDs only. The server recomputes the
+   amount from `data/programs.json` and ignores any amount in the request.
+3. The server writes a `pending` row to Airtable, then creates a Clover
+   checkout session and stores its session ID on the row.
+4. The parent pays on Clover's hosted page and is sent back to
+   `register.html?registration=<id>`, which shows "Confirming your payment"
+   and polls the status endpoint.
+5. Clover posts a signed webhook to `/api/webhooks/clover`. **Only this moves
+   the row to `confirmed`**, with the Clover order ID.
+6. Pay at the facility and pay by check skip 3 to 5 and write `confirmed`
+   directly, with nothing charged.
+
+Proven end to end with a real $30 card payment on 1 October 2026, then voided.
+
+Full detail, including the real Clover payload and both silent failure modes:
+`docs/clover-hosted-checkout-playbook.md`. The provider-agnostic method:
+`docs/payments-integration-principles.md`.
+
+## 6. Environment variables
+
+All on Vercel, read from `process.env`, never in a file.
+
+| Variable | Notes |
+|---|---|
+| `PAYMENT_PROVIDER` | `mock` or `clover`. Currently `mock` on Preview |
+| `MOCK_WEBHOOK_SECRET` | any long random string, preview only |
+| `CLOVER_ENV` | `sandbox` or `production` |
+| `CLOVER_MERCHANT_ID`, `CLOVER_PRIVATE_TOKEN` | Clover ecommerce credentials |
+| `CLOVER_WEBHOOK_SECRET` | the Hosted Checkout signing secret |
+| `AIRTABLE_TOKEN`, `AIRTABLE_BASE_ID`, `AIRTABLE_TABLE_NAME` | storage |
+| `ENQUIRIES_TABLE_NAME` | `Enquiries Review` on Preview, `Enquiries` on Production |
+| `SITE_ORIGIN` | unset until cutover. Unset keeps every page noindex. Production only, exactly `https://dichiarobaseball.com` |
+
+**A changed variable needs a redeploy.** An existing deployment keeps the
+values it was built with. An empty commit to `review` is enough.
+
+Airtable currently points at `Registrations Review` on Preview, so the client's
+test registrations stay out of the handover table (`Registrations`).
+
+## 7. Round history
+
+| Round | Date | What it did |
+|---|---|---|
+| 01 | 30 Sep | Deploy verification. Routes, overflow, parity, links |
+| 02 | 30 Sep | Payment backend on the mock. Adapter, checkout, webhook, status, Airtable |
+| 03 | 30 Sep | Honest prototype. Real program slugs, server pricing, demo code removed |
+| 04 | 30 Sep to 1 Oct | Clover live test. First real payment, adversarial checks |
+| 05 | 1 Oct | Webhook payload captured, by-value matching, unmatched tracking |
+| 06 | 1 Oct | Playbook revision, docs added |
+| 07 | 3 to 5 Oct | Copy overhaul across every page. Finished, B10 reported. `prompts/2026-10-03-round07-copy-overhaul.md` |
+| 08 | 5 Oct | Sticky header, eyebrow icon and colors, one image hero, one stat strip, responsive sweep. Parts A and B accepted, closing fixes done. `prompts/2026-10-05-round08-responsive-and-global.md` |
+| 09 | 7 Oct | Item 0, the mobile hero hotfix, shipped in round 10. Items 1 to 4 ran in round 11. `prompts/2026-10-05-round09-program-pages.md` |
+| 10 | 7 Oct | Launch plan and the 7 October client review guide, hero hotfix. `prompts/2026-10-07-round10-launch-review.md` |
+| 11 | 7 Oct | Client review changes and the generated program pages. `prompts/2026-10-07-round11-client-changes-and-program-pages.md` |
+| 12 | 7 Oct | Flyer re-baseline, Teams on the camps page, small fixes, launch hardening. `prompts/2026-10-07-round12-launch-hardening.md` |
+| 13 | 8 Oct | Launch polish: no placeholder name, legal email lines, review notes off, final copy sweep. `prompts/2026-10-07-round13-launch-polish.md` |
+| 14 | 8 Oct | Enquiry forms save to Airtable, factual legal fixes, one time and age style. `prompts/2026-10-08-round14-forms-and-legal.md` |
+| 15 | 8 Oct | Spam trap fix, add to calendar three ways, true metadata, the Full switch, marketing opt-in. `prompts/2026-10-08-round15-calendar-metadata-full-optin.md` |
+| 16 | 9 Oct | Visual review pack: contact sheet, image map, core flows timed, Lighthouse, client test guide. `prompts/2026-10-09-round16-visual-review.md` |
+| 17 | 9 Oct | Image registry by slot, responsive images, one stylesheet, self-hosted fonts, Register CLS fixed. `prompts/2026-10-09-round17-image-pipeline-and-speed.md` |
+| 18a | 9 Oct | New Home hero (coach) and Facility band (turf). `prompts/2026-10-09-round18a-home-hero-test.md` |
+| 18b | 9 Oct | Phone hero: `file_mobile` and `zoom_mobile` in the registry, turf photo on phones. `prompts/2026-10-09-round18b-phone-hero.md` |
+| 19 | 9 Oct | Launch readiness: images locked, cutover rehearsed, variables audited, 404 page, runbook. `prompts/2026-10-09-round19-launch-readiness.md` |
+
+Every round is a committed prompt file in `prompts/`. Read the round in flight
+before doing anything.
+
+## 8. Where things stand, 9 October 2026
+
+**Launch candidate, frozen for go-live Monday 12 October 1pm.** The review
+preview is what ships. Only Daniel's weekend photo pass (the list in
+`docs/review/image-map.md`) and the runbook steps change anything before
+then. Run Monday from `docs/go-live-runbook.md`.
+
+**Done in round 19, 9 October**
+
+- **Images locked.** Round 18b kept: phones get the turf photo in the Home
+  hero through `file_mobile`, desktop the coach. Slot 8 is back on
+  `dbsa-02`; slot 32 keeps `dbsa-05`. Both photos turned out to be the same
+  room (a batting cage with HitTrax, sofas and house windows behind the
+  net), so both alts now say what is in them and both head the weekend
+  photo list.
+- **How production builds.** Vercel runs `node build.mjs` on every deploy
+  (build log: "Running vercel build", then the build's own output), so the
+  committed HTML is regenerated there. `SITE_ORIGIN` belongs in Vercel
+  Production variables only; no local production build step exists or is
+  needed. Rehearsed in a temp copy: robots allows, sitemap 21 of 21 URLs on
+  the domain, every canonical and `og:url` on the domain, noindex only on
+  404, program and register. The preview stays noindex (meta, header,
+  robots, empty sitemap). The `x-robots-tag` header on previews is Vercel's
+  own and is not sent on Production.
+- **Production variables, 9 October:** only `AIRTABLE_TABLE_NAME` is set.
+  The other nine go in on Monday by the runbook, before the merge, because
+  the merge itself starts the Production build.
+- **Merge readiness.** `main` is at round 02 (30 September) and has nothing
+  `review` lacks; the merge brings 120 commits. verify, check:payments (13)
+  and check:enquiry (12) pass. All 34 old Framer paths 301 to a 200, with or
+  without a trailing slash.
+- **New:** `404.html` (noindex, links root-absolute so it works at any
+  depth), `trailingSlash: false`, a 180px icon also served at
+  `/favicon.ico`.
+- **The second Vercel project is gone.** Only `dichiarobaseball.com-rgr6`
+  is listed.
+- **Airtable is ready.** `Registrations` has `webhook_note` and the opt-in
+  columns; `Enquiries` exists; the live alerts for both are deployed.
+- **DNS today** (InMotion nameservers, TTL 900): apex A `31.43.160.6` and
+  `31.43.161.6`, `www` CNAME `sites.framer.app`, mail on its own A record.
+  These are the rollback values.
+
+**Done in round 17, 9 October**
+
+- **One image registry.** `data/images.json` has slots 1-47, numbered as
+  in `docs/review/image-map.md`, each with `file`, `alt`, `focal` and
+  optional `focal_mobile`, plus a `layout` naming its `sizes` value.
+  Pages write `{{img N}}` (`{{img N hero}}` for the first hero,
+  `{{img_url N}}` for og:image); program pages take `image.slot` from
+  `data/program-copy.json`. A swap is one line plus `npm run build`;
+  steps under "How to swap a photo" in the image map.
+- **Responsive images.** `build-images.mjs` writes WebP and JPG at 480,
+  800, 1280, 1920 (2880 where the original allows; none does today) to
+  `assets/img/gen/`, content hash in the name, cached by
+  `manifest.json`. Committed; Vercel never runs sharp and fails the
+  build if a file is missing. Every image is a `<picture>` with a
+  measured `sizes`; the first hero is eager, `fetchpriority="high"` and
+  preloaded.
+- **Instructors (slots 48-54) not in the registry.** Daniel owns that
+  page. Its files stay in `assets/img/` (01, 09 and the portraits), so
+  01 and 09 exist twice for now, once in `src/`. Bring them in and
+  delete the loose copies with the Instructors rework.
+- **One stylesheet, self-hosted fonts.** `build.mjs` concatenates
+  `fonts.css` and the ten stylesheets into `assets/css/site.min.css`
+  (73 KB, was 11 requests plus Google Fonts), linked with a hash.
+  Edit the sources, never `site.min.css`.
+- **Register CLS** 0.844 to 0: `main` holds the screen until a step
+  panel shows (`register.css`).
+- **Lighthouse mobile on the preview, median of three:** Home 81 to 99
+  (LCP 3.76s to 2.13s), Camps 82 to 99 (3.74s to 2.12s), Infield 81 to
+  100, Register 89 to 99. CLS 0 on all twelve runs. Home image weight
+  for a full scroll 2,437 KB to 592 KB on a phone.
+- **No visual change**, proven by before and after screenshots at 390,
+  768, 1024 and 1440: same page heights, no changed pixel outside a
+  photo, Register and Instructors pixel-identical.
+- verify checks images: a missing original fails, sizes against drawn
+  width at three widths, and the six duplicate photos are listed (set
+  `DUPLICATES_FAIL = true` in `verify.mjs` after the photo round).
+- **Next: round 18** swaps the photos and copy from Daniel's list.
+
+**Done in round 16, 9 October**
+
+- **Visual review pack.** Contact sheet of every page at 1440 and 390 in
+  `_proof/round16/contact-sheet.html` (local only). Image map in
+  `docs/review/image-map.md`: 54 numbered slots, export sizes grouped A to
+  I, heavy files and problems. Next round swaps images and copy from
+  Daniel's answers against those slot numbers.
+- **Core flows pass on the preview at 390**: register online, at the
+  facility and by check, Contact, Team camps, HitTrax from Home, Add to
+  calendar. Rows read back from the Review tables. One fix: the
+  confirmation screen's dates now read in US order ("October 25").
+- **Client test guide** for Michael in `docs/review/client-test-guide.md`.
+- **Lighthouse, mobile**: performance 84 to 96 on content pages, 75 on
+  Register (layout shift); accessibility 100. Wins for later: one CSS file
+  and self-hosted fonts, image compression with WebP, reserve the register
+  page's height.
+- The launch plan's cutover section now warns not to touch the MX record.
+- The `marketing_opt_in` columns exist in all four tables (Airtable
+  schema read 9 October).
+
+**Done in round 15, 8 October**
+
+- **The spam trap no longer eats real messages.** The honeypot was named
+  `website`, which browsers autofill, so real parents got a fake success
+  and no row. It is now `dbsa_trap` with every autofill-ignore attribute,
+  and a discard logs `honeypot` or `too_fast`, never the value.
+- **Add to calendar** on every program page and the confirmation screen: a
+  disclosure button with Apple Calendar (the `.ics`, also Outlook desktop),
+  Google Calendar and Outlook.com. Absolute URLs come from `SITE_ORIGIN`,
+  else the deployment's branch URL. Events carry group times, the venue
+  address (the Superdome on Superdome dates) and a link back.
+- **Metadata has one source per page**: the `<title>` and meta
+  description. The build copies them into og: and twitter: tags. Program
+  descriptions come from the data, the Camps count from its cards. verify
+  checks it. Rule in CLAUDE.md under "Metadata".
+- **The Full switch**: `"full": true` on a program in `data/programs.json`
+  closes it everywhere (buttons become "Ask about openings", a Full chip,
+  checkout refuses it). Steps in `docs/launch-plan.md`, section 6.
+- **Marketing opt-in** on Register, Contact and Team camps, stored as
+  `marketing_opt_in` and `marketing_opt_in_at`. A table without those
+  columns still gets the row. Nothing talks to Constant Contact yet.
+- check-payments has 13 checks, check-enquiry 12.
+
+**Done in round 14, 8 October**
+
+- **The Contact and Team camps forms work.** `POST /api/enquiry` writes one
+  row to the table named by `ENQUIRIES_TABLE_NAME`, same base and token as
+  registrations, through the shared client in `api/_lib/store.js`. An
+  Airtable automation emails Michael; the site sends no email. With no table
+  name it returns the generic failure and writes nothing, never falling back
+  to registrations. Honeypot and a 3 second floor answer with a fake success;
+  5 a minute per address, in memory. `?about=<slug>` preselects the Contact
+  topic and is stored, from `api/_lib/topics.js`, which the build also
+  writes into the page. `npm run check:enquiry` has 9 checks.
+- `ENQUIRIES_TABLE_NAME` is set on Preview and messages save (round 15).
+- **`legal.json` factual fixes:** last updated Oct 8, 2026; no cookies,
+  Vercel Web Analytics named; no waitlist; "on the confirmation screen";
+  no waiver skip (Register too); the forms sentence in privacy; American
+  spellings. "Anything else is opt-in" is left for the lawyer.
+- Times on Register read "2:30pm-4:00pm". Ages read "6-12" everywhere
+  outside the instructors page source.
+
+**Round 13, 8 October**
+
+**Done in round 13, 8 October**
+
+- **No placeholder name.** A parent back from payment in a browser with no
+  saved name sees "You're registered." The status endpoint still returns no
+  personal data. check-payments 11 asserts it and fails if "Mia" comes back.
+- **`legal.json` no longer promises email.** Terms: "Your booking is
+  confirmed when the confirmation screen shows your reference number."
+  Privacy: confirmation, reminder and receipt emails removed, and Constant
+  Contact removed from the sharing list. Everything else word for word.
+- **Review notes and placeholders off** every page except Instructors.
+  `build.mjs` no longer renders `legal.json` note blocks (they stay in the
+  file). Hours on About and Contact read "Call (201) 773-6858 for today's
+  hours." Lou's Journey lost its three empty sections (video, recovery,
+  coverage). Register lost the prototype note, the "Add another player"
+  button and the sibling promises. Every open question is in
+  `docs/launch-plan.md`, section 5, "Open after launch".
+- **Copy sweep.** One time range style ("9:00am-12:00pm") on every page and
+  in the calendar files. Camp date ranges carry years. Sentence case page
+  titles and breadcrumb. Email promises off the camps and team camps pages.
+- **The Contact and Team camps forms still send nothing.** They now say so
+  plainly with the phone and email. Fixed in round 14.
+
+**Earlier, 7 October 2026**
+
+**Done in round 12, 7 October**
+
+- **The nine flyers are the source of truth**, in `assets/flyers/<slug>.pdf`.
+  `data/programs.json` re-baselined against them field by field. One fact
+  changed: the Infield combined Superdome dates gain Mar 6 (Feb 6 is at the
+  academy, so 11 academy and 4 Superdome). No price changed. Each program's
+  `flyer` field names its file, and every program page has the flyer button.
+- **Teams on the camps page.** A Teams filter and cards for IHA Softball, Fair
+  Lawn HS Softball and Old Tappan HS. Every live program now has a generated
+  page, gated ones included. A gated program is not sold on the site: every
+  register button on its card and page is "Ask about joining", to
+  `contact.html?about=<slug>`, and the checkout still refuses it.
+- The header lines up with the content container at every width.
+- The Infield venue counts, schedule sentence and group lede are generated
+  from the data through tokens in `data/program-copy.json`, so they cannot
+  drift from the dates again.
+- **Past options are not sellable.** Monthly packages carry their own
+  `dates`. An option with no session still to come is hidden on the program
+  page, left out of `/api/programs/<slug>` and refused by `priceCart` with
+  the same "Unknown option" error as an option that never existed.
+- `/api/config-check` deleted.
+- **Signature failure alert.** A webhook that fails verification writes one
+  `signature_failed` row a minute, ID `SIGFAIL-<UTC minute>`, with "Webhook
+  signature failure" in program and "<bytes> bytes at <time>" in option,
+  never the body, headers or secret. On a preview the 401 body reports the
+  row read back from Airtable.
+- **Third state.** After 60 seconds unconfirmed the confirmation screen says
+  "Still confirming your payment.", shows the reference and a call button,
+  and keeps checking every 5 seconds, moving to confirmed when it lands.
+- **No screen promises an email, receipt or reminder.** The confirmation
+  screens say "Keep this page. Your reference number is your proof of
+  registration." once each.
+- **301 redirects** from all 35 old Framer paths, in `vercel.json`.
+- **Vercel Web Analytics** tag in `partials/head.html`, with a commented
+  slot for Google Analytics. Daniel enables Analytics in the dashboard.
+- `check-payments` has 11 checks: 5 rewritten for the alert row, 10 for
+  past options, 11 for the third state.
+
+**Decisions taken on 7 October, round 11 verdict, do not re-ask**
+
+- The kit's fixed spacing, hover and 44px touch-target system is not
+  adopted before launch. The site meets the WCAG 2.2 AA 24px minimum. 44px
+  targets and the kit's system are post-launch.
+
+**Done in rounds 10 and 11, 7 October**
+
+- `docs/launch-plan.md` and `docs/client-review-2026-10-07.md` written.
+  Go-live target Tuesday 13 October.
+- Mobile hero hotfix: lighter dim over the top of the image hero on phones,
+  stacked natural-width buttons, homepage hero is `dbsa-07`.
+- **Program pages are generated.** `build.mjs` writes one page per program
+  in `data/programs.json` that is `live` and not `gated`, at
+  `programs/<slug>.html`, plus `programs/<slug>.ics` with one event per
+  session date. Six today. Facts come only from `data/programs.json`, words
+  only from `data/program-copy.json` (keyed by slug), the page shell is
+  `pages/_program.html`. A section with no data and no copy is left out.
+  Change either data file and every page rebuilds, no template edit.
+- `program.html` is now a noindex forwarder: `program.html?p=<old slug or
+  data slug>` goes to the program page, anything else to
+  `camps-and-clinics.html`.
+- Every "See dates and details" link points at its own program page.
+- Instructor selection removed (Lessons hero sub, og description, the
+  "Choose who teaches" band, the Contact FAQ). Lessons links to Instructors
+  from the end of Rates. `pages/instructors.html` untouched, Daniel owns it.
+- About staff teaser has the `dbsa-09` photo. Homepage Lou band links to
+  Instagram. Homepage HitTrax button is "Request a HitTrax session" to
+  `contact.html?about=hittrax`.
+- `verify.mjs` walks the six program pages and checks the calendar files.
+
+**Decisions taken on 7 October, already answered, do not re-ask**
+
+- Families can no longer choose or request an instructor anywhere on the
+  site.
+- HitTrax stays a promotion with a "Request a HitTrax session" option. It is
+  not sold online yet. Michael is setting its pricing.
+- Michael is sending 9 PDFs as the new baseline for every camp, lesson and
+  purchasable item. A later round re-baselines `data/programs.json` from
+  them (round 13), with the Teams filter, three more camps, flyer buttons
+  and the final copy sweep. Round 12 is launch hardening.
+
+**Done before 7 October**
+
+- Full front end built across ten pages, unindexed, on `review`.
+- Registration and payment path proven end to end against Clover production,
+  then reverted to the mock for client review.
+- Three live $30 payments across the diagnosis, all voided. Net zero.
+- Adversarial checks passing: bad signature, redirect without payment,
+  tampered amount, duplicate delivery.
+- Unmatched and unconfirmable webhooks write a traceable Airtable row.
+- Signing secret rotated and verified.
+
+**In flight**
+
+- Round 07, the copy overhaul, is finished and reported. Three TEST
+  registrations on the preview prove each payment path, references
+  `DBSA-6Y5A4MQ36H` (card, mock), `DBSA-N9CHAWZKHY` (facility) and
+  `DBSA-64J2UYNXAJ` (check), all in Registrations Review. Do not delete them.
+  - Still held: the two program-page lines stating the academy and Superdome
+    split (11 and 4 on the page, 12 and 3 in `programs.json`). Waiting on
+    the Feb 6 answer.
+- Round 08, responsive system, heroes and global navigation. Parts A and B
+  accepted on 5 October, including the rule that every image band keeps at
+  least 200px of photograph above its copy on a phone. Closing fixes done:
+  internal files no longer deployed, proof images untracked into `_proof/`,
+  register progress labels 12px at every width. **The round is closed
+  pending Daniel's sign-off on the closing report.**
+  - Sticky header with a hiding announcement bar. Motion tokens
+    `--dur-reveal` and `--ease-reveal` in `tokens.css`.
+  - Eyebrow: Daniel's baseball icon, color set only by background through
+    `--eyebrow-color`. verify.mjs checks it.
+  - One image hero (`.hero` in `home.css`) on Home, Camps, Lessons,
+    Instructors and the program page, sharing one copy-anchored scrim rule
+    with the homepage HitTrax band. One stat strip component. verify.mjs
+    checks the strips.
+  - The responsive rule and every deliberate exception live in
+    `docs/responsive-decisions.md`. Read it before any layout work.
+  - Proof images for the round are in `_proof/`, local only. From now on
+    every round's proof images go there and nowhere else.
+  - Next: the next round, once Daniel writes it.
+
+**Decisions taken on 5 October, already answered, do not re-ask**
+
+- The hero overlay follows the copy: left to right on wide screens, bottom up
+  on phones. Accepted as an adaptation.
+- Card kickers stay red. Only `.eyebrow` takes the icon and the two colors.
+- The green confirmation band keeps its light green eyebrow until there is a
+  third approved color.
+- The net texture stays off photographs and only on plain dark surfaces.
+- The HitTrax links go to `facility-and-rentals.html#hittrax`. The empty
+  `#hittrax` marker at the end of Lessons stays.
+- Lou's bio reads "Founder and head instructor since 2000."
+- Every image band keeps at least 200px of photograph above its copy on a
+  phone.
+- Register progress labels are one size at every width, 12px, never smaller.
+- Internal files are not deployed and proof images are not tracked by git.
+
+**Decisions taken on 3 October, already answered, do not re-ask**
+
+- **Part A is approved.** Daniel reviewed the homepage and the global elements
+  on the preview at both sizes.
+- **The announcement bar link is approved.** CC repointed it from the broken
+  register page to the fall Little League registration. Keep that change.
+- **Remove the Hall of Fame claim from marketing copy**, in all three places it
+  is totalled up: the Instructors hero sub, the Instructors stat strip and the
+  About staff teaser. **Keep it in Fran Fitzgerald's own bio**, which is his
+  real credential and stays word for word. Replacements:
+  - Instructors hero sub: Three Major League draft picks on staff, all still
+    teaching on the floor.
+  - Instructors stat strip, two items: "3" MLB draft picks, and "Since 2000"
+    Teaching in Fair Lawn. If the component needs a third, report it rather
+    than inventing one.
+  - About staff teaser body: Coaches who played in college and the pros,
+    teaching every session.
+- **Remove the owner tag from Lou.** Keep "Founder and head instructor".
+  Report every place "Owner" appeared.
+- **The Instructors stat "25 years teaching here" becomes "Since 2000".** A
+  hardcoded year count goes stale every January.
+- **About's "15+" stays as it is.** Understated rather than wrong.
+- **A final copy sweep happens before go-live.** Small wording inconsistencies
+  found along the way are logged as findings, not fixed mid-round.
+
+**Waiting on Michael**
+
+- Whether the confirmation email comes from the site or Constant Contact. The
+  recommendation already sent: send it from the site so it is immediate and
+  never suppressed by a marketing unsubscribe, and push the contact record to
+  Constant Contact separately.
+- How the second instalment on the two-payment option is collected.
+- Hit Night winter pricing, lesson package pricing, the instructor roster,
+  opening hours, the check payee name.
+
+**Launch blockers** are listed in `docs/clover-hosted-checkout-playbook.md`
+under "Before go-live". The two that bite silently:
+
+1. `SITE_ORIGIN` must be exactly `https://dichiarobaseball.com`. Any other
+   value leaves the live site noindex and nothing reports an error.
+2. The Clover signing secret in the dashboard and in Vercel must match.
+   If they drift, every payment is taken and no registration is ever
+   confirmed, with no trace anywhere a person looks.
+
+## 9. Known issues not yet fixed
+
+- A voided or refunded payment leaves the registration `confirmed`, because
+  Clover sends no webhook for it. Manual for now.
+- **Test row from round 13 in Registrations Review:** `DBSA-SZVG7RZ5FA`
+  (Little League fall, mock card, confirmed, the 390 preview walk). Safe to
+  delete.
+- **The review table has no `webhook_note` field**, so notes on unmatched
+  and flagged rows are dropped on the preview. The signature alert carries
+  its facts in program and option for that reason. Check the production
+  `Registrations` table has the field before launch.
+- **Test rows from round 12 in Registrations Review:** `DBSA-DXCECT6VJD`
+  (Hit Night drop-in, mock, confirmed, the third-state proof) and
+  `SIGFAIL-20261007-2045` to `SIGFAIL-20261007-2049` (signature alert proofs,
+  up to one a minute). Safe to delete.
+- **Program pages are static.** A past option disappears from a page at the
+  next deploy; between deploys the checkout refuses it, and the register
+  flow does not offer it.
+- **Gated team programs register by contact only.** Whether Michael wants
+  them registered online is his decision; online needs the code system.
+- `llms.txt` still lists only ungated programs, from round 08's rule. The
+  team programs are now on the camps page, so the rule may no longer apply.
+- **Flyer contradictions for Michael:** Hit Night Fall's registration box
+  prints November $25 and December $125 against its own schedule ($125 and
+  $100, which the data follows). Hit Night Winter prints "March 1, 8l". Old
+  Tappan lists "Live BP" twice. Fair Lawn HS and Old Tappan have no photo
+  consent paragraph.
+- Clover sandbox access was never granted. It needs their support team.
+- `netlify.toml` is dead. Clean URLs are off. `verify.mjs` has gaps.
+- **"Have a town or league code?" link removed** from the program template
+  in round 11, because the code field no longer exists. It comes back if
+  codes come back.
+- **Premium review gate, first run, round 11** (`review.config.mjs`, routes
+  touched in round 11, 1440/1024/768/390). Passing: overflow, truncation,
+  type, order, reveal. Fixed in round 11: the header overflowed by 9px at
+  1024 on every page, and the red register band body text was 4.48:1. Still
+  failing, all site-wide and older than round 11, for Daniel to decide:
+  - Edges: at 1440 the header runs to the gutter (59.8 to 1380.2) while
+    content sits in the 1280px container (80 to 1360), 20px apart.
+  - Touch targets under 44px at 390: footer links 28px, arrow links and
+    breadcrumbs 32px, compact buttons 40px, skip link 43px. `verify.mjs`
+    checks 24px.
+  - Rhythm and hover: the site's band spacing is fluid (`--band-y`) and
+    hover is per component, so the kit's one-gap, one-colour checks cannot
+    pass without a system change.
+  - Contrast: the amber "To confirm with Michael" hours placeholder on
+    Contact is 4.36:1. It comes off before launch.
+- **Register progress connector at 360px**, fixed in round 11: the steps are
+  equal columns on phones and each connector stops 8px short of the next
+  marker.
+- **There is a second Vercel project called plain `dichiarobaseball.com`**,
+  separate from `dichiarobaseball.com-rgr6`, last touched 1 October. Two
+  projects and one domain is a cutover hazard: the domain can only point at
+  one, and if the old project is still connected to the repo it may be
+  building on every push. Three read-only questions decide what happens to it:
+  is the domain attached to it, is it connected to the GitHub repo, does it
+  hold environment variables `-rgr6` does not. **Record the answers in the
+  cutover checklist, then decide delete or deliberately keep.** Do not delete
+  it before those answers exist.
+  Answers from CC's read-only check on 3 October: the domain is not attached
+  to it, it is connected to the repo and builds every push, and it holds no
+  environment variables at all. **Resolved by 9 October:** the project no
+  longer exists in the team.
+- **Internal docs are no longer deployed.** `.vercelignore` excludes `docs/`,
+  `prompts/`, `CLAUDE.md` and `README.md`, so they return 404 on every
+  deployment. Anything else at the repo root is still publicly served.
+- **`_proof/` is local only.** Proof images live there, ignored by git and by
+  Vercel. The 41 MB of round 08 proof images committed earlier stays in git
+  history, accepted, and is not served.
+
+## 10. Where the truth lives
+
+| Question | Answer |
+|---|---|
+| What are the rules for working here | `CLAUDE.md` |
+| What is the state of the build | this file |
+| What does a program cost, when does it run | `data/programs.json`. Never a page |
+| How does the Clover integration work | `docs/clover-hosted-checkout-playbook.md` |
+| How should payments be built anywhere | `docs/payments-integration-principles.md` |
+| What was asked for in round N | `prompts/` |
+| What is still open before launch | the playbook, "Before go-live" |
+
+Daniel keeps a fuller set of director-level documents in the Claude project
+for this client: the cutover checklist, the design and copy punchlist, the
+payment integration status, the brand foundation, the instructor bios, the
+proposal and the meeting notes. **Those are not in this repo and you cannot
+read them.** If a round depends on one, Daniel pastes the relevant part into
+the round prompt. Do not guess at their contents.
+
+## 11. How Daniel works
+
+- One workstream at a time, with a checkpoint before the next.
+- Reports are short and structured. Detail belongs in a document, not a reply.
+- He is not a developer. Terminal instructions need to be exact and
+  copy-pasteable, with no placeholders to fill in.
+- He wants to be told when he is wrong, with the reasoning.
+- "CC" always means Claude Code.

@@ -6,26 +6,40 @@
 <meta name="theme-color" content="#17120F">
 
 <link rel="icon" href="assets/img/mark.svg" type="image/svg+xml">
-<link rel="icon" href="assets/img/favicon.png" sizes="any">
-<link rel="apple-touch-icon" href="assets/img/favicon.png">
+<link rel="icon" href="assets/img/apple-touch-icon.png" type="image/png" sizes="180x180">
+<link rel="apple-touch-icon" href="assets/img/apple-touch-icon.png">
 
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;600;700;900&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<!-- Fonts are self-hosted (assets/fonts, declared in assets/css/fonts.css).
+     The two latin files carry every weight used above the fold. -->
+<link rel="preload" href="assets/fonts/archivo-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="assets/fonts/jetbrains-mono-latin.woff2" as="font" type="font/woff2" crossorigin>
 
-<link rel="stylesheet" href="assets/css/tokens.css">
-<link rel="stylesheet" href="assets/css/base.css">
-<link rel="stylesheet" href="assets/css/components.css">
-<link rel="stylesheet" href="assets/css/home.css">
-<link rel="stylesheet" href="assets/css/camps.css">
-<link rel="stylesheet" href="assets/css/pages.css">
-<link rel="stylesheet" href="assets/css/register.css">
-<link rel="stylesheet" href="assets/css/instructors.css">
-<link rel="stylesheet" href="assets/css/legal.css">
-<link rel="stylesheet" href="assets/css/program.css">
+<!-- One stylesheet, built by build.mjs from the files in assets/css/. -->
+<link rel="stylesheet" href="assets/css/site.min.css?v=8ee950e5">
+
+<!-- Analytics. Vercel Web Analytics: no cookies, so no consent banner. It
+     records nothing until it is enabled in the Vercel dashboard (project,
+     Analytics, Enable); until then the script below answers 404 and the
+     page is unaffected. -->
+<script>window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };</script>
+<script defer src="/_vercel/insights/script.js"></script>
+
+<!-- GOOGLE ANALYTICS SLOT. build.mjs writes the GA4 tag here when the
+     GA4_MEASUREMENT_ID variable is set, and nothing when it is not. Google
+     signals and ad personalisation are off; previews and local builds add
+     debug_mode so their traffic stays out of real reports. Events go through
+     window.dbsaTrack in site.js. The privacy policy's cookies section says so. -->
+
 
 <title>Register · DiChiaro Baseball &amp; Softball Academy</title>
 <meta name="description" content="Register for a camp, clinic or lesson at DiChiaro Baseball &amp; Softball Academy. Three steps, about three minutes, waiver included.">
+<meta property="og:title" content="Register · DiChiaro Baseball &amp; Softball Academy">
+<meta property="og:description" content="Register for a camp, clinic or lesson at DiChiaro Baseball &amp; Softball Academy. Three steps, about three minutes, waiver included.">
+<meta property="og:image" content="https://dichiarobaseball.com/assets/img/dbsa-01-facility-in-use.jpg">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Register · DiChiaro Baseball &amp; Softball Academy">
+<meta name="twitter:description" content="Register for a camp, clinic or lesson at DiChiaro Baseball &amp; Softball Academy. Three steps, about three minutes, waiver included.">
+<meta name="twitter:image" content="https://dichiarobaseball.com/assets/img/dbsa-01-facility-in-use.jpg">
 
 <meta name="robots" content="noindex, nofollow">
 </head>
@@ -35,8 +49,8 @@
 
 <header class="site-header">
   <p class="announce">
-    Fall little league camp starts Oct 25 &nbsp;·&nbsp; 8 sessions &nbsp;·&nbsp;
-    <a href="register.html">Register now</a>
+    Little League camp starts Sunday, Oct 25. &nbsp;·&nbsp;
+    <a href="register.html?program=little-league-fall-2026">Register</a>
   </p>
 
   <nav class="nav" aria-label="Main">
@@ -46,9 +60,9 @@
     </a>
 
     <ul class="nav__links">
-      <li><a class="nav__link" href="camps-and-clinics.html">Camps &amp; Clinics</a></li>
+      <li><a class="nav__link" href="camps-and-clinics.html">Camps</a></li>
       <li><a class="nav__link" href="lessons.html">Lessons</a></li>
-      <li><a class="nav__link" href="facility-and-rentals.html">Facility &amp; Rentals</a></li>
+      <li><a class="nav__link" href="facility-and-rentals.html">Rentals</a></li>
       <li><a class="nav__link" href="instructors.html">Instructors</a></li>
       <li><a class="nav__link" href="about.html">About</a></li>
     </ul>
@@ -73,7 +87,7 @@
       </li>
     </ul>
 
-    <a class="btn btn--primary btn--compact nav__cta" href="register.html">Register</a>
+    <a class="btn btn--primary btn--compact nav__cta" href="camps-and-clinics.html">Open camps</a>
 
     <button class="nav__toggle" type="button" data-menu-open
             aria-expanded="false" aria-controls="mobile-menu">
@@ -94,16 +108,17 @@
   </div>
 
   <ul class="menu__list">
-    <li><a href="camps-and-clinics.html">Camps &amp; Clinics</a></li>
+    <li><a href="camps-and-clinics.html">Camps</a></li>
     <li><a href="lessons.html">Lessons</a></li>
-    <li><a href="facility-and-rentals.html">Facility &amp; Rentals</a></li>
+    <li><a href="facility-and-rentals.html">Rentals</a></li>
     <li><a href="instructors.html">Instructors</a></li>
     <li><a href="about.html">About</a></li>
     <li><a href="contact.html">Contact</a></li>
   </ul>
 
   <div class="menu__foot">
-    <a class="btn btn--primary btn--block" href="register.html">Register</a>
+    <a class="btn btn--primary btn--block" href="camps-and-clinics.html">Open camps</a>
+    <a class="btn btn--ghost btn--block" href="tel:+12017736858">Call (201) 773-6858</a>
     <ul class="nav__social nav__social--menu">
       <li>
         <a href="https://www.instagram.com/dichiaroacademy" rel="noopener" aria-label="DiChiaro Academy on Instagram">
@@ -132,10 +147,13 @@
 
 <main id="main">
 
+<script type="application/json" id="calendar-links">{"little-league-fall-2026":{"ics":"programs/little-league-fall-2026.ics","google":"https://calendar.google.com/calendar/r?cid=webcal%3A%2F%2Fdichiarobaseball.com%2Fprograms%2Flittle-league-fall-2026.ics","outlook":"https://outlook.live.com/calendar/0/addfromweb?url=https%3A%2F%2Fdichiarobaseball.com%2Fprograms%2Flittle-league-fall-2026.ics"},"little-league-winter-2027":{"ics":"programs/little-league-winter-2027.ics","google":"https://calendar.google.com/calendar/r?cid=webcal%3A%2F%2Fdichiarobaseball.com%2Fprograms%2Flittle-league-winter-2027.ics","outlook":"https://outlook.live.com/calendar/0/addfromweb?url=https%3A%2F%2Fdichiarobaseball.com%2Fprograms%2Flittle-league-winter-2027.ics"},"little-league-march-2027":{"ics":"programs/little-league-march-2027.ics","google":"https://calendar.google.com/calendar/r?cid=webcal%3A%2F%2Fdichiarobaseball.com%2Fprograms%2Flittle-league-march-2027.ics","outlook":"https://outlook.live.com/calendar/0/addfromweb?url=https%3A%2F%2Fdichiarobaseball.com%2Fprograms%2Flittle-league-march-2027.ics"},"infield-camp-2026-27":{"ics":"programs/infield-camp-2026-27.ics","google":"https://calendar.google.com/calendar/r?cid=webcal%3A%2F%2Fdichiarobaseball.com%2Fprograms%2Finfield-camp-2026-27.ics","outlook":"https://outlook.live.com/calendar/0/addfromweb?url=https%3A%2F%2Fdichiarobaseball.com%2Fprograms%2Finfield-camp-2026-27.ics"},"hit-night-fall-2026":{"ics":"programs/hit-night-fall-2026.ics","google":"https://calendar.google.com/calendar/r?cid=webcal%3A%2F%2Fdichiarobaseball.com%2Fprograms%2Fhit-night-fall-2026.ics","outlook":"https://outlook.live.com/calendar/0/addfromweb?url=https%3A%2F%2Fdichiarobaseball.com%2Fprograms%2Fhit-night-fall-2026.ics"},"hit-night-winter-2027":{"ics":"programs/hit-night-winter-2027.ics","google":"https://calendar.google.com/calendar/r?cid=webcal%3A%2F%2Fdichiarobaseball.com%2Fprograms%2Fhit-night-winter-2027.ics","outlook":"https://outlook.live.com/calendar/0/addfromweb?url=https%3A%2F%2Fdichiarobaseball.com%2Fprograms%2Fhit-night-winter-2027.ics"},"iha-softball-winter-2027":{"ics":"programs/iha-softball-winter-2027.ics","google":"https://calendar.google.com/calendar/r?cid=webcal%3A%2F%2Fdichiarobaseball.com%2Fprograms%2Fiha-softball-winter-2027.ics","outlook":"https://outlook.live.com/calendar/0/addfromweb?url=https%3A%2F%2Fdichiarobaseball.com%2Fprograms%2Fiha-softball-winter-2027.ics"},"fair-lawn-hs-softball-2027":{"ics":"programs/fair-lawn-hs-softball-2027.ics","google":"https://calendar.google.com/calendar/r?cid=webcal%3A%2F%2Fdichiarobaseball.com%2Fprograms%2Ffair-lawn-hs-softball-2027.ics","outlook":"https://outlook.live.com/calendar/0/addfromweb?url=https%3A%2F%2Fdichiarobaseball.com%2Fprograms%2Ffair-lawn-hs-softball-2027.ics"},"old-tappan-hs-2026-27":{"ics":"programs/old-tappan-hs-2026-27.ics","google":"https://calendar.google.com/calendar/r?cid=webcal%3A%2F%2Fdichiarobaseball.com%2Fprograms%2Fold-tappan-hs-2026-27.ics","outlook":"https://outlook.live.com/calendar/0/addfromweb?url=https%3A%2F%2Fdichiarobaseball.com%2Fprograms%2Fold-tappan-hs-2026-27.ics"}}</script>
+<script type="application/json" id="ga-items">{"little-league-fall-2026":{"item_name":"Little League Training Camp, Fall 2026","item_category":"both"},"little-league-winter-2027":{"item_name":"Little League Training Camp, Winter 2027","item_category":"both"},"little-league-march-2027":{"item_name":"Little League Training Camp, March 2027","item_category":"both"},"infield-camp-2026-27":{"item_name":"Lou DiChiaro's Infield Camp, 2026-27","item_category":"both"},"hit-night-fall-2026":{"item_name":"Monday Hit Night, Fall 2026","item_category":"both"},"hit-night-winter-2027":{"item_name":"Monday Hit Night, Winter 2027","item_category":"both"},"iha-softball-winter-2027":{"item_category":"softball"},"fair-lawn-hs-softball-2027":{"item_category":"softball"},"old-tappan-hs-2026-27":{"item_category":"baseball"}}</script>
+
 <!-- ===================================================================== -->
 <!-- Progress                                                              -->
 <!-- ===================================================================== -->
-<nav class="progress" aria-label="Registration progress" data-progress>
+<nav class="progress" aria-label="Registration progress" data-progress hidden>
   <div class="progress__inner">
     <div class="progress__step" data-step-marker="1" data-state="now">
       <span class="progress__marker">01</span>
@@ -157,7 +175,26 @@
 <!-- ===================================================================== -->
 <!-- Step 01 · Players and parent                                          -->
 <!-- ===================================================================== -->
-<section class="reg step-panel" data-step="1" aria-labelledby="s1-title">
+<section class="reg step-panel" data-program-missing aria-labelledby="missing-title" hidden>
+  <div class="reg__inner">
+    <div class="reg__form">
+      <div class="reg__head">
+        <p class="eyebrow">Registration</p>
+        <h1 class="display-l" id="missing-title">We could not find that program.</h1>
+        <p class="body-l">
+          The link you followed does not match a program that is open for registration.
+          Nothing has been saved and nothing has been charged. Choose a program and
+          register from its page.
+        </p>
+      </div>
+      <div class="reg__actions">
+        <a class="btn btn--primary" href="camps-and-clinics.html">See camps and clinics</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="reg step-panel" data-step="1" aria-labelledby="s1-title" hidden>
   <div class="reg__inner">
     <form class="reg__form" data-step-form="1" novalidate>
 
@@ -165,8 +202,7 @@
         <p class="eyebrow">Step 1 of 3</p>
         <h1 class="display-l" id="s1-title">Who is playing?</h1>
         <p class="body-l">
-          Tell us about the player and how to reach you. Registering more than one child?
-          Add them here and pay once.
+          Add the player and how to reach you.
         </p>
       </div>
 
@@ -201,13 +237,11 @@
         </div>
       </div>
 
-      <p><button class="add-player" type="button" data-add-player><span aria-hidden="true">+</span> Add another player</button></p>
-
       <div class="reg-card">
         <div class="reg-card__head">
           <p class="meta">Parent or guardian</p>
         </div>
-        <p class="reg-card__note">This is who we contact about the camp, and who signs the waiver on the next step.</p>
+        <p class="reg-card__note">We&rsquo;ll contact you about the camp, and you&rsquo;ll sign the waiver next.</p>
         <div class="form__row">
           <div class="field">
             <label for="g-first">First name</label>
@@ -222,7 +256,6 @@
           <div class="field">
             <label for="g-email">Email</label>
             <input class="input" id="g-email" type="email" autocomplete="email" inputmode="email" placeholder="elena@example.com" required>
-            <p class="field__hint">Confirmation and session reminders go here</p>
           </div>
           <div class="field">
             <label for="g-mobile">Mobile</label>
@@ -237,13 +270,20 @@
           <div class="field">
             <label for="g2-phone">Second contact phone</label>
             <input class="input" id="g2-phone" type="tel" inputmode="tel" placeholder="Optional">
-            <p class="field__hint">Someone reachable if we cannot get you</p>
+            <p class="field__hint">Someone we can call if we can&rsquo;t reach you.</p>
           </div>
         </div>
         <div class="field">
           <label for="coach-note">Anything the coach should know</label>
           <textarea class="textarea" id="coach-note" placeholder="Injuries, which hand they throw with, who they know on the roster. Optional."></textarea>
         </div>
+        <label class="choice">
+          <input type="checkbox" id="marketing-opt-in" name="marketing_opt_in">
+          <span class="choice__copy">
+            <strong>Send me news about camps and clinics.</strong>
+            <span>You can unsubscribe at any time.</span>
+          </span>
+        </label>
       </div>
 
       <div class="reg__actions">
@@ -254,19 +294,18 @@
 
     <aside class="summary">
       <p class="summary__eyebrow">You are registering for</p>
-      <h2 class="heading-m">Little League Training Camp</h2>
+      <h2 class="heading-m" data-program-name></h2>
       <dl class="summary__facts">
-        <div class="summary__fact"><dt>Dates</dt><dd>Oct 25 to Dec 13</dd></div>
-        <div class="summary__fact"><dt>Day</dt><dd>Sundays, 2:30 to 4:00pm</dd></div>
-        <div class="summary__fact"><dt>Sessions</dt><dd>8</dd></div>
-        <div class="summary__fact"><dt>Where</dt><dd>18-01 Pollitt Drive</dd></div>
-        <div class="summary__fact summary__fact--rate" data-rate-row hidden><dt>Rate</dt><dd data-rate-label></dd></div>
+        <div class="summary__fact"><dt>Dates</dt><dd data-program-dates></dd></div>
+        <div class="summary__fact"><dt>Day</dt><dd data-program-day></dd></div>
+        <div class="summary__fact"><dt>Sessions</dt><dd data-program-sessions></dd></div>
+        <div class="summary__fact"><dt>Where</dt><dd data-program-where></dd></div>
       </dl>
       <dl class="summary__total">
         <dt>Total</dt>
-        <dd data-total>$320</dd>
+        <dd data-total></dd>
       </dl>
-      <p class="summary__note">One player. Adding a sibling updates this total.</p>
+      <p class="summary__note">One player.</p>
     </aside>
   </div>
 </section>
@@ -282,8 +321,7 @@
         <p class="eyebrow">Step 2 of 3</p>
         <h2 class="display-l" id="s2-title">Sign the waiver</h2>
         <p class="body-l">
-          One waiver per player, once a season. Sign it now and every camp or lesson you
-          book between now and the end of the season skips this step.
+          Once per player, per season.
         </p>
       </div>
 
@@ -297,7 +335,7 @@
           <h4>Assumption of risk and release</h4>
           <p>I understand that baseball and softball involve a risk of injury, including injury from thrown and batted balls, collisions, and the use of training equipment.</p>
           <p>I accept that risk on behalf of the player named above, and I confirm the player is medically fit to take part.</p>
-          <p>I authorise DiChiaro Baseball &amp; Softball Academy to arrange emergency medical care if I cannot be reached, and I accept responsibility for the cost of that care.</p>
+          <p>I authorize DiChiaro Baseball &amp; Softball Academy to arrange emergency medical care if I cannot be reached, and I accept responsibility for the cost of that care.</p>
           <p>I release the academy, its staff, and the owners of the premises from liability for injury arising from ordinary participation, to the extent permitted by the law of the State of New Jersey.</p>
         </div>
 
@@ -315,7 +353,7 @@
             <input type="checkbox" id="photo-consent">
             <span class="choice__copy">
               <strong>The academy may photograph or film this player</strong>
-              <span>Optional. Used on the website and Instagram. Saying no changes nothing about the booking.</span>
+              <span>Optional. Used on our website and Instagram. Saying no changes nothing.</span>
             </span>
           </label>
         </div>
@@ -327,18 +365,9 @@
           </div>
           <div class="field">
             <label for="sign-date">Date</label>
-            <input class="input" id="sign-date" type="text" value="21 September 2026" readonly>
+            <input class="input" id="sign-date" type="text" value="" readonly data-sign-date>
           </div>
         </div>
-      </div>
-
-      <div class="reg-card reg-card--surface">
-        <p class="reg-card__note">
-          Registering more than one player repeats this card, one per child. A player who
-          already signed this season shows a green Signed row instead, with the date, and
-          nothing to fill in.
-        </p>
-        <p class="signed"><span aria-hidden="true">&#10003;</span> Signed 4 August 2026, for the 2026-27 season</p>
       </div>
 
       <div class="reg__actions">
@@ -349,16 +378,15 @@
 
     <aside class="summary">
       <p class="summary__eyebrow">You are registering for</p>
-      <h2 class="heading-m">Little League Training Camp</h2>
+      <h2 class="heading-m" data-program-name></h2>
       <dl class="summary__facts">
-        <div class="summary__fact"><dt>Dates</dt><dd>Oct 25 to Dec 13</dd></div>
-        <div class="summary__fact"><dt>Day</dt><dd>Sundays, 2:30 to 4:00pm</dd></div>
-        <div class="summary__fact"><dt>Sessions</dt><dd>8</dd></div>
-        <div class="summary__fact"><dt>Where</dt><dd>18-01 Pollitt Drive</dd></div>
-        <div class="summary__fact summary__fact--rate" data-rate-row hidden><dt>Rate</dt><dd data-rate-label></dd></div>
+        <div class="summary__fact"><dt>Dates</dt><dd data-program-dates></dd></div>
+        <div class="summary__fact"><dt>Day</dt><dd data-program-day></dd></div>
+        <div class="summary__fact"><dt>Sessions</dt><dd data-program-sessions></dd></div>
+        <div class="summary__fact"><dt>Where</dt><dd data-program-where></dd></div>
       </dl>
-      <dl class="summary__total"><dt>Total</dt><dd data-total>$320</dd></dl>
-      <p class="summary__note">One player. Adding a sibling updates this total.</p>
+      <dl class="summary__total"><dt>Total</dt><dd data-total></dd></dl>
+      <p class="summary__note">One player.</p>
     </aside>
   </div>
 </section>
@@ -374,8 +402,7 @@
         <p class="eyebrow">Step 3 of 3</p>
         <h2 class="display-l" id="s3-title">Review and pay</h2>
         <p class="body-l">
-          Check this over, then finish on Clover&rsquo;s secure payment page. Your place
-          is held from the moment you get there.
+          Check the details, then pay on Clover&rsquo;s secure page.
         </p>
       </div>
 
@@ -384,39 +411,21 @@
           <h3 class="heading-s">What you are paying for</h3>
         </div>
         <div class="lines">
+          <div data-options hidden></div>
+
           <div class="line">
             <div class="line__copy">
-              <span>Little League Training Camp, fall</span>
-              <small>8 Sundays, Oct 25 to Dec 13. One player.</small>
+              <span data-line-name></span>
+              <small data-line-detail></small>
             </div>
-            <span class="line__price" data-line-price>$320</span>
-          </div>
-
-          <div class="rate-applied" data-rate-applied hidden>
-            <span><span aria-hidden="true">&#10003;</span> <span data-rate-label></span> rate applied</span>
-            <button type="button" data-remove-code>Remove code</button>
+            <span class="line__price" data-line-price></span>
           </div>
 
           <div class="line line--total">
             <div class="line__copy">Total due today</div>
-            <span class="line__price" data-total>$320</span>
+            <span class="line__price" data-due-today></span>
           </div>
-        </div>
-
-        <div class="code-box" id="code">
-          <p data-code-prompt>
-            <button class="code-toggle" type="button" data-code-toggle>Have a town or league code?</button>
-          </p>
-          <div data-code-field hidden>
-            <div class="field">
-              <label for="rate-code">Town or league code</label>
-              <div class="code-box__row">
-                <input class="input" id="rate-code" type="text" autocomplete="off" spellcheck="false" placeholder="e.g. DEMO25">
-                <button class="btn btn--secondary" type="button" data-apply-code>Apply</button>
-              </div>
-              <p class="field__hint" data-code-hint>Your town or league will have sent this to you.</p>
-            </div>
-          </div>
+          <p class="reg-card__note" data-line-later hidden></p>
         </div>
       </div>
 
@@ -436,30 +445,28 @@
             <input type="radio" name="pay" value="facility">
             <span class="choice__copy">
               <strong>At the facility</strong>
-              <span>Register now and pay at the front desk. Your place is held for seven days.</span>
+              <span>Pay at the front desk. We hold the place for seven days.</span>
             </span>
           </label>
           <label class="choice">
             <input type="radio" name="pay" value="check">
             <span class="choice__copy">
               <strong>By check</strong>
-              <span>Bring or post a check made out to DiChiaro Baseball &amp; Softball Academy. Your place is held until it clears.</span>
+              <span>Payable to DiChiaro Baseball &amp; Softball Academy. We hold the place until it clears.</span>
             </span>
           </label>
         </div>
       </div>
 
       <div class="reg-card reg-card--surface handoff" data-handoff>
-        <p class="meta">Shown only when Online now is selected</p>
         <h3 class="heading-m">You finish on Clover&rsquo;s page, not ours.</h3>
         <dl class="handoff__steps">
           <div class="handoff__step"><dt>01</dt><dd>The button below takes you to Clover, the academy&rsquo;s card processor.</dd></div>
           <div class="handoff__step"><dt>02</dt><dd>You enter your card there. We never see or store the number.</dd></div>
-          <div class="handoff__step"><dt>03</dt><dd>Clover sends you straight back here and your confirmation email follows.</dd></div>
+          <div class="handoff__step"><dt>03</dt><dd>Clover sends you back here to confirm.</dd></div>
         </dl>
         <p class="hold-note">
-          Your registration and waiver are saved before you leave this page. If payment is
-          interrupted, nothing is lost and we email you a link to finish.
+          Your registration is saved before you leave this page.
         </p>
       </div>
 
@@ -471,16 +478,15 @@
 
     <aside class="summary">
       <p class="summary__eyebrow">You are registering for</p>
-      <h2 class="heading-m">Little League Training Camp</h2>
+      <h2 class="heading-m" data-program-name></h2>
       <dl class="summary__facts">
-        <div class="summary__fact"><dt>Dates</dt><dd>Oct 25 to Dec 13</dd></div>
-        <div class="summary__fact"><dt>Day</dt><dd>Sundays, 2:30 to 4:00pm</dd></div>
-        <div class="summary__fact"><dt>Sessions</dt><dd>8</dd></div>
-        <div class="summary__fact"><dt>Where</dt><dd>18-01 Pollitt Drive</dd></div>
-        <div class="summary__fact summary__fact--rate" data-rate-row hidden><dt>Rate</dt><dd data-rate-label></dd></div>
+        <div class="summary__fact"><dt>Dates</dt><dd data-program-dates></dd></div>
+        <div class="summary__fact"><dt>Day</dt><dd data-program-day></dd></div>
+        <div class="summary__fact"><dt>Sessions</dt><dd data-program-sessions></dd></div>
+        <div class="summary__fact"><dt>Where</dt><dd data-program-where></dd></div>
       </dl>
-      <dl class="summary__total"><dt>Total</dt><dd data-total>$320</dd></dl>
-      <p class="summary__note">One player. Adding a sibling updates this total.</p>
+      <dl class="summary__total"><dt>Total</dt><dd data-total></dd></dl>
+      <p class="summary__note">One player.</p>
     </aside>
   </div>
 </section>
@@ -493,13 +499,14 @@
   <div class="confirm-band">
     <div class="confirm-band__inner">
       <div class="confirm-band__copy">
-        <p class="eyebrow" data-confirm-eyebrow>You are in</p>
-        <h2 class="display-l" id="done-title" data-confirm-title>Mia is registered.</h2>
-        <p class="body-l" data-confirm-lede>
-          Little League Training Camp, fall. Eight Sundays starting 25 October.
+        <p class="eyebrow" data-confirm-eyebrow></p>
+        <h2 class="display-l" id="done-title" data-confirm-title></h2>
+        <p class="body-l" data-confirm-lede></p>
+        <p class="confirm-band__call" data-confirm-call hidden>
+          <a class="btn btn--secondary" href="tel:+12017736858">Call (201) 773-6858</a>
         </p>
       </div>
-      <p class="confirm-ref">Reference DBSA-2026-0418</p>
+      <p class="confirm-ref"></p>
     </div>
   </div>
 
@@ -509,71 +516,41 @@
 
         <div class="reg-card">
           <div class="reg-card__head"><h3 class="heading-s">What happens next</h3></div>
-          <dl class="handoff__steps" data-next-steps>
-            <div class="handoff__step"><dt>Today</dt><dd>A confirmation email with the full schedule and your receipt.</dd></div>
-            <div class="handoff__step"><dt>A week before</dt><dd>A reminder with what to bring.</dd></div>
-            <div class="handoff__step"><dt>First session</dt><dd>Arrive ten minutes early. Sunday 25 October, 2:30pm.</dd></div>
-          </dl>
+          <dl class="handoff__steps handoff__steps--labels" data-next-steps></dl>
         </div>
 
-        <div class="reg-card">
+        <div class="reg-card" data-dates-card hidden>
           <div class="reg-card__head">
-            <h3 class="heading-s">All eight sessions</h3>
-            <a class="code-toggle" href="contact.html?about=calendar">Add to calendar</a>
+            <h3 class="heading-s" data-dates-title></h3>
+            <div class="cal cal--light" data-cal>
+              <button class="code-toggle cal__toggle" type="button" aria-expanded="false" aria-controls="cal-confirm">Add to calendar</button>
+              <ul class="cal__menu" id="cal-confirm" hidden>
+                <li><a href="#" data-cal-link="ics" download>Apple Calendar <span class="cal__note">or Outlook on a computer</span></a></li>
+                <li><a href="#" data-cal-link="google" target="_blank" rel="noopener">Google Calendar</a></li>
+                <li><a href="#" data-cal-link="outlook" target="_blank" rel="noopener">Outlook.com</a></li>
+              </ul>
+            </div>
           </div>
-          <div class="dates">
-            <span class="day">Sun 25 Oct</span><span class="day">Sun 1 Nov</span>
-            <span class="day">Sun 8 Nov</span><span class="day">Sun 15 Nov</span>
-            <span class="day">Sun 22 Nov</span><span class="day">Sun 29 Nov</span>
-            <span class="day">Sun 6 Dec</span><span class="day">Sun 13 Dec</span>
-          </div>
-          <p class="reg-card__note">All sessions run 2:30 to 4:00pm at 18-01 Pollitt Drive, Fair Lawn.</p>
+          <div class="dates" data-dates></div>
+          <p class="reg-card__note" data-dates-note></p>
         </div>
 
         <div class="reg__actions">
-          <a class="btn btn--secondary" href="register.html">Register another player</a>
+          <a class="btn btn--secondary" href="register.html" data-register-again>Register another player</a>
           <a class="reg__back" href="camps-and-clinics.html">Back to camps and clinics</a>
         </div>
       </div>
 
       <aside class="due">
-        <p class="due__status" data-due-status>Payment due at the facility</p>
+        <p class="due__status" data-due-status></p>
         <dl class="summary__facts">
-          <div class="summary__fact"><dt>Amount</dt><dd data-due-amount>$320.00</dd></div>
-          <div class="summary__fact"><dt>Due</dt><dd data-due-when>First session, 25 Oct</dd></div>
-          <div class="summary__fact"><dt>Accepted</dt><dd data-due-accepted>Card, cash or check</dd></div>
-          <div class="summary__fact"><dt>Status</dt><dd data-due-state>Not yet paid</dd></div>
+          <div class="summary__fact"><dt>Amount</dt><dd data-due-amount></dd></div>
+          <div class="summary__fact"><dt>Due</dt><dd data-due-when></dd></div>
+          <div class="summary__fact"><dt>Accepted</dt><dd data-due-accepted></dd></div>
+          <div class="summary__fact"><dt>Status</dt><dd data-due-state></dd></div>
         </dl>
-        <p class="summary__note" data-due-note>
-          Prefer to pay online instead? Call (201) 773-6858 and we can send a payment link.
-        </p>
+        <p class="summary__note" data-due-note></p>
       </aside>
-    </div>
-  </div>
-</section>
-
-<!-- ===================================================================== -->
-<!-- Prototype note                                                        -->
-<!-- ===================================================================== -->
-<section class="band band--bone">
-  <div class="container">
-    <div class="build-note">
-      <p class="meta">Prototype, not the built flow</p>
-      <p>
-        These are the real screens, walkable end to end, with no server behind them.
-        Nothing is stored, nothing is charged, and no email is sent. One code works here
-        so the town rate can be demonstrated: <strong>DEMO25</strong> applies the Demo
-        Town Little League rate, and anything else returns the one generic failure
-        message. The town is invented, because naming a real league against a lower
-        price is the thing this design exists to prevent.
-      </p>
-      <p>
-        In the built site that lookup is server side and rate limited, the rate never
-        appears in the page source, and no list of towns or codes is ever downloadable.
-        Shipping the demo lookup as written would defeat the whole point of the design:
-        anyone could read the page source and see which towns pay less. The rules are in
-        the registration build spec.
-      </p>
     </div>
   </div>
 </section>
@@ -599,29 +576,26 @@
         <h3>Programs</h3>
         <a href="camps-and-clinics.html#little-league-training-camp">Little League Training Camp</a>
         <a href="camps-and-clinics.html#infield-camp">Infield Camp</a>
-        <a href="camps-and-clinics.html#monday-hit-night">Monday Hit Nights</a>
-        <a href="camps-and-clinics.html#team-and-specialty">Team &amp; specialty camps</a>
-        <a href="team-camps.html">Team &amp; town camps</a>
+        <a href="camps-and-clinics.html#monday-hit-night">Monday Hit Night</a>
+        <a href="team-camps.html">Team camps</a>
         <a href="camps-and-clinics.html">All camps and clinics</a>
       </nav>
 
-      <nav class="site-footer__group" aria-label="Lessons and facility">
-        <h3>Lessons &amp; facility</h3>
+      <nav class="site-footer__group" aria-label="Lessons and rentals">
+        <h3>Lessons and rentals</h3>
         <a href="lessons.html#private">Private lessons</a>
         <a href="lessons.html#semi-private">Semi-private lessons</a>
-        <a href="lessons.html#packages">Lesson packages</a>
-        <a href="lessons.html#hittrax">HitTrax sessions</a>
-        <a href="facility-and-rentals.html">Facility rentals</a>
+        <a href="facility-and-rentals.html#hittrax">HitTrax sessions</a>
+        <a href="facility-and-rentals.html">Cage and facility rentals</a>
       </nav>
 
       <nav class="site-footer__group" aria-label="Academy">
         <h3>Academy</h3>
-        <a href="instructors.html">Our instructors</a>
-        <a href="about.html">About Lou</a>
+        <a href="instructors.html">Instructors</a>
+        <a href="about.html">About the academy</a>
         <a href="lous-journey.html">Lou&rsquo;s journey</a>
         <a href="contact.html">Contact</a>
-        <a href="register.html">Register</a>
-        <a href="waiver-and-policies.html">Waiver &amp; policies</a>
+        <a href="waiver-and-policies.html">Waiver and policies</a>
       </nav>
 
     </div>

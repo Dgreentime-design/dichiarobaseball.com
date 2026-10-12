@@ -6,6 +6,11 @@
    2. Generates a stub page for every route that is designed but not built
       yet, from pages/_stub.html and stubs.json, so no link in the
       prototype dead-ends in a 404.
+   3. Generates one page and one calendar file per public program, from
+      pages/_program.html, data/programs.json and data/program-copy.json.
+   4. Builds the sized images for every slot in data/images.json and
+      resolves {{img N}} tokens into <picture> (see build-images.mjs).
+   5. Writes one combined, minified stylesheet, assets/css/site.min.css.
 
    Three things are shared by every page: the header, the mobile menu and
    the footer. They live once, in partials/, so a change to the navigation
@@ -14,8 +19,11 @@
    Run: node build.mjs
    ========================================================================== */
 
-import { readFileSync, writeFileSync, readdirSync, existsSync } from "node:fs";
+import { readFileSync, writeFileSync, readdirSync, existsSync, mkdirSync } from "node:fs";
 import { join } from "node:path";
+import { createHash } from "node:crypto";
+import { ABOUT_TOPICS } from "./api/_lib/topics.js";
+import { generate as generateImages, resolveImages, imageUrl } from "./build-images.mjs";
 
 const PAGES = "pages";
 const PARTIALS = "partials";
@@ -67,7 +75,9 @@ const IS_PROD = process.env.SITE_ORIGIN === PROD_ORIGIN;
 
 /* Pages that stay out of the index whatever the origin. The registration
    flow is a transaction, not a page anyone should arrive at from a search. */
-const ALWAYS_NOINDEX = new Set(["register.html"]);
+/* program.html only forwards old links to a program's own page. */
+/* 404.html is what Vercel serves for any path that does not exist. */
+const ALWAYS_NOINDEX = new Set(["register.html", "program.html", "404.html"]);
 
 /* Collected as pages are written, so robots.txt, sitemap.xml and llms.txt
    are generated from the routes that actually exist rather than a list
@@ -81,12 +91,72 @@ const LEGAL_FILES = new Set(
     : []
 );
 
+/* --- Images ------------------------------------------------------------- */
+
+console.log("Images");
+const imageRun = await generateImages();
+console.log(`  ${imageRun.total} originals, ${imageRun.built} rebuilt`);
+
+/* --- One stylesheet ------------------------------------------------------
+
+   The ten stylesheets and the self-hosted fonts, in the order the head
+   used to load them, as one minified file: one render-blocking request
+   instead of eleven plus Google Fonts. Edit the files in assets/css/, never
+   site.min.css. The hash in the link makes a changed file reach browsers
+   at once, past the week-long cache on /assets/. */
+const CSS_ORDER = ["fonts", "tokens", "base", "components", "home", "camps", "pages", "register", "instructors", "legal", "program"];
+function minifyCss(css) {
+  let out = "", i = 0;
+  while (i < css.length) {
+    const ch = css[i];
+    if (ch === '"' || ch === "'") {
+      let j = i + 1;
+      while (j < css.length && css[j] !== ch) j += css[j] === "\\" ? 2 : 1;
+      out += css.slice(i, j + 1); i = j + 1; continue;
+    }
+    if (ch === "/" && css[i + 1] === "*") { const end = css.indexOf("*/", i + 2); i = end < 0 ? css.length : end + 2; continue; }
+    if (/\s/.test(ch)) {
+      while (i < css.length && /\s/.test(css[i])) i++;
+      if (out && !/[{};, ]$/.test(out) && !/^[{};,]/.test(css[i] || "")) out += " ";
+      continue;
+    }
+    out += ch; i++;
+  }
+  return out.trim() + "\n";
+}
+const CSS = minifyCss(CSS_ORDER.map((n) => readFileSync(join("assets", "css", n + ".css"), "utf8")).join("\n"));
+writeFileSync(join("assets", "css", "site.min.css"), CSS);
+const CSS_HREF = `assets/css/site.min.css?v=${createHash("sha1").update(CSS).digest("hex").slice(0, 8)}`;
+console.log(`  assets/css/site.min.css, ${(CSS.length / 1024).toFixed(1)} KB`);
+
+/* --- Google Analytics 4 ---------------------------------------------------
+
+   GA4_MEASUREMENT_ID turns the tag on, set in Vercel for Production and
+   Preview. Unset, nothing is written and the site behaves as before. The
+   script is async and its onload and onerror set window.dbsaGa, so
+   site.js can tell a loaded tag from a blocked one and never hold a
+   navigation for a tag that will not answer. Only a G- ID is accepted: the
+   value is written into every page. */
+const GA4_ID = (process.env.GA4_MEASUREMENT_ID || "").trim();
+const GA4_OK = /^G-[A-Z0-9]{4,20}$/.test(GA4_ID);
+if (GA4_ID && !GA4_OK) console.warn(`  GA4_MEASUREMENT_ID is not a G- measurement ID, so no tag is written`);
+const GA4_CONFIG = {
+  send_page_view: true,
+  allow_google_signals: false,
+  allow_ad_personalization_signals: false,
+  ...(IS_PROD ? {} : { debug_mode: true }),
+};
+const GA4_SNIPPET = GA4_OK
+  ? `<script async src="https://www.googletagmanager.com/gtag/js?id=${GA4_ID}" onload="window.dbsaGa='ready'" onerror="window.dbsaGa='blocked'"></script>
+<script>window.dataLayer = window.dataLayer || []; function gtag() { dataLayer.push(arguments); } gtag("js", new Date()); gtag("config", "${GA4_ID}", ${JSON.stringify(GA4_CONFIG)});</script>`
+  : "";
+
 const cache = new Map();
 function partial(name) {
   if (cache.has(name)) return cache.get(name);
   const path = join(PARTIALS, name + ".html");
   if (!existsSync(path)) throw new Error(`Missing partial: ${name}`);
-  const body = readFileSync(path, "utf8").trimEnd();
+  const body = readFileSync(path, "utf8").trimEnd().replaceAll("{{css_href}}", CSS_HREF).replaceAll("{{ga4}}", GA4_SNIPPET);
   cache.set(name, body);
   return body;
 }
@@ -153,7 +223,97 @@ const programs = existsSync(join("data", "programs.json"))
   : { _meta: {}, programs: [] };
 
 const VENUES = (programs._meta && programs._meta.venues) || {};
+
+/* An unlisted program is a team's own block (round 22). Its page works and
+   sells, at programs/<slug>.html, so Michael can send the team its link, and
+   that is the only way in: noindex, so out of the sitemap and llms.txt, and
+   left out of every list, card and feed the rest of the site is built from. */
+const UNLISTED = new Set(programs.programs.filter((p) => p.unlisted).map((p) => p.slug));
+for (const slug of UNLISTED) ALWAYS_NOINDEX.add(`programs/${slug}.html`);
+const LISTED = programs.programs.filter((p) => !UNLISTED.has(p.slug));
+
+/* A price on a hand-written card, from the data: {{price <slug> <option>}}. */
+function dataPrice(slug, id) {
+  const p = programs.programs.find((x) => x.slug === slug);
+  const o = p && p.options.find((x) => x.id === id);
+  if (!o) throw new Error(`build: {{price ${slug} ${id}}} names no option in data/programs.json`);
+  return "$" + Number(o.price).toLocaleString("en-US");
+}
+
+/* "Last 4 sessions at the Superdome, 8am to 10am": a program's combined
+   sessions, from schedule.combined, when they are its last dates. Used on
+   the program page and, as {{superdome <slug>}}, on the hand-written cards. */
+function superdomeLine(p) {
+  const s = (p && p.schedule) || {};
+  const c = s.combined;
+  if (!c || !c.dates || !c.dates.length) return "";
+  if ((s.dates || []).slice(-c.dates.length).join() !== c.dates.join()) {
+    throw new Error(`build: ${p.slug} has combined sessions that are not its last dates`);
+  }
+  const short = (t) => t.trim().replace(/:00(?=\s*[ap]m)/i, "").replace(/\s+/g, "");
+  const [from, to] = c.time.split(/\s*[-–]\s*/);
+  return `Last ${c.dates.length} sessions at the Superdome, ${short(from)} to ${short(to)}`;
+}
 const PHONE = "+1-201-773-6858";
+
+/* --- Add to calendar -------------------------------------------------------
+
+   Google and Outlook.com subscribe to a calendar by fetching it themselves,
+   so they need an absolute URL that serves the file. One value decides it:
+   SITE_ORIGIN, which is https://dichiarobaseball.com from the cutover.
+   Until then it is the deployment's own branch URL, where this build's
+   files actually are. (ORIGIN, above, points a preview at the project's
+   production URL, which serves main and may not have the file.) */
+const CALENDAR_ORIGIN = (
+  process.env.SITE_ORIGIN ||
+  (process.env.VERCEL_BRANCH_URL ? `https://${process.env.VERCEL_BRANCH_URL}` : ORIGIN)
+).replace(/\/+$/, "");
+
+/* --- What analytics is told about a program --------------------------------
+
+   The ecommerce item for GA4: the slug, the title, the sport and the
+   lowest price on sale, the same "from" price the page shows. Facts only,
+   from data/programs.json; nothing about a family. */
+const gaCategory = (p) => {
+  const s = [].concat(p.sport || []);
+  return s.includes("baseball") && s.includes("softball") ? "both" : s[0] || "both";
+};
+function gaItem(p) {
+  const opts = openOptions(p).length ? openOptions(p) : p.options;
+  return {
+    item_id: p.slug,
+    item_name: `${p.name}, ${p.season}`,
+    item_category: gaCategory(p),
+    price: Math.min(...opts.map((o) => o.price)),
+  };
+}
+const gaJson = (v) => JSON.stringify(v).replace(/</g, "\\u003c");
+
+/* Apple Calendar, and Outlook on the desktop, take the file itself: `ics`
+   is the path from the site root, made relative by the page. */
+function calendarLinks(slug) {
+  const ics = `programs/${slug}.ics`;
+  const url = `${CALENDAR_ORIGIN}/${ics}`;
+  return {
+    ics,
+    google: `https://calendar.google.com/calendar/r?cid=${encodeURIComponent(url.replace(/^https?:/, "webcal:"))}`,
+    outlook: `https://outlook.live.com/calendar/0/addfromweb?url=${encodeURIComponent(url)}`
+  };
+}
+
+/* A disclosure button and a list of links, opened by site.js. No hover:
+   it works by keyboard and is read as a button and a list. */
+function calendarControl(id, links, ics = links.ics) {
+  const a = (s) => s.replace(/&/g, "&amp;");
+  return `<div class="cal" data-cal>
+        <button class="btn btn--ghost btn--compact cal__toggle" type="button" aria-expanded="false" aria-controls="${id}">Add to calendar</button>
+        <ul class="cal__menu" id="${id}" hidden>
+          <li><a href="${a(ics)}" download>Apple Calendar <span class="cal__note">or Outlook on a computer</span></a></li>
+          <li><a href="${a(links.google)}" target="_blank" rel="noopener">Google Calendar</a></li>
+          <li><a href="${a(links.outlook)}" target="_blank" rel="noopener">Outlook.com</a></li>
+        </ul>
+      </div>`;
+}
 const EMAIL = "info@dichiarobaseball.com";
 
 function postalAddress(address) {
@@ -178,7 +338,7 @@ function facilityNode() {
     "@type": "SportsActivityLocation",
     "@id": FACILITY_ID,
     name: f.name || "DiChiaro Baseball & Softball Academy",
-    description: "Year-round indoor baseball and softball instruction in Fair Lawn, New Jersey. Hitting, fielding and pitching for ages six to eighteen.",
+    description: "Year-round indoor baseball and softball instruction in Fair Lawn, New Jersey. Hitting, fielding and pitching for ages 6 and up.",
     url: `${ORIGIN}/`,
     telephone: PHONE,
     email: EMAIL,
@@ -199,29 +359,42 @@ function facilityNode() {
    Where a program splits into groups, the group carries the time, so each
    group is its own series. Where it has combined sessions at the other
    venue, those dates take that venue and that time. */
-function eventsFor(program) {
+/* The time a single-slot program runs on a date. A program can change its
+   time part way through (Old Tappan moves from 4:00pm to 7:00pm on 3
+   January), recorded in the data as schedule.time_change. */
+function timeOn(s, date) {
+  return s.time_change && date >= s.time_change.from ? s.time_change.time : s.time;
+}
+
+/* Where a family goes to sign up. A gated program is not sold on the site:
+   it is a team's own block, so the page asks the family to get in touch. */
+const signUpUrl = (program) => program.gated
+  ? `contact.html?about=${encodeURIComponent(program.slug)}`
+  : `register.html?program=${encodeURIComponent(program.slug)}`;
+
+function eventsFor(program, file) {
   const s = program.schedule || {};
   const combined = s.combined || null;
   const combinedDates = new Set((combined && combined.dates) || []);
   const facility = VENUES.facility || {};
   const other = VENUES[s.venue === "split" ? "superdome" : s.venue] || VENUES.superdome || {};
-  const offers = (program.options || []).map((o) => ({
+  const offers = openOptions(program).map((o) => ({
     "@type": "Offer",
     name: plain(o.label),
     price: String(o.price),
     priceCurrency: "USD",
-    availability: "https://schema.org/InStock",
-    url: `${ORIGIN}/register.html?program=${encodeURIComponent(program.slug)}`,
+    availability: program.full ? "https://schema.org/SoldOut" : "https://schema.org/InStock",
+    url: `${ORIGIN}/${program.full ? `contact.html?about=${encodeURIComponent(program.slug)}` : signUpUrl(program)}`,
   }));
 
-  const times = (s.groups && s.groups.length)
+  const times = (date) => (s.groups && s.groups.length)
     ? s.groups.map((g) => ({ label: g.label, time: g.time }))
-    : [{ label: null, time: s.time }];
+    : [{ label: null, time: timeOn(s, date) }];
 
   const out = [];
   for (const date of s.dates || []) {
     const isCombined = combinedDates.has(date);
-    const slots = isCombined ? [{ label: combined.label, time: combined.time }] : times;
+    const slots = isCombined ? [{ label: combined.label, time: combined.time }] : times(date);
     for (const slot of slots) {
       const range = parseRange(date, slot.time);
       if (!range) continue;
@@ -240,7 +413,7 @@ function eventsFor(program) {
           address: postalAddress(venue.address || facility.address || ""),
         },
         organizer: { "@id": FACILITY_ID },
-        url: `${ORIGIN}/program.html`,
+        url: `${ORIGIN}/${file}`,
         offers,
       });
     }
@@ -285,9 +458,8 @@ function nthSunday(year, month, n) {
   return new Date(Date.UTC(year, month, 1 + offset + (n - 1) * 7, 12));
 }
 
-/* The program page currently carries one program. Keyed by file so a second
-   program page only needs its slug adding. */
-const PROGRAM_PAGE = { "program.html": "infield-camp-2026-27" };
+/* Program pages, keyed by file. Filled in as the pages are generated. */
+const PROGRAM_PAGE = {};
 
 function structuredData(file) {
   const graph = [];
@@ -297,7 +469,7 @@ function structuredData(file) {
     const program = programs.programs.find((p) => p.slug === slug);
     if (program) {
       graph.push(facilityNode());
-      graph.push(...eventsFor(program));
+      graph.push(...eventsFor(program, file));
     }
   }
   if (!graph.length) return null;
@@ -315,7 +487,68 @@ function injectJsonLd(html, file) {
   return html.replace(/<\/head>/i, tag + "\n</head>");
 }
 
+/* --- Metadata, one source per page ----------------------------------------
+
+   A page's <title> and meta description are the only place its search and
+   share text is written. The og: and twitter: title and description are
+   copied from them here, so they cannot drift apart, and a page with no
+   share image gets the facility photo. Any count, price, date or age in a
+   description comes from the data the page renders (see the Metadata rule
+   in CLAUDE.md); verify.mjs checks it. */
+const DEFAULT_OG_IMAGE = `${PROD_ORIGIN}/assets/img/dbsa-01-facility-in-use.jpg`;
+function setMeta(html) {
+  const title = pick(html, /<title>([\s\S]*?)<\/title>/i);
+  const description = pick(html, /<meta name="description" content="([^"]*)"/i);
+  if (!title || !description) return html;
+  html = html.replace(/\n?<meta (?:property="og:(?:title|description)"|name="twitter:(?:title|description|image)") content="[^"]*">/gi, "");
+  const image = pick(html, /<meta property="og:image" content="([^"]*)"/i) || DEFAULT_OG_IMAGE;
+  const tags = [
+    `<meta property="og:title" content="${title}">`,
+    `<meta property="og:description" content="${description}">`,
+    ...(/property="og:image"/i.test(html) ? [] : [`<meta property="og:image" content="${image}">`]),
+    ...(/name="twitter:card"/i.test(html) ? [] : [`<meta name="twitter:card" content="summary_large_image">`]),
+    `<meta name="twitter:title" content="${title}">`,
+    `<meta name="twitter:description" content="${description}">`,
+    `<meta name="twitter:image" content="${image}">`
+  ];
+  /* A function, not a "$1" string: a price such as $165 in the text would
+     otherwise be read as a capture group. */
+  return html.replace(/(<meta name="description" content="[^"]*">)/i, (tag) => `${tag}\n${tags.join("\n")}`);
+}
+
+/* --- The "Full" switch -----------------------------------------------------
+
+   "full": true on a program in data/programs.json closes it by hand. On
+   every page, each register link for it becomes "Ask about openings" to
+   contact.html?about=<slug>, and each card that links to its page shows a
+   "Full" chip. The program page shows Full in its hero (heroBlock), and
+   the checkout refuses it (priceCart). Nothing to edit but the one line. */
+const FULL = programs.programs.filter((p) => p.full).map((p) => p.slug);
+function applyFull(html) {
+  for (const slug of FULL) {
+    const s = slug.replace(/[-]/g, "\\-");
+    html = html.replace(new RegExp(`<a([^>]*?)href="((?:\\.\\./)?)register\\.html\\?program=${s}(?:&[^"]*)?"([^>]*)>[\\s\\S]*?</a>`, "g"),
+      (_, pre, up, post) => `<a${pre}href="${up}contact.html?about=${slug}"${post}>Ask about openings</a>`);
+    html = html.replace(/<article\b[\s\S]*?<\/article>/g, (card) => card.includes(`programs/${slug}.html`)
+      ? card.replace(/<span class="chip[^"]*">[^<]*<\/span>/, '<span class="chip">Full</span>') : card);
+  }
+  return html;
+}
+
+/* The 404 page is served at whatever path was asked for, such as
+   /programs/nope.html, where the relative links every page uses would
+   point one folder too deep. So its links are made root-absolute.
+   A <base href="/"> would do it too, but would also send the skip link
+   (#main) to the homepage. */
+function rootRelative(html) {
+  return html.replace(/\b(href|src)="(?![a-z][a-z0-9+.-]*:|\/|#)([^"]*)"/gi,
+    (_, attr, url) => `${attr}="/${url.replace(/^\.\//, "")}"`);
+}
+
 function write(file, html) {
+  if (file === "404.html") html = rootRelative(html);
+  html = applyFull(html);
+  html = setMeta(html);
   html = setOrigin(html);
   html = setRobots(html, file);
   html = injectJsonLd(html, file);
@@ -335,7 +568,29 @@ function write(file, html) {
 console.log("Pages");
 let pages = 0;
 for (const file of readdirSync(PAGES).filter(f => f.endsWith(".html") && !f.startsWith("_"))) {
-  write(file, resolvePartials(readFileSync(join(PAGES, file), "utf8")));
+  /* {{about_topics}}: the Contact page's ?about= slugs and the topic each
+     preselects, from api/_lib/topics.js, the same map the endpoint checks. */
+  const html = resolvePartials(readFileSync(join(PAGES, file), "utf8"))
+    /* {{card_count}}: the Camps description counts the cards on the page,
+       so it cannot say four while the page shows seven. */
+    .replace(/\{\{card_count\}\}/g, (_, i, src) => ["No", "One", "Two", "Three", "Four", "Five", "Six", "Seven", "Eight",
+      "Nine", "Ten", "Eleven", "Twelve"][(src.match(/<article class="card[ "]/g) || []).length] || String((src.match(/<article class="card[ "]/g) || []).length))
+    .replaceAll("{{about_topics}}", JSON.stringify(ABOUT_TOPICS).replace(/<\//g, "<\\/"))
+    .replace(/\{\{price ([a-z0-9-]+) ([a-z0-9-]+)\}\}/g, (_, slug, id) => dataPrice(slug, id))
+    .replace(/\{\{superdome ([a-z0-9-]+)\}\}/g, (_, slug) => {
+      const line = superdomeLine(programs.programs.find((p) => p.slug === slug));
+      if (!line) throw new Error(`build: {{superdome ${slug}}} has no combined sessions in data/programs.json`);
+      return line;
+    })
+    /* An unlisted program keeps its category, not its name: register.js
+       takes the name from the program it loads. */
+    .replaceAll("{{ga_items}}", () => gaJson(Object.fromEntries(programs.programs
+      .filter((p) => p.status === "live").map((p) => [p.slug, UNLISTED.has(p.slug)
+        ? { item_category: gaCategory(p) }
+        : { item_name: `${p.name}, ${p.season}`, item_category: gaCategory(p) }]))))
+    .replaceAll("{{calendar_links}}", JSON.stringify(Object.fromEntries(programs.programs
+      .filter((p) => p.status === "live").map((p) => [p.slug, calendarLinks(p.slug)]))).replace(/<\//g, "<\\/"));
+  write(file, resolveImages(html, { origin: PROD_ORIGIN }));
   pages++;
 }
 
@@ -385,7 +640,9 @@ if (existsSync("legal.json") && existsSync(join(PAGES, "_legal.html"))) {
       const blocks = sec.blocks.map(b => {
         if (b.t === "p") return `\n        <p>${b.text}</p>`;
         if (b.t === "ul") return `\n        <ul>${b.items.map(i => `\n          <li>${i}</li>`).join("")}\n        </ul>`;
-        if (b.t === "note") return `\n        <aside class="draft-note">\n          <p class="meta">Needs legal review</p>\n          <p>${b.text}</p>\n        </aside>`;
+        /* Review notes in legal.json are not published. They are kept in
+           docs/launch-plan.md under "Open after launch". */
+        if (b.t === "note") return "";
         return "";
       }).join("");
       return `\n      <section id="${slug(sec.title)}">\n        <h2 class="heading-l"><span class="num">${sec.num}</span><span>${sec.title}</span></h2>${blocks}\n      </section>`;
@@ -404,6 +661,614 @@ if (existsSync("legal.json") && existsSync(join(PAGES, "_legal.html"))) {
     write(doc.file, html);
     legal++;
   }
+}
+
+/* --- Program pages -------------------------------------------------------
+
+   One static page per live program, gated team programs included, at
+   programs/<slug>.html, plus a calendar file beside it. Facts come from
+   data/programs.json and words from data/program-copy.json, and nothing
+   else: change either file and every page rebuilds, with no edit here.
+
+   A section with neither data nor approved copy is left out, never filled
+   in. Static rather than rendered in the browser, so each program can be
+   indexed at launch with its own title, description and events. */
+
+console.log("Programs");
+const COPY = existsSync(join("data", "program-copy.json"))
+  ? JSON.parse(readFileSync(join("data", "program-copy.json"), "utf8"))
+  : {};
+/* Every live program gets a page, gated ones included: a team program is
+   shown on the site, it just is not sold here. */
+const PUBLIC = programs.programs.filter((p) => p.status === "live");
+const MON = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+const MONTH = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+const DOW = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+const WORDS = ["Zero", "One", "Two", "Three", "Four", "Five", "Six", "Seven", "Eight", "Nine", "Ten",
+  "Eleven", "Twelve", "Thirteen", "Fourteen", "Fifteen", "Sixteen", "Seventeen", "Eighteen", "Nineteen", "Twenty"];
+const TENS = ["", "", "Twenty", "Thirty", "Forty", "Fifty", "Sixty", "Seventy", "Eighty", "Ninety"];
+const word = (n) => n <= 20 ? WORDS[n]
+  : n < 100 ? TENS[Math.floor(n / 10)] + (n % 10 ? "-" + WORDS[n % 10].toLowerCase() : "")
+  : String(n);
+const ymd = (iso) => { const [y, m, d] = iso.split("-").map(Number); return { y, m: m - 1, d }; };
+/* American order, from the data: "Nov 14, 2026". */
+const usDate = (iso) => { const { y, m, d } = ymd(iso); return `${MON[m]} ${d}, ${y}`; };
+const dow = (iso) => DOW[new Date(`${iso}T12:00:00Z`).getUTCDay()];
+const money = (n) => "$" + Number(n).toLocaleString("en-US");
+const typo = (s) => String(s).replace(/'/g, "&rsquo;");
+const compact = (t) => String(t).replace(/\s*-\s*/, "-");
+/* "6 to 12" in the data reads "Ages 6-12", the site's one range style;
+   "Grades 4 to 8 and high school" reads "Grades 4-8 and high school". */
+const agesLabel = (a) => {
+  const s = String(a).replace(/(\d+) to (\d+)/g, "$1-$2");
+  return /^\d/.test(s) ? `Ages ${s}` : s;
+};
+const fill = (s, vars) => String(s).replace(/\{(\w+)\}/g, (_, k) => (k in vars ? vars[k] : `{${k}}`));
+const today = new Date().toISOString().slice(0, 10);
+
+/* "18-01 Pollitt Drive, Fair Lawn, NJ 07410" to "Pollitt Drive, Fair Lawn". */
+const shortPlace = (address) => {
+  const parts = String(address).split(",").map((s) => s.trim());
+  return [parts[0].replace(/^[\d-]+\s+/, ""), parts[1]].filter(Boolean).join(", ");
+};
+
+/* The span a program day covers, earliest start to latest end. */
+function daySpan(s) {
+  if (!(s.groups && s.groups.length)) return s.time ? compact(s.time) : "";
+  const first = s.groups[0].time.split(/\s*-\s*/)[0];
+  const last = s.groups[s.groups.length - 1].time.split(/\s*-\s*/)[1];
+  return `${first}-${last}`;
+}
+
+/* The options a family can still buy, by the same rule the checkout uses
+   (api/_lib/programs.js): one with a session still to come. The page is
+   built at deploy time, so the checkout's own check is the one that holds
+   between deploys. */
+const easternToday = new Intl.DateTimeFormat("en-CA", { timeZone: "America/New_York" }).format(new Date());
+const openOptions = (p) => p.options.filter((o) =>
+  (o.dates || p.schedule.dates || []).some((d) => d >= easternToday));
+
+/* Words the copy can use in place of facts, from the schedule: how many
+   sessions, how many at each venue, which months the away sessions fall in,
+   the day and the times. */
+function factsFor(p) {
+  const s = p.schedule;
+  const away = (s.combined && s.combined.dates) || [];
+  const months = [...new Set(away.map((iso) => MONTH[ymd(iso).m]))];
+  const lower = (n) => word(n).toLowerCase();
+  return {
+    sessions: lower(s.dates.length),
+    home: lower(s.dates.length - away.length),
+    Home: word(s.dates.length - away.length),
+    away: lower(away.length),
+    away_months: months.length > 1 ? months.slice(0, -1).join(", ") + " and " + months.at(-1) : (months[0] || ""),
+    day: s.day.toLowerCase(),
+    Day: s.day,
+    home_time: compact(daySpan(s)),
+    away_time: s.combined ? compact(s.combined.time) : "",
+    home_count: s.dates.length - away.length,
+    away_count: away.length,
+    total: s.dates.length,
+  };
+}
+
+/* The search and share description of a program page, from its data only:
+   name, ages, sessions, first and last date, time and price. */
+function programDescription(p) {
+  const s = p.schedule;
+  const opts = openOptions(p).length ? openOptions(p) : p.options;
+  const prices = [...new Set(opts.map((o) => o.price))];
+  const min = Math.min(...opts.map((o) => o.price));
+  const d = s.dates || [];
+  const later = s.time_change ? `, ${compact(s.time_change.time)} from ${MON[ymd(s.time_change.from).m]} ${ymd(s.time_change.from).d}` : "";
+  const time = compact(s.groups && s.groups.length ? daySpan(s) : s.time) + later;
+  const when = d.length ? `, ${d.length} ${s.day}s from ${usDate(d[0])} to ${usDate(d[d.length - 1])}, ${time}` : "";
+  const text = `${typo(p.name)}, ${esc(p.season)}. ${esc(`${agesLabel(p.ages)}${when}. ${prices.length > 1 ? "From " : ""}${money(min)}.`)}`;
+  /* The place is left off where it would take the description past 160. */
+  return plain(text).length + 15 <= 160 ? `${text} Fair Lawn, NJ.` : text;
+}
+
+function heroBlock(p, c, f) {
+  const s = p.schedule;
+  const opts = openOptions(p).length ? openOptions(p) : p.options;
+  const prices = [...new Set(opts.map((o) => o.price))];
+  const min = Math.min(...opts.map((o) => o.price));
+  const instalments = Math.max(0, ...opts.map((o) => (o.schedule || []).length));
+  const from = money(min) + (instalments > 1 ? `, ${instalments}-payment plan` : "");
+  const ages = agesLabel(p.ages);
+  const sports = p.sport.map((x) => x[0].toUpperCase() + x.slice(1)).join(" &amp; ");
+  const dates = s.dates || [];
+  const img = c.image;
+  const flyer = p.flyer && existsSync(join("assets", "flyers", p.flyer))
+    ? `\n        <a class="btn btn--ghost" href="assets/flyers/${encodeURI(p.flyer)}" download>Download the flyer (PDF)</a>` : "";
+  const starts = p.full ? `\n        <p class="status status--full">Full</p>`
+    : dates.length && dates[0] > today ? `\n        <p class="status">Starts ${MON[ymd(dates[0]).m]} ${ymd(dates[0]).d}</p>` : "";
+  const cta = f.gated ? "Ask about joining"
+    : `${c.register_label || "Register"} &nbsp;·&nbsp; ${prices.length > 1 ? "from " : ""}${money(min)}`;
+  return `
+<!-- ===================================================================== -->
+<!-- Block 01 · Hero · required                                            -->
+<!-- ===================================================================== -->
+<section class="hero">
+  <div class="hero__media media media--16x9 media--note">
+    {{img ${img.slot} hero}}
+    <span class="media__label">${img.label}</span>
+  </div>
+
+  <div class="hero__inner">
+    <div class="hero__copy">
+      <nav class="crumbs" aria-label="Breadcrumb">
+        <a href="camps-and-clinics.html">Camps &amp; clinics</a>
+        <span aria-hidden="true">/</span>
+        <span aria-current="page">${c.crumb || typo(p.name)}</span>
+      </nav>
+
+      <p class="eyebrow eyebrow--on-dark">${sports} &nbsp;·&nbsp; ${esc(p.season)}</p>
+      <h1 class="display-xl">${c.title_html || typo(p.name)}</h1>
+      <p class="hero__lede body-l">
+        ${c.hero_sub || typo(p.summary)}
+      </p>
+
+      <dl class="prog-facts">
+        <div class="stat stat--label"><dt>Who</dt><dd>${esc(ages)}</dd></div>
+        <div class="stat stat--label"><dt>When</dt><dd>${dates.length} ${s.day}s, ${daySpan(s)}${s.time_change ? `, ${compact(s.time_change.time)} from ${MON[ymd(s.time_change.from).m]} ${ymd(s.time_change.from).d}` : ""}</dd></div>
+        <div class="stat stat--label"><dt>Runs</dt><dd>${usDate(dates[0])} to ${usDate(dates[dates.length - 1])}</dd></div>
+        <div class="stat stat--label"><dt>${opts.length > 1 ? "From" : "Price"}</dt><dd>${from}</dd></div>
+      </dl>
+
+      <div class="prog-actions">
+        <a class="btn btn--primary" href="${f.register}">${cta}</a>${flyer}${starts}
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Block 02 · Marquee · optional -->
+{{> marquee }}
+`;
+}
+
+function groupsBlock(p, c, f) {
+  const groups = p.schedule.groups || [];
+  if (groups.length < 2) return "";
+  const g = c.groups || {};
+  const cards = groups.map((grp) => {
+    const gc = (g.cards || {})[grp.id] || {};
+    const chip = gc.chip ? `\n          <span class="chip${gc.chip_class ? " " + gc.chip_class : ""}">${gc.chip}</span>` : "";
+    const body = gc.body ? `\n        <p>${gc.body}</p>` : "";
+    const cta = gc.cta || { label: f.gated ? "Ask about joining" : `Register for ${esc(grp.label.toLowerCase())}`, href: f.register };
+    return `
+      <article class="group">
+        <div class="group__head">
+          <h3 class="heading-m">${esc(grp.label)}</h3>${chip}
+        </div>
+        <p class="group__when">${p.schedule.day}s &nbsp;·&nbsp; ${esc(compact(grp.time))}</p>${body}
+        <a class="btn ${cta.class || "btn--primary"}" href="${cta.href}">${cta.label}</a>
+      </article>`;
+  }).join("\n");
+  const lede = g.lede ? `\n      <p class="sec-head__lede body-l">\n        ${fill(g.lede, factsFor(p))}\n      </p>` : "";
+  return `
+<!-- ===================================================================== -->
+<!-- Block 03 · Groups · optional, two or more groups only                 -->
+<!-- ===================================================================== -->
+<section class="band band--bone" aria-labelledby="groups-title">
+  <div class="container">
+    <div class="sec-head">
+      <p class="eyebrow">${g.eyebrow || word(groups.length) + " groups"}</p>
+      <h2 class="display-l" id="groups-title">${g.title || groups.map((x, i) => esc(i ? x.label.toLowerCase() : x.label)).join(" and ") + "."}</h2>${lede}
+    </div>
+
+    <div class="group-grid">${cards}
+    </div>
+  </div>
+</section>
+`;
+}
+
+function skillsBlock(p, c) {
+  const list = p.teaches || [];
+  if (!list.length) return "";
+  const k = c.skills || {};
+  const desc = k.descriptions || {};
+  const items = list.map((name, i) =>
+    `      <article class="skill"><p class="skill__n">${String(i + 1).padStart(2, "0")}</p><h3>${esc(name)}</h3>${desc[name] ? `<p>${desc[name]}</p>` : ""}</article>`
+  ).join("\n");
+  const eyebrow = k.eyebrow ? `\n      <p class="eyebrow">${k.eyebrow}</p>` : "";
+  /* Three across unless another count fills every row: ten skills are two
+     rows of five, eight are two rows of four, never a row with one. */
+  const cols = list.length % 3 === 0 ? 3 : [5, 4].find((n) => list.length % n === 0) || 3;
+  return `
+<!-- ===================================================================== -->
+<!-- Block 04 · What is taught · required                                  -->
+<!-- ===================================================================== -->
+<section class="band band--surface" aria-labelledby="taught-title">
+  <div class="container">
+    <div class="sec-head">${eyebrow}
+      <h2 class="display-l" id="taught-title">${word(list.length)} skills, drilled until they&rsquo;re automatic.</h2>
+    </div>
+
+    <div class="skills${cols === 3 ? "" : ` skills--${cols}`}">
+${items}
+    </div>
+  </div>
+</section>
+`;
+}
+
+function scheduleBlock(p, c, f) {
+  const s = p.schedule;
+  const away = new Set((s.combined && s.combined.dates) || []);
+  const months = [];
+  for (const iso of s.dates) {
+    const { y, m, d } = ymd(iso);
+    const key = `${MONTH[m]} ${y}`;
+    let row = months.find((r) => r.key === key);
+    if (!row) months.push(row = { key, days: [] });
+    row.days.push(`<span class="day${away.has(iso) ? " day--away" : ""}">${dow(iso)} ${d}</span>`);
+  }
+  const facility = VENUES.facility || {};
+  const other = VENUES.superdome || {};
+  const key = (s.groups && s.groups.length)
+    ? s.groups.map((g) => `      <li>${esc(g.label)} &nbsp;·&nbsp; ${compact(g.time)}</li>`)
+    : [`      <li>${esc(shortPlace(facility.address))} &nbsp;·&nbsp; ${compact(s.time)}${s.time_change ? `, then ${compact(s.time_change.time)} from ${usDate(s.time_change.from)}` : ""}</li>`];
+  if (s.combined) key.push(`      <li class="is-away">${esc(superdomeLine(p) || `${s.combined.label} · ${compact(s.combined.time)}`)}</li>`);
+  const lede = (c.schedule && c.schedule.lede)
+    ? `\n    <p class="sec-head__lede body-l schedule__lede">\n      ${fill(c.schedule.lede, factsFor(p))}\n    </p>` : "";
+  return `
+<!-- ===================================================================== -->
+<!-- Block 05 · Schedule · required                                        -->
+<!-- ===================================================================== -->
+<section class="band band--ink" aria-labelledby="schedule-title">
+  <div class="container">
+    <p class="eyebrow eyebrow--dim">Every date, up front</p>
+    <div class="schedule__head">
+      <h2 class="display-l on-dark" id="schedule-title">${word(s.dates.length)} ${s.day}s.</h2>
+      ${calendarControl(`cal-${p.slug}`, calendarLinks(p.slug), f.ics)}
+    </div>${lede}
+
+    <div class="months">
+${months.map((r) => `      <div class="month">
+        <p class="month__name">${r.key}</p>
+        <div class="month__days">${r.days.join("")}</div>
+      </div>`).join("\n")}
+    </div>
+
+    <ul class="schedule__key">
+${key.join("\n")}
+    </ul>
+  </div>
+</section>
+`;
+}
+
+function pricingBlock(p, c, f) {
+  const opts = openOptions(p);
+  const k = c.pricing || {};
+  /* One option shows a price band only when the copy writes one for it, as
+     the Infield Camp's does since its two-payment plan was removed. */
+  if (opts.length < 2 && !(opts.length === 1 && k.plans && k.plans[opts[0].id])) return "";
+  const plans = k.plans || {};
+  const min = Math.min(...opts.map((o) => o.price));
+  const vars = { price: money(min), per_session: money(Math.round(min / p.schedule.dates.length)) };
+  const reg = (plan) => f.register + (plan && !f.gated ? `&amp;plan=${plan}` : "");
+  let body;
+  if (opts.length <= 2) {
+    body = `    <div class="plans${opts.length === 1 ? " plans--one" : ""}">` + opts.map((o) => {
+      const pc = plans[o.id] || {};
+      const sched = o.schedule && o.schedule.length > 1 ? o.schedule : null;
+      const amount = sched ? money(sched[0].amount) : money(o.price);
+      const note = sched
+        ? "now, " + sched.slice(1).map((x) => `then ${money(x.amount)} on ${usDate(x.when)}`).join(", ")
+        : (pc.note || "");
+      return `
+      <article class="plan">
+        <p class="plan__label">${pc.label || esc(o.label)}</p>
+        <div class="plan__amount">
+          <strong>${amount}</strong>${note ? `\n          <span>${note}</span>` : ""}
+        </div>${pc.body ? `\n        <p>${pc.body}</p>` : ""}
+        <a class="btn btn--primary" href="${reg(pc.plan)}">${f.gated ? "Ask about joining" : pc.cta || "Register"}</a>
+      </article>`;
+    }).join("\n") + `\n    </div>`;
+  } else {
+    /* More than two options reads as a price list, not a row of cards. */
+    body = `    <div class="plans">
+      <article class="plan plan--list">
+        <div class="rate-group">
+${opts.map((o) => `          <div class="rate-row">
+            <div class="rate-row__label"><span class="body-m">${esc(o.label)}</span></div>
+            <span class="rate-row__price">${money(o.price)}</span>
+          </div>`).join("\n")}
+        </div>
+        <a class="btn btn--primary" href="${f.register}">${f.gated ? "Ask about joining" : "Register"}</a>
+      </article>
+    </div>`;
+  }
+  const lede = k.lede ? `\n      <p class="sec-head__lede body-l">\n        ${fill(k.lede, vars)}\n      </p>` : "";
+  const included = (k.included || []).length
+    ? `\n\n    <ul class="included">\n${k.included.map((x) => `      <li>${x}</li>`).join("\n")}\n    </ul>` : "";
+  const note = k.note_html ? `\n\n    ${k.note_html}` : "";
+  return `
+<!-- ===================================================================== -->
+<!-- Block 06 · Pricing · optional, plans or packages only                 -->
+<!-- ===================================================================== -->
+<section class="band band--bone" aria-labelledby="price-title">
+  <div class="container">
+    <div class="sec-head">
+      <p class="eyebrow">${opts.length === 1 ? "One price" : `${word(opts.length)} ways to pay`}</p>
+      <h2 class="display-l" id="price-title">${k.title ? fill(k.title, vars) : `From ${money(min)}.`}</h2>${lede}
+    </div>
+
+${body}${included}${note}
+  </div>
+</section>
+`;
+}
+
+function instructorBlock(c) {
+  const k = c.instructor;
+  if (!k) return "";
+  return `
+<!-- ===================================================================== -->
+<!-- Block 07 · Instructor · copy only                                     -->
+<!-- ===================================================================== -->
+<section class="band band--surface" aria-labelledby="who-teaches-title">
+  <div class="container instructor-split">
+    <div class="media media--4x5">
+      {{img ${k.image.slot}}}
+      <span class="media__label">${k.image.label}</span>
+    </div>
+
+    <div class="lou__copy">
+      <p class="eyebrow">${k.eyebrow}</p>
+      <h2 class="display-l" id="who-teaches-title">${k.name}</h2>
+      <p class="body-l">
+        ${k.body}
+      </p>
+
+      <dl class="lou__credits">
+${k.credits.map(([y, t]) => `        <div class="lou__credit"><dt>${y}</dt><dd>${t}</dd></div>`).join("\n")}
+      </dl>
+${k.quote ? `
+      <figure class="pull-quote">
+        <blockquote>${k.quote.text}</blockquote>
+        <cite>${k.quote.cite}</cite>
+      </figure>
+` : ""}
+      <p class="chip-row__action">
+        <a class="arrow-link" href="instructors.html"><span>Meet all the instructors</span><span aria-hidden="true">&rarr;</span></a>
+      </p>
+    </div>
+  </div>
+</section>
+`;
+}
+
+function venuesBlock(p, c) {
+  const s = p.schedule;
+  const k = c.venues;
+  if (s.venue !== "split" || !k) return "";
+  const facts = factsFor(p);
+  const card = (id) => {
+    const v = VENUES[id] || {};
+    const vc = (k.cards || {})[id] || {};
+    const n = id === "facility" ? facts.home_count : facts.away_count;
+    const parts = String(v.address).split(",").map((x) => x.trim());
+    const q = encodeURIComponent(v.address).replace(/%20/g, "+").replace(/%2C/g, "");
+    return `
+      <article class="venue">
+        <div class="media media--16x9">
+          {{img ${vc.map.slot}}}
+          <span class="media__label">${vc.map.label}</span>
+        </div>
+        <div class="venue__body">
+          <div class="venue__head">
+            <h3 class="heading-m">${vc.title || esc(v.name)}</h3>
+            <span class="venue__count">${n} of ${facts.total} sessions</span>
+          </div>
+          <address>${esc(parts[0])}<br>${esc(parts.slice(1).join(", ").replace(/, (\d{5})$/, " $1"))}</address>${vc.when ? `\n          <p class="venue__when">${fill(vc.when, facts)}</p>` : ""}
+          <a class="btn btn--outline btn--compact" href="https://maps.google.com/?q=${q}" rel="noopener">Get directions</a>
+        </div>
+      </article>`;
+  };
+  return `
+<!-- ===================================================================== -->
+<!-- Block 08 · Location · optional, two or more venues only               -->
+<!-- ===================================================================== -->
+<section class="band band--bone" aria-labelledby="where-title">
+  <div class="container">
+    <div class="sec-head">
+      <p class="eyebrow">${k.eyebrow}</p>
+      <h2 class="heading-xl" id="where-title">${k.title}</h2>
+    </div>
+
+    <div class="venues">${card("facility")}
+${card("superdome")}
+    </div>
+  </div>
+</section>
+`;
+}
+
+function faqBlock(c) {
+  if (!(c.faq && c.faq.length)) return "";
+  return `
+<!-- ===================================================================== -->
+<!-- Block 09 · FAQ · optional                                             -->
+<!-- ===================================================================== -->
+<section class="band band--surface" aria-labelledby="faq-title">
+  <div class="container">
+    <div class="sec-head">
+      <p class="eyebrow">Before you ask</p>
+      <h2 class="heading-xl" id="faq-title">Questions parents ask.</h2>
+    </div>
+
+    <div class="faq">
+${c.faq.map(([q, a]) => `      <details>
+        <summary>${q}</summary>
+        <p>${a}</p>
+      </details>`).join("\n")}
+    </div>
+  </div>
+</section>
+`;
+}
+
+function registerBlock(p, c, f) {
+  const k = c.register_band || {};
+  const opts = openOptions(p).length ? openOptions(p) : p.options;
+  const prices = [...new Set(opts.map((o) => o.price))];
+  const min = Math.min(...opts.map((o) => o.price));
+  const cta = (!f.gated && k.cta) || { label: f.gated ? "Ask about joining" : `Register &nbsp;·&nbsp; ${prices.length > 1 ? "from " : ""}${money(min)}`, href: f.register };
+  return `
+<!-- ===================================================================== -->
+<!-- Block 10 · Register band · required                                   -->
+<!-- ===================================================================== -->
+<section class="band band--red" aria-labelledby="prog-register-title">
+  <div class="register__inner">
+    <div class="register__copy">
+      <h2 class="display-l" id="prog-register-title">${k.title_html || `${typo(p.name)},<br>${esc(p.season)}.`}</h2>${k.body ? `
+      <p class="body-m">
+        ${k.body}
+      </p>` : ""}
+    </div>
+    <div class="register__actions">
+      <a class="btn btn--secondary" href="${cta.href}">${cta.label}</a>
+    </div>
+  </div>
+</section>
+`;
+}
+
+/* The calendar file. One event per session date: a family is in one group,
+   so a day with two groups is one event spanning both, with each group's
+   time in the description. Combined dates take that time and that venue.
+   Times are written in UTC from the Eastern offset of each date. */
+function icsFor(p) {
+  const s = p.schedule;
+  const away = new Set((s.combined && s.combined.dates) || []);
+  const facility = VENUES.facility || {};
+  const other = VENUES.superdome || {};
+  const text = (x) => String(x).replace(/\\/g, "\\\\").replace(/;/g, "\\;").replace(/,/g, "\\,").replace(/\n/g, "\\n");
+  const page = `${CALENDAR_ORIGIN}/programs/${p.slug}.html`;
+  const utc = (local) => new Date(local).toISOString().replace(/[-:]/g, "").replace(/\.\d{3}/, "");
+  /* The build day, not the build second, so a rebuild on the same day
+     writes the same file. */
+  const stamp = today.replace(/-/g, "") + "T000000Z";
+  const lines = ["BEGIN:VCALENDAR", "VERSION:2.0", "PRODID:-//DiChiaro Baseball & Softball Academy//Program calendar//EN",
+    "CALSCALE:GREGORIAN", "METHOD:PUBLISH", `X-WR-CALNAME:${text(`${plain(p.name)}, ${p.season}`)}`];
+  for (const date of s.dates) {
+    const combined = away.has(date);
+    const time = combined ? s.combined.time
+      : (s.groups && s.groups.length ? daySpan(s).replace("-", " - ") : timeOn(s, date));
+    const range = parseRange(date, time);
+    if (!range) continue;
+    const venue = combined ? other : facility;
+    const when = combined
+      ? `${s.combined.label}: ${compact(s.combined.time)}`
+      : (s.groups && s.groups.length ? s.groups.map((g) => `${g.label}: ${compact(g.time)}`).join(". ") : compact(timeOn(s, date)));
+    const detail = `${when}. ${venue.name}, ${venue.address}. Dates and details: ${page}`;
+    lines.push("BEGIN:VEVENT", `UID:${p.slug}-${date}@dichiarobaseball.com`, `DTSTAMP:${stamp}`,
+      `DTSTART:${utc(range.start)}`, `DTEND:${utc(range.end)}`,
+      `SUMMARY:${text(plain(p.name))}`,
+      `LOCATION:${text(`${venue.name}, ${venue.address}`)}`);
+    lines.push(`DESCRIPTION:${text(detail)}`, `URL:${page}`);
+    lines.push("END:VEVENT");
+  }
+  lines.push("END:VCALENDAR");
+  /* Lines longer than 75 octets are folded, as the format requires. */
+  const fold = (line) => {
+    const out = [];
+    let rest = Buffer.from(line, "utf8");
+    let limit = 75;
+    while (rest.length > limit) {
+      let cut = limit;
+      while (cut > 0 && (rest[cut] & 0xc0) === 0x80) cut--;
+      out.push(rest.subarray(0, cut).toString("utf8"));
+      rest = rest.subarray(cut);
+      limit = 74;
+    }
+    out.push(rest.toString("utf8"));
+    return out.join("\r\n ");
+  };
+  return lines.map(fold).join("\r\n") + "\r\n";
+}
+
+const PROGRAM_DIR = "programs";
+
+/* Pages in programs/ sit one folder down, and every link in the partials
+   and the template is relative to the root. Rewritten once, here, so the
+   partials stay as they are. */
+const upOne = (html) => html.replace(
+  /(\s(?:href|src)=")(?!https?:|\/\/|#|mailto:|tel:|data:|\/|\.\.\/)([^"]+)"/g,
+  (_, a, url) => {
+    if (url.startsWith(PROGRAM_DIR + "/")) return `${a}${url.slice(PROGRAM_DIR.length + 1)}"`;
+    if (url === "./") return `${a}../"`;
+    return `${a}../${url}"`;
+  }
+);
+
+if (PUBLIC.length && existsSync(join(PAGES, "_program.html"))) {
+  mkdirSync(PROGRAM_DIR, { recursive: true });
+  const template = readFileSync(join(PAGES, "_program.html"), "utf8");
+  for (const p of PUBLIC) {
+    const c = COPY[p.slug] || {};
+    const file = `${PROGRAM_DIR}/${p.slug}.html`;
+    const f = { register: signUpUrl(p).replace(/&/g, "&amp;"), gated: !!p.gated, ics: `${PROGRAM_DIR}/${p.slug}.ics` };
+    if (!c.image || !c.image.slot) throw new Error(`build: ${p.slug} has no hero image slot in data/program-copy.json`);
+    const blocks = [heroBlock(p, c, f), groupsBlock(p, c, f), skillsBlock(p, c), scheduleBlock(p, c, f),
+      pricingBlock(p, c, f), instructorBlock(c), venuesBlock(p, c), faqBlock(c), registerBlock(p, c, f)].join("");
+    const name = typo(p.name);
+    const html = resolvePartials(template
+      .replace("{{blocks}}", () => blocks)
+      /* The short brand, as the social links say it: a program title with
+         the full academy name runs 66 to 90 characters and is cut off in
+         search results before the brand is read. */
+      .replaceAll("{{title}}", () => `${name}, ${esc(p.season)} · DiChiaro Academy`)
+      .replaceAll("{{description}}", () => programDescription(p))
+      .replaceAll("{{og_image}}", () => imageUrl(c.image.slot, PROD_ORIGIN))
+      .replaceAll("{{ga_item}}", () => gaJson(gaItem(p)))
+      .replaceAll("{{file}}", () => file));
+    PROGRAM_PAGE[file] = p.slug;
+    write(file, upOne(resolveImages(html, { origin: PROD_ORIGIN, prefix: "../" })));
+    writeFileSync(f.ics, icsFor(p));
+    console.log("  built", f.ics);
+  }
+
+  /* program.html was the one fixed program page and every old link points
+     at it, as program.html?p=<old slug>. It now forwards to the program's
+     own page, and anything it does not know goes to the camps page. */
+  const LEGACY = {
+    "little-league-training-camp": "little-league-fall-2026",
+    "spring-little-league": "little-league-march-2027",
+    "infield-camp": "infield-camp-2026-27",
+    "monday-hit-night": "hit-night-fall-2026",
+  };
+  const map = Object.fromEntries([
+    ...Object.entries(LEGACY).filter(([, to]) => PUBLIC.some((p) => p.slug === to)),
+    ...PUBLIC.filter((p) => !UNLISTED.has(p.slug)).map((p) => [p.slug, p.slug]),
+  ]);
+  write("program.html", `<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Finding your program · DiChiaro Baseball &amp; Softball Academy</title>
+<meta name="description" content="This old program link now forwards to the program&rsquo;s own page at DiChiaro Baseball &amp; Softball Academy, or to the full list of camps and clinics.">
+<link rel="canonical" href="https://dichiarobaseball.com/camps-and-clinics.html">
+<script>
+  (function () {
+    var map = ${JSON.stringify(map)};
+    var p = new URLSearchParams(window.location.search).get("p");
+    window.location.replace(map[p] ? "${PROGRAM_DIR}/" + map[p] + ".html" : "camps-and-clinics.html");
+  })();
+</script>
+<noscript><meta http-equiv="refresh" content="0; url=camps-and-clinics.html"></noscript>
+</head>
+<body>
+<p><a href="camps-and-clinics.html">See camps and clinics</a></p>
+</body>
+</html>
+`);
 }
 
 /* --- robots.txt, sitemap.xml, llms.txt -----------------------------------
@@ -441,8 +1306,8 @@ writeFileSync("llms.txt", [
   "",
   "> Year-round indoor baseball and softball instruction in Fair Lawn, New",
   "> Jersey. Lou DiChiaro has taught Bergen County players for twenty-five",
-  "> years. Hitting, fielding and pitching for ages six to eighteen, in a",
-  "> 5,500 sq ft facility built for it.",
+  "> years. Hitting, fielding and pitching for ages 6 and up, in a",
+  "> 6,500 sq ft facility built for it.",
   "",
   `Address: ${(VENUES.facility && VENUES.facility.address) || ""}`,
   `Phone: ${PHONE}`,
@@ -454,16 +1319,17 @@ writeFileSync("llms.txt", [
   "",
   "## Programs",
   "",
-  /* Open programs only. A gated program is not listed on any page of the
+  /* Open, listed programs only. An unlisted one is left out with the rest
+     of the site (see UNLISTED). A gated program is not listed on any page of the
      site, so listing it here would publish, to the crawlers this file
      exists for, exactly what the gate is there to withhold. Read from the
      data rather than by name, because which programs are gated is still
      provisional. */
-  ...programs.programs.filter((p) => !p.gated).map((p) => {
+  ...LISTED.filter((p) => !p.gated).map((p) => {
     const when = (p.schedule && p.schedule.dates && p.schedule.dates.length)
       ? `${p.schedule.dates[0]} to ${p.schedule.dates[p.schedule.dates.length - 1]}, ${p.schedule.day || ""}`.trim()
       : "dates to confirm";
-    return `- ${p.name}, ${p.season}. Ages ${p.ages}. ${when}.`;
+    return `- ${p.name}, ${p.season}. ${agesLabel(p.ages)}. ${when}.`;
   }),
   "",
   "## Notes",

@@ -6,33 +6,44 @@
 <meta name="theme-color" content="#17120F">
 
 <link rel="icon" href="assets/img/mark.svg" type="image/svg+xml">
-<link rel="icon" href="assets/img/favicon.png" sizes="any">
-<link rel="apple-touch-icon" href="assets/img/favicon.png">
+<link rel="icon" href="assets/img/apple-touch-icon.png" type="image/png" sizes="180x180">
+<link rel="apple-touch-icon" href="assets/img/apple-touch-icon.png">
 
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;600;700;900&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<!-- Fonts are self-hosted (assets/fonts, declared in assets/css/fonts.css).
+     The two latin files carry every weight used above the fold. -->
+<link rel="preload" href="assets/fonts/archivo-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="assets/fonts/jetbrains-mono-latin.woff2" as="font" type="font/woff2" crossorigin>
 
-<link rel="stylesheet" href="assets/css/tokens.css">
-<link rel="stylesheet" href="assets/css/base.css">
-<link rel="stylesheet" href="assets/css/components.css">
-<link rel="stylesheet" href="assets/css/home.css">
-<link rel="stylesheet" href="assets/css/camps.css">
-<link rel="stylesheet" href="assets/css/pages.css">
-<link rel="stylesheet" href="assets/css/register.css">
-<link rel="stylesheet" href="assets/css/instructors.css">
-<link rel="stylesheet" href="assets/css/legal.css">
-<link rel="stylesheet" href="assets/css/program.css">
+<!-- One stylesheet, built by build.mjs from the files in assets/css/. -->
+<link rel="stylesheet" href="assets/css/site.min.css?v=8ee950e5">
+
+<!-- Analytics. Vercel Web Analytics: no cookies, so no consent banner. It
+     records nothing until it is enabled in the Vercel dashboard (project,
+     Analytics, Enable); until then the script below answers 404 and the
+     page is unaffected. -->
+<script>window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };</script>
+<script defer src="/_vercel/insights/script.js"></script>
+
+<!-- GOOGLE ANALYTICS SLOT. build.mjs writes the GA4 tag here when the
+     GA4_MEASUREMENT_ID variable is set, and nothing when it is not. Google
+     signals and ad personalisation are off; previews and local builds add
+     debug_mode so their traffic stays out of real reports. Events go through
+     window.dbsaTrack in site.js. The privacy policy's cookies section says so. -->
+
 
 <title>About · DiChiaro Baseball &amp; Softball Academy</title>
 <meta name="description" content="Lou DiChiaro has been teaching hitting and fielding since 2000. The academy he built in Fair Lawn runs seven days a week, year round.">
+<meta property="og:title" content="About · DiChiaro Baseball &amp; Softball Academy">
+<meta property="og:description" content="Lou DiChiaro has been teaching hitting and fielding since 2000. The academy he built in Fair Lawn runs seven days a week, year round.">
+<meta name="twitter:title" content="About · DiChiaro Baseball &amp; Softball Academy">
+<meta name="twitter:description" content="Lou DiChiaro has been teaching hitting and fielding since 2000. The academy he built in Fair Lawn runs seven days a week, year round.">
+<meta name="twitter:image" content="https://dichiarobaseball.com/assets/img/gen/dbsa-34-hitting-clinic-talk-1280-3dffb927.jpg">
 <link rel="canonical" href="https://dichiarobaseball.com/about.html">
 <meta property="og:type" content="website">
-<meta property="og:title" content="About · DiChiaro Baseball &amp; Softball Academy">
-<meta property="og:description" content="Small groups, real reps, and coaches who have already been where the player is trying to go.">
 <meta property="og:url" content="https://dichiarobaseball.com/about.html">
-<meta property="og:image" content="https://dichiarobaseball.com/assets/img/dbsa-01-facility-in-use.jpg">
+<meta property="og:image" content="https://dichiarobaseball.com/assets/img/gen/dbsa-34-hitting-clinic-talk-1280-3dffb927.jpg">
 <meta name="twitter:card" content="summary_large_image">
+<link rel="preload" as="image" type="image/webp" imagesrcset="assets/img/gen/dbsa-34-hitting-clinic-talk-480-3dffb927.webp 480w, assets/img/gen/dbsa-34-hitting-clinic-talk-800-3dffb927.webp 800w, assets/img/gen/dbsa-34-hitting-clinic-talk-1280-3dffb927.webp 1280w" imagesizes="(min-width: 1344px) 1280px, calc(100vw - 40px)" fetchpriority="high">
 
 <meta name="robots" content="noindex, nofollow">
 </head>
@@ -42,8 +53,8 @@
 
 <header class="site-header">
   <p class="announce">
-    Fall little league camp starts Oct 25 &nbsp;·&nbsp; 8 sessions &nbsp;·&nbsp;
-    <a href="register.html">Register now</a>
+    Little League camp starts Sunday, Oct 25. &nbsp;·&nbsp;
+    <a href="register.html?program=little-league-fall-2026">Register</a>
   </p>
 
   <nav class="nav" aria-label="Main">
@@ -53,9 +64,9 @@
     </a>
 
     <ul class="nav__links">
-      <li><a class="nav__link" href="camps-and-clinics.html">Camps &amp; Clinics</a></li>
+      <li><a class="nav__link" href="camps-and-clinics.html">Camps</a></li>
       <li><a class="nav__link" href="lessons.html">Lessons</a></li>
-      <li><a class="nav__link" href="facility-and-rentals.html">Facility &amp; Rentals</a></li>
+      <li><a class="nav__link" href="facility-and-rentals.html">Rentals</a></li>
       <li><a class="nav__link" href="instructors.html">Instructors</a></li>
       <li><a class="nav__link" href="about.html" aria-current="page">About</a></li>
     </ul>
@@ -80,7 +91,7 @@
       </li>
     </ul>
 
-    <a class="btn btn--primary btn--compact nav__cta" href="register.html">Register</a>
+    <a class="btn btn--primary btn--compact nav__cta" href="camps-and-clinics.html">Open camps</a>
 
     <button class="nav__toggle" type="button" data-menu-open
             aria-expanded="false" aria-controls="mobile-menu">
@@ -101,16 +112,17 @@
   </div>
 
   <ul class="menu__list">
-    <li><a href="camps-and-clinics.html">Camps &amp; Clinics</a></li>
+    <li><a href="camps-and-clinics.html">Camps</a></li>
     <li><a href="lessons.html">Lessons</a></li>
-    <li><a href="facility-and-rentals.html">Facility &amp; Rentals</a></li>
+    <li><a href="facility-and-rentals.html">Rentals</a></li>
     <li><a href="instructors.html">Instructors</a></li>
     <li><a href="about.html">About</a></li>
     <li><a href="contact.html">Contact</a></li>
   </ul>
 
   <div class="menu__foot">
-    <a class="btn btn--primary btn--block" href="register.html">Register</a>
+    <a class="btn btn--primary btn--block" href="camps-and-clinics.html">Open camps</a>
+    <a class="btn btn--ghost btn--block" href="tel:+12017736858">Call (201) 773-6858</a>
     <ul class="nav__social nav__social--menu">
       <li>
         <a href="https://www.instagram.com/dichiaroacademy" rel="noopener" aria-label="DiChiaro Academy on Instagram">
@@ -146,16 +158,14 @@
   <div class="hero-light__inner">
     <div class="hero-light__copy">
       <p class="eyebrow">Our story</p>
-      <h1 class="display-l">Lou DiChiaro has been teaching hitting and fielding since 2000.</h1>
+      <h1 class="display-l">Every player leaves better than they came in.</h1>
       <p class="hero-light__lede body-l">
-        The academy he built in Fair Lawn runs seven days a week, year round, on one idea:
-        small groups, real reps, and coaches who have already been where the player is
-        trying to go.
+        That has been the goal since Lou started teaching in 2000. Enjoying the work is the other half.
       </p>
     </div>
 
     <div class="media media--3x1">
-      <img src="assets/img/dbsa-01-facility-in-use.jpg" alt="The full academy room from the back corner with the nets up and players working" width="2400" height="1600" fetchpriority="high">
+      <picture><source type="image/webp" srcset="assets/img/gen/dbsa-34-hitting-clinic-talk-480-3dffb927.webp 480w, assets/img/gen/dbsa-34-hitting-clinic-talk-800-3dffb927.webp 800w, assets/img/gen/dbsa-34-hitting-clinic-talk-1280-3dffb927.webp 1280w" sizes="(min-width: 1344px) 1280px, calc(100vw - 40px)"><img src="assets/img/gen/dbsa-34-hitting-clinic-talk-1280-3dffb927.jpg" srcset="assets/img/gen/dbsa-34-hitting-clinic-talk-480-3dffb927.jpg 480w, assets/img/gen/dbsa-34-hitting-clinic-talk-800-3dffb927.jpg 800w, assets/img/gen/dbsa-34-hitting-clinic-talk-1280-3dffb927.jpg 1280w" sizes="(min-width: 1344px) 1280px, calc(100vw - 40px)" alt="Lou talking a large group of hitters through the session" width="1448" height="1086" fetchpriority="high" data-slot="40" style="--focal: 50% 30%;"></picture>
       <span class="media__label">dbsa-01 · The full room from the back corner. Nets up, cages lit, players working</span>
     </div>
   </div>
@@ -173,25 +183,16 @@
 
     <div class="prose">
       <p>
-        Lou DiChiaro played four years at Seton Hall, spent a summer in the Cape Cod
-        League, and was drafted by the Baltimore Orioles in 1983. He started teaching in
-        2000, and he has been at it every season since. <a href="lous-journey.html">His full
-        journey is here</a>.
+        Lou played four years at Seton Hall, hit .321 in the Cape Cod League and was
+        drafted by the Orioles in 1983. He started teaching in 2000 and hasn&rsquo;t stopped.
       </p>
       <p>
-        The academy grew out of that work. It is a 5,500 square foot room in Fair Lawn
-        with cages, turf and HitTrax, and a staff who all played at college or
-        professional level. Nobody here is reading a drill out of a binder.
+        The academy is 6,500 square feet in Fair Lawn, staffed by coaches who played in
+        high school, college and the pros. Groups stay small, so every player gets the reps
+        and the coach sees every swing.
       </p>
       <p>
-        More than two thousand athletes have trained here, from eight-year-olds learning
-        to hold a bat properly to high school players chasing a college roster spot. The
-        camps and clinics are capped on purpose. Small groups mean more swings, more
-        ground balls, and a coach who can actually see what a player is doing wrong.
-      </p>
-      <p>
-        The goal has not changed. Every player leaves better than they came in, and every
-        player enjoys the work. That is the whole business.
+        <a class="arrow-link" href="lous-journey.html"><span>Read Lou&rsquo;s story</span><span aria-hidden="true">&rarr;</span></a>
       </p>
 
       <figure class="pull-quote">
@@ -207,11 +208,10 @@
 <!-- ===================================================================== -->
 <section class="band band--surface" aria-label="The academy in numbers">
   <div class="container">
-    <dl class="numbers stat-strip">
+    <dl class="stat-strip">
       <div class="stat"><dt>15+</dt><dd>Years of the academy</dd></div>
       <div class="stat"><dt>2,000+</dt><dd>Athletes trained</dd></div>
-      <div class="stat"><dt>7</dt><dd>Instructors on staff</dd></div>
-      <div class="stat"><dt>5,500</dt><dd>Square feet, indoors</dd></div>
+      <div class="stat"><dt>6,500</dt><dd>Square feet, indoors</dd></div>
       <div class="stat"><dt>365</dt><dd>Days a year</dd></div>
     </dl>
   </div>
@@ -224,29 +224,29 @@
   <div class="container">
     <div class="sec-head">
       <p class="eyebrow eyebrow--dim">How we teach</p>
-      <h2 class="display-l on-dark" id="teach-title">Four things we will not compromise on.</h2>
+      <h2 class="display-l on-dark" id="teach-title">Four things we don&rsquo;t compromise on.</h2>
     </div>
 
     <div class="principles">
       <article class="principle">
         <p class="principle__n">01</p>
         <h3>Small groups, real reps</h3>
-        <p>Camps and clinics are capped on purpose. More swings, more ground balls, and a coach who can see what one player is doing wrong.</p>
+        <p>More reps per player, and a coach who sees every one.</p>
       </article>
       <article class="principle">
         <p class="principle__n">02</p>
         <h3>Taught by people who played</h3>
-        <p>Every instructor played at college or professional level. Three were drafted by major league clubs.</p>
+        <p>College and pro experience, including three Major League draft picks.</p>
       </article>
       <article class="principle">
         <p class="principle__n">03</p>
         <h3>Measured, not guessed</h3>
-        <p>HitTrax gives exit velocity, launch angle and spray charts. Progress is a number a player can see, not an opinion they have to take on faith.</p>
+        <p>HitTrax turns progress into a number a player can see.</p>
       </article>
       <article class="principle">
         <p class="principle__n">04</p>
-        <h3>A positive experience first</h3>
-        <p>Players who enjoy the work keep showing up. Confidence and discipline come from the same place, and both take time.</p>
+        <h3>Fun is part of it</h3>
+        <p>Players who enjoy the work keep showing up, and keep getting better.</p>
       </article>
     </div>
   </div>
@@ -260,10 +260,9 @@
     <div class="intro-split">
       <div class="sec-head">
         <p class="eyebrow">The facility</p>
-        <h2 class="heading-xl" id="facility-title">5,500 square feet, and the weather never matters.</h2>
+        <h2 class="heading-xl" id="facility-title">6,500 square feet, and the weather never matters.</h2>
         <p class="sec-head__lede body-m">
-          The academy sits on Pollitt Drive in Fair Lawn, ten minutes from Route 208 and
-          Route 4. It is open year round, so a January lesson looks exactly like a June one.
+          On Pollitt Drive in Fair Lawn, ten minutes from Routes 208 and 4.
         </p>
       </div>
 
@@ -281,15 +280,15 @@
 
     <div class="gallery">
       <div class="media media--16x9">
-        <img src="assets/img/dbsa-03-hitting-cage.jpg" alt="A batting cage down the line with the ball in flight" width="2400" height="1600" loading="lazy">
+        <picture><source type="image/webp" srcset="assets/img/gen/dbsa-30-cage-hitter-wide-480-362b2e49.webp 480w, assets/img/gen/dbsa-30-cage-hitter-wide-800-362b2e49.webp 800w, assets/img/gen/dbsa-30-cage-hitter-wide-1280-362b2e49.webp 1280w" sizes="(min-width: 1344px) 412px, (min-width: 768px) 31vw, 100vw"><img src="assets/img/gen/dbsa-30-cage-hitter-wide-1280-362b2e49.jpg" srcset="assets/img/gen/dbsa-30-cage-hitter-wide-480-362b2e49.jpg 480w, assets/img/gen/dbsa-30-cage-hitter-wide-800-362b2e49.jpg 800w, assets/img/gen/dbsa-30-cage-hitter-wide-1280-362b2e49.jpg 1280w" sizes="(min-width: 1344px) 412px, (min-width: 768px) 31vw, 100vw" alt="A hitter mid swing in a long cage, players waiting their turn" width="1448" height="1086" loading="lazy" decoding="async" data-slot="41" style="--focal: 35% 65%;"></picture>
         <span class="media__label">dbsa-03 · Down the line, ball in flight</span>
       </div>
       <div class="media media--16x9">
-        <img src="assets/img/dbsa-04-fielding-turf.jpg" alt="A ground ball rep on the turf with a coach hitting fungo" width="2400" height="1600" loading="lazy">
+        <picture><source type="image/webp" srcset="assets/img/gen/dbsa-33-superdome-fielding-480-31b6c797.webp 480w, assets/img/gen/dbsa-33-superdome-fielding-800-31b6c797.webp 800w, assets/img/gen/dbsa-33-superdome-fielding-1280-31b6c797.webp 1280w" sizes="(min-width: 1344px) 412px, (min-width: 768px) 31vw, 100vw"><img src="assets/img/gen/dbsa-33-superdome-fielding-1280-31b6c797.jpg" srcset="assets/img/gen/dbsa-33-superdome-fielding-480-31b6c797.jpg 480w, assets/img/gen/dbsa-33-superdome-fielding-800-31b6c797.jpg 800w, assets/img/gen/dbsa-33-superdome-fielding-1280-31b6c797.jpg 1280w" sizes="(min-width: 1344px) 412px, (min-width: 768px) 31vw, 100vw" alt="Infielders warming up on the Superdome turf" width="1448" height="1086" loading="lazy" decoding="async" data-slot="42" style="--focal: 50% 55%;"></picture>
         <span class="media__label">dbsa-04 · Ground ball rep, coach fungo</span>
       </div>
       <div class="media media--16x9">
-        <img src="assets/img/dbsa-08-hittrax-screen.jpg" alt="The HitTrax screen showing a live spray chart" width="2400" height="1800" loading="lazy">
+        <picture><source type="image/webp" srcset="assets/img/gen/dbsa-32-softball-clinic-group-480-4f805c71.webp 480w, assets/img/gen/dbsa-32-softball-clinic-group-800-4f805c71.webp 800w, assets/img/gen/dbsa-32-softball-clinic-group-1280-4f805c71.webp 1280w" sizes="(min-width: 1344px) 412px, (min-width: 768px) 31vw, 100vw"><img src="assets/img/gen/dbsa-32-softball-clinic-group-1280-4f805c71.jpg" srcset="assets/img/gen/dbsa-32-softball-clinic-group-480-4f805c71.jpg 480w, assets/img/gen/dbsa-32-softball-clinic-group-800-4f805c71.jpg 800w, assets/img/gen/dbsa-32-softball-clinic-group-1280-4f805c71.jpg 1280w" sizes="(min-width: 1344px) 412px, (min-width: 768px) 31vw, 100vw" alt="A softball clinic group with Lou and the coaches" width="1448" height="1086" loading="lazy" decoding="async" data-slot="43"></picture>
         <span class="media__label">dbsa-08 · Screen with a live spray chart</span>
       </div>
     </div>
@@ -301,11 +300,13 @@
 <!-- ===================================================================== -->
 <section class="band band--surface" aria-labelledby="staff-title">
   <div class="container">
+    <div class="intro-split">
+      <div class="staff-teaser__copy">
     <div class="sec-head">
       <p class="eyebrow">The staff</p>
-      <h2 class="heading-xl" id="staff-title">Seven instructors. Every one of them played.</h2>
+      <h2 class="heading-xl" id="staff-title">Meet the coaches.</h2>
       <p class="sec-head__lede body-l">
-        Three were drafted by major league clubs. Two Hall of Fame inductions between them.
+        Coaches who played in college and the pros, teaching every session.
       </p>
     </div>
 
@@ -316,22 +317,17 @@
       <span class="name-chip">Christopher DiChiaro</span>
       <span class="name-chip">Mike Warden</span>
       <span class="name-chip">Scott Fischer</span>
-      <span class="name-chip">Eric Pfisterer</span>
     </div>
 
     <p class="chip-row__action">
       <a class="btn btn--secondary" href="instructors.html">Meet the instructors</a>
     </p>
+      </div>
 
-    <div class="build-note">
-      <p class="meta">Needs confirming with Michael</p>
-      <p>
-        The roster here matches the current site: seven names. If Diana Schraer and Sam
-        Keating are on staff, this section gets back a third Hall of Fame induction and
-        two dedicated softball pitching coaches, which nothing on the current site
-        mentions and which is the strongest unused fact the academy has. Same question as
-        on the Instructors page.
-      </p>
+      <div class="media media--4x5">
+        <picture><source type="image/webp" srcset="assets/img/gen/dbsa-26-lou-with-player-480-d7411ea4.webp 480w, assets/img/gen/dbsa-26-lou-with-player-800-d7411ea4.webp 800w" sizes="(min-width: 1024px) 480px, 100vw"><img src="assets/img/gen/dbsa-26-lou-with-player-800-d7411ea4.jpg" srcset="assets/img/gen/dbsa-26-lou-with-player-480-d7411ea4.jpg 480w, assets/img/gen/dbsa-26-lou-with-player-800-d7411ea4.jpg 800w" sizes="(min-width: 1024px) 480px, 100vw" alt="Lou DiChiaro with a former player at the academy" width="1086" height="1448" loading="lazy" decoding="async" data-slot="44" style="--focal: 50% 100%;"></picture>
+        <span class="media__label">dbsa-09 · Lou mid instruction with a player</span>
+      </div>
     </div>
   </div>
 </section>
@@ -359,15 +355,15 @@
           <dt>Email</dt>
           <dd><a href="mailto:info@dichiarobaseball.com">info@dichiarobaseball.com</a></dd>
         </div>
-        <div class="rail__detail rail__detail--pending">
+        <div class="rail__detail">
           <dt>Hours</dt>
-          <dd>To confirm with Michael before launch</dd>
+          <dd>Call <a href="tel:+12017736858">(201) 773-6858</a> for today&rsquo;s hours.</dd>
         </div>
       </dl>
     </div>
 
     <div class="media media--4x3">
-      <img src="assets/img/dbsa-18-map-fair-lawn.png" alt="Map showing the academy on Pollitt Drive in Fair Lawn" width="1200" height="800" loading="lazy">
+      <picture><source type="image/webp" srcset="assets/img/gen/dbsa-18-map-fair-lawn-480-bcc18de0.webp 480w, assets/img/gen/dbsa-18-map-fair-lawn-800-bcc18de0.webp 800w, assets/img/gen/dbsa-18-map-fair-lawn-1280-bcc18de0.webp 1280w" sizes="(min-width: 1344px) 720px, (min-width: 1024px) calc(93vw - 570px), 100vw"><img src="assets/img/gen/dbsa-18-map-fair-lawn-1280-bcc18de0.jpg" srcset="assets/img/gen/dbsa-18-map-fair-lawn-480-bcc18de0.jpg 480w, assets/img/gen/dbsa-18-map-fair-lawn-800-bcc18de0.jpg 800w, assets/img/gen/dbsa-18-map-fair-lawn-1280-bcc18de0.jpg 1280w" sizes="(min-width: 1344px) 720px, (min-width: 1024px) calc(93vw - 570px), 100vw" alt="Map showing the academy on Pollitt Drive in Fair Lawn" width="1600" height="1067" loading="lazy" decoding="async" data-slot="45"></picture>
       <span class="media__label">dbsa-18 · Static map tile, pin on Pollitt Drive, tap opens directions</span>
     </div>
   </div>
@@ -381,10 +377,6 @@
     <div class="register__copy">
       <p class="eyebrow eyebrow--dim">Get started</p>
       <h2 class="display-l on-dark" id="start-title">Come in once and see<br>how we work.</h2>
-      <p class="body-m dim">
-        Book a lesson, sign up for a camp, or call the facility and talk it through with
-        us first. Either way, the first step is short.
-      </p>
     </div>
     <div class="register__actions">
       <a class="btn btn--primary" href="camps-and-clinics.html">See camps and clinics</a>
@@ -401,8 +393,9 @@
       <span>Pitching</span><span aria-hidden="true">•</span>
       <span>Catching</span><span aria-hidden="true">•</span>
       <span>HitTrax</span><span aria-hidden="true">•</span>
+      <span>Ages 6 and up</span><span aria-hidden="true">•</span>
       <span>Year round</span><span aria-hidden="true">•</span>
-      <span>Bergen County</span><span aria-hidden="true">•</span>
+      <span>Fair Lawn</span><span aria-hidden="true">•</span>
     </div>
   </div>
 </div>
@@ -428,29 +421,26 @@
         <h3>Programs</h3>
         <a href="camps-and-clinics.html#little-league-training-camp">Little League Training Camp</a>
         <a href="camps-and-clinics.html#infield-camp">Infield Camp</a>
-        <a href="camps-and-clinics.html#monday-hit-night">Monday Hit Nights</a>
-        <a href="camps-and-clinics.html#team-and-specialty">Team &amp; specialty camps</a>
-        <a href="team-camps.html">Team &amp; town camps</a>
+        <a href="camps-and-clinics.html#monday-hit-night">Monday Hit Night</a>
+        <a href="team-camps.html">Team camps</a>
         <a href="camps-and-clinics.html">All camps and clinics</a>
       </nav>
 
-      <nav class="site-footer__group" aria-label="Lessons and facility">
-        <h3>Lessons &amp; facility</h3>
+      <nav class="site-footer__group" aria-label="Lessons and rentals">
+        <h3>Lessons and rentals</h3>
         <a href="lessons.html#private">Private lessons</a>
         <a href="lessons.html#semi-private">Semi-private lessons</a>
-        <a href="lessons.html#packages">Lesson packages</a>
-        <a href="lessons.html#hittrax">HitTrax sessions</a>
-        <a href="facility-and-rentals.html">Facility rentals</a>
+        <a href="facility-and-rentals.html#hittrax">HitTrax sessions</a>
+        <a href="facility-and-rentals.html">Cage and facility rentals</a>
       </nav>
 
       <nav class="site-footer__group" aria-label="Academy">
         <h3>Academy</h3>
-        <a href="instructors.html">Our instructors</a>
-        <a href="about.html">About Lou</a>
+        <a href="instructors.html">Instructors</a>
+        <a href="about.html">About the academy</a>
         <a href="lous-journey.html">Lou&rsquo;s journey</a>
         <a href="contact.html">Contact</a>
-        <a href="register.html">Register</a>
-        <a href="waiver-and-policies.html">Waiver &amp; policies</a>
+        <a href="waiver-and-policies.html">Waiver and policies</a>
       </nav>
 
     </div>

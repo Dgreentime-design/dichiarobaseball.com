@@ -10,10 +10,9 @@
       after a 404, which put a real error in the logs for a file that is
       missing on purpose.
 
-   2. The demo rate code. DEMO25 applies the invented town rate and drops
-      the total. Anything else returns one message, whatever the reason.
-      Checked because renaming the code is the kind of change that works
-      everywhere except the one place nobody re-ran.
+   2. No code affordance. Codes are not built, so the registration page
+      offers none, and the only total it shows is the one the server
+      charges. DEMO25 used to show $180 against a $320 charge.
    ========================================================================== */
 
 import { chromium } from "playwright";
@@ -75,34 +74,33 @@ console.log("Gianna Sarlo card");
   await page.close();
 }
 
-/* --- 2: the demo rate code ----------------------------------------------- */
+/* --- 2: no code affordance ---------------------------------------------- */
 
-console.log("\nDemo rate code");
+/* DEMO25 showed $180 while the server charged $320. Codes are not built, so
+   the page offers no code at all, and the total it shows is the server's. */
+
+console.log("\nNo town or league code");
 {
   const page = await browser.newPage({ viewport: { width: 1440, height: 900 } });
   const errors = [];
   page.on("pageerror", (e) => errors.push(e.message));
-  await page.goto(`${BASE}/register.html`, { waitUntil: "networkidle" });
+  await page.goto(`${BASE}/register.html?program=little-league-fall-2026`, { waitUntil: "networkidle" });
   await page.waitForTimeout(400);
 
   const source = await page.content();
-  for (const banned of ["PLL25", "Paterson Little League"]) {
-    if (source.includes(banned)) fail(`the served page still contains "${banned}"`);
-  }
-  if (!source.includes("DEMO25")) fail("the served page does not mention DEMO25");
-  else ok("the page offers DEMO25 and names no real league");
+  const found = ["DEMO25", "Demo Town", "PLL25", "Paterson Little League", "rate-code", "data-apply-code"]
+    .filter((banned) => source.includes(banned));
+  if (found.length) fail(`the served page still contains ${found.map((b) => `"${b}"`).join(", ")}`);
+  else ok("no code field, no demo code, no league named");
 
-  /* Walk to step 3, where the code field lives. */
   const total = () => page.evaluate(() => {
     const el = document.querySelector("[data-total]");
     return el ? el.textContent.trim() : null;
   });
-
   const before = await total();
 
   /* Walk the real flow to step 3 rather than forcing state, so this also
-     proves the steps still advance. Required fields are filled generically:
-     what is being tested here is the code, not the validation. */
+     proves the steps still advance. */
   const reached = await page.evaluate(async () => {
     const fill = (form) => {
       for (const el of form.querySelectorAll("[required]")) {
@@ -112,7 +110,6 @@ console.log("\nDemo rate code");
           if (opt) el.value = opt.value;
         } else if (el.type === "email") el.value = "parent@example.com";
         else if (el.type === "tel") el.value = "2015550123";
-        else if (el.type === "date") el.value = "2015-01-01";
         else if (/date of birth|dob/i.test(el.getAttribute("placeholder") || el.id || "")) el.value = "01/01/2015";
         else el.value = "Test";
         el.dispatchEvent(new Event("input", { bubbles: true }));
@@ -132,55 +129,12 @@ console.log("\nDemo rate code");
     const panel = document.querySelector('[data-step]:not([hidden])');
     return panel ? Number(panel.getAttribute("data-step")) : null;
   });
-
   if (reached !== 3) fail(`could not reach step 3, stopped on step ${reached}`);
   else ok("walked steps 1 and 2, reached step 3");
 
-  await page.evaluate(() => {
-    const t = document.querySelector("[data-code-toggle]");
-    if (t) t.click();
-  });
-  await page.waitForTimeout(200);
-
-  const field = await page.$("#rate-code");
-
-  if (field) {
-    await page.fill("#rate-code", "NOPE99");
-    await page.evaluate(() => {
-      const btn = document.querySelector("[data-apply-code]")
-        || Array.from(document.querySelectorAll("button")).find(b => /apply/i.test(b.textContent || ""));
-      if (btn) btn.click();
-    });
-    await page.waitForTimeout(300);
-    const afterBad = await total();
-    const message = await page.evaluate(() => {
-      const el = document.querySelector(".field__error");
-      return el ? el.textContent.trim() : null;
-    });
-    if (afterBad !== before) fail("a bad code changed the total");
-    else ok(`a bad code leaves the total at ${before}`);
-    if (!message) fail("a bad code produced no message");
-    else ok(`one message, no detail about why: "${message}"`);
-
-    await page.fill("#rate-code", "DEMO25");
-    await page.evaluate(() => {
-      const btn = document.querySelector("[data-apply-code]")
-        || Array.from(document.querySelectorAll("button")).find(b => /apply/i.test(b.textContent || ""));
-      if (btn) btn.click();
-    });
-    await page.waitForTimeout(300);
-    const afterGood = await total();
-    if (afterGood === before) fail(`DEMO25 did not change the total, still ${before}`);
-    else ok(`DEMO25 applies: ${before} becomes ${afterGood}`);
-
-    const shown = await page.evaluate(() => {
-      const el = document.querySelector("[data-rate-label]");
-      return el ? el.textContent.trim() : null;
-    });
-    if (shown) ok(`rate shown as "${shown}"`);
-  } else {
-    fail("could not reach the code field");
-  }
+  const due = await page.evaluate(() => (document.querySelector("[data-due-today]") || {}).textContent);
+  if (before !== "$320" || due !== "$320") fail(`totals read ${before} and ${due}, the server charges $320`);
+  else ok("the total and the amount due today are both $320, the server's price");
 
   if (errors.length) fail(`page error: ${errors[0]}`);
   else ok("no page errors");

@@ -9,12 +9,30 @@
   font-family: var(--f-mono); font-weight: 500;
   font-size: var(--t-eyebrow); line-height: 1.3;
   letter-spacing: var(--ls-eyebrow); text-transform: uppercase;
-  color: var(--c-red);
 }
-.eyebrow::before { content: ""; width: 34px; height: 2px; background: currentColor; flex: none; }
+
+/* The color is decided by the background behind the eyebrow, never by the
+   breakpoint, and only here. Light backgrounds take the muted grey, dark
+   and image backgrounds set --eyebrow-color to the bright red, which holds
+   4.5:1 on ink where the brand red does not. :root lifts this above the
+   generic "p inside a band" color rules elsewhere, so nothing else can
+   recolor an eyebrow by accident. */
+:root { --eyebrow-color: var(--c-muted); }
+.band--ink, .band--ink-deep, .hero, .page-hero, .split-band, .hittrax {
+  --eyebrow-color: var(--c-red-bright);
+}
+:root .eyebrow { color: var(--eyebrow-color); }
+
+/* The baseball, Daniel's Figma export used as it is, so it keeps its own
+   two colors whatever the text color. Decorative, so it is a background
+   rather than an image with alt text. Fixed size at every width, roughly
+   the cap height of the eyebrow type. */
+.eyebrow::before {
+  content: ""; flex: none;
+  width: 12px; height: 12px;
+  background: url("../img/icon-baseball.svg") center / contain no-repeat;
+}
 .eyebrow--bare::before { display: none; }
-.eyebrow--dim { color: var(--c-dim); }
-.eyebrow--dim::before { background: var(--c-red); }
 
 /* --- Buttons ------------------------------------------------------------ */
 
@@ -91,7 +109,16 @@
   background: var(--c-panel);
   border-radius: var(--r-2);
 }
-.media img { width: 100%; height: 100%; object-fit: cover; }
+.media img { width: 100%; height: 100%; object-fit: cover; object-position: var(--focal, 50% 50%); }
+/* Each image is a <picture> from data/images.json. display: contents keeps
+   the <img> sized by .media exactly as before. --focal and --focal-m (the
+   phone crop, up to 767px) come from the slot's focal and focal_mobile. */
+.media picture { display: contents; }
+@media (max-width: 767px) { .media img { object-position: var(--focal-m, var(--focal, 50% 50%)); } }
+/* zoom_mobile: a phone photo that fills a tall box by height cannot move up
+   or down with object-position, so the slot scales it about its focal point
+   instead. Only slots that set it get a transform. */
+@media (max-width: 767px) { .media img[style*="--zoom-m"] { transform: scale(var(--zoom-m)); transform-origin: var(--focal-m, var(--focal, 50% 50%)); } }
 .media__label {
   display: none;
   position: absolute; inset: 0;
@@ -125,6 +152,24 @@
 
 .site-header { background: var(--c-bone); border-bottom: 1px solid var(--c-line); }
 
+/* Sticky once site.js has measured it. Scrolling down slides the whole
+   header up by the announcement bar's measured height, so the bar leaves
+   and the nav stays pinned. transform only, never height or margin, so
+   nothing below it moves. */
+.has-sticky-header .site-header {
+  position: sticky; top: 0; z-index: 100;
+  transition: transform var(--dur-reveal) var(--ease-reveal);
+}
+.header-condensed .site-header { transform: translateY(calc(-1 * var(--announce-h))); }
+
+/* Reduced motion: no travel. The global rule in base.css already cuts the
+   slide to nothing, so the header jumps. The bar fades over 150ms instead,
+   which needs !important to win over that same global rule. */
+@media (prefers-reduced-motion: reduce) {
+  .has-sticky-header .announce { transition: opacity 150ms linear !important; }
+  .header-condensed .announce { opacity: 0; }
+}
+
 .announce {
   background: var(--c-red); color: var(--c-white);
   text-align: center; padding: 10px var(--gutter);
@@ -134,9 +179,12 @@
 }
 .announce a { text-decoration: underline; text-underline-offset: 3px; }
 
+/* The nav lines up with the content: the gutter on a narrow screen, and the
+   1280px container's edge once the screen is wider than it plus two
+   gutters, the same edges every band uses. */
 .nav {
   display: flex; align-items: center; gap: var(--s-7);
-  padding: 14px var(--gutter);
+  padding: 14px max(var(--gutter), (100% - var(--container)) / 2);
 }
 .nav__logo { flex: none; }
 
@@ -151,6 +199,11 @@
 .nav__link:hover, .nav__link[aria-current="page"] { border-bottom-color: var(--c-red); }
 
 .nav__cta { flex: none; }
+/* Between 1024 and 1199 the full nav is 9px wider than the screen at the
+   default gaps, so the gaps tighten one step there. */
+@media (min-width: 1024px) and (max-width: 1199px) {
+  .nav, .nav__links { gap: var(--s-6); }
+}
 
 .nav__toggle {
   display: none; margin-left: auto;
@@ -273,7 +326,7 @@
   .site-footer__top { grid-template-columns: 1fr; }
   .site-footer__bottom .spacer { display: none; }
   .site-footer__bottom { flex-direction: column; align-items: flex-start; gap: 4px; }
-  .site-footer__bottom .legal-links { display: flex; gap: var(--s-5); margin-bottom: 12px; order: -1; }
+  .site-footer__bottom .legal-links { display: flex; gap: var(--s-5); margin-top: 12px; }
 }
 
 /* --- Logo -----------------------------------------------------------------

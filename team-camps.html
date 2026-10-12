@@ -6,33 +6,44 @@
 <meta name="theme-color" content="#17120F">
 
 <link rel="icon" href="assets/img/mark.svg" type="image/svg+xml">
-<link rel="icon" href="assets/img/favicon.png" sizes="any">
-<link rel="apple-touch-icon" href="assets/img/favicon.png">
+<link rel="icon" href="assets/img/apple-touch-icon.png" type="image/png" sizes="180x180">
+<link rel="apple-touch-icon" href="assets/img/apple-touch-icon.png">
 
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;600;700;900&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<!-- Fonts are self-hosted (assets/fonts, declared in assets/css/fonts.css).
+     The two latin files carry every weight used above the fold. -->
+<link rel="preload" href="assets/fonts/archivo-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="assets/fonts/jetbrains-mono-latin.woff2" as="font" type="font/woff2" crossorigin>
 
-<link rel="stylesheet" href="assets/css/tokens.css">
-<link rel="stylesheet" href="assets/css/base.css">
-<link rel="stylesheet" href="assets/css/components.css">
-<link rel="stylesheet" href="assets/css/home.css">
-<link rel="stylesheet" href="assets/css/camps.css">
-<link rel="stylesheet" href="assets/css/pages.css">
-<link rel="stylesheet" href="assets/css/register.css">
-<link rel="stylesheet" href="assets/css/instructors.css">
-<link rel="stylesheet" href="assets/css/legal.css">
-<link rel="stylesheet" href="assets/css/program.css">
+<!-- One stylesheet, built by build.mjs from the files in assets/css/. -->
+<link rel="stylesheet" href="assets/css/site.min.css?v=8ee950e5">
+
+<!-- Analytics. Vercel Web Analytics: no cookies, so no consent banner. It
+     records nothing until it is enabled in the Vercel dashboard (project,
+     Analytics, Enable); until then the script below answers 404 and the
+     page is unaffected. -->
+<script>window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };</script>
+<script defer src="/_vercel/insights/script.js"></script>
+
+<!-- GOOGLE ANALYTICS SLOT. build.mjs writes the GA4 tag here when the
+     GA4_MEASUREMENT_ID variable is set, and nothing when it is not. Google
+     signals and ad personalisation are off; previews and local builds add
+     debug_mode so their traffic stays out of real reports. Events go through
+     window.dbsaTrack in site.js. The privacy policy's cookies section says so. -->
+
 
 <title>Team &amp; town camps · DiChiaro Baseball &amp; Softball Academy</title>
-<meta name="description" content="Over thirty teams train at the academy each winter. Blocks run six, seven, eight or ten weeks, built around your season. Call (201) 773-6858.">
+<meta name="description" content="Bring your team indoors this winter. Blocks of six to ten weeks for high school, travel and town teams, built around your season. Call (201) 773-6858.">
+<meta property="og:title" content="Team &amp; town camps · DiChiaro Baseball &amp; Softball Academy">
+<meta property="og:description" content="Bring your team indoors this winter. Blocks of six to ten weeks for high school, travel and town teams, built around your season. Call (201) 773-6858.">
+<meta name="twitter:title" content="Team &amp; town camps · DiChiaro Baseball &amp; Softball Academy">
+<meta name="twitter:description" content="Bring your team indoors this winter. Blocks of six to ten weeks for high school, travel and town teams, built around your season. Call (201) 773-6858.">
+<meta name="twitter:image" content="https://dichiarobaseball.com/assets/img/gen/dbsa-35-tournament-team-1280-a8194ecd.jpg">
 <link rel="canonical" href="https://dichiarobaseball.com/team-camps.html">
 <meta property="og:type" content="website">
-<meta property="og:title" content="Team &amp; town camps · DiChiaro Baseball &amp; Softball Academy">
-<meta property="og:description" content="One call, one block of dates, one registration link for your parents. Built around your season, not ours.">
 <meta property="og:url" content="https://dichiarobaseball.com/team-camps.html">
-<meta property="og:image" content="https://dichiarobaseball.com/assets/img/dbsa-01-facility-in-use.jpg">
+<meta property="og:image" content="https://dichiarobaseball.com/assets/img/gen/dbsa-35-tournament-team-1280-a8194ecd.jpg">
 <meta name="twitter:card" content="summary_large_image">
+<link rel="preload" as="image" type="image/webp" imagesrcset="assets/img/gen/dbsa-35-tournament-team-480-a8194ecd.webp 480w, assets/img/gen/dbsa-35-tournament-team-800-a8194ecd.webp 800w, assets/img/gen/dbsa-35-tournament-team-1280-a8194ecd.webp 1280w" imagesizes="(min-width: 1344px) 1280px, calc(100vw - 40px)" fetchpriority="high">
 
 <meta name="robots" content="noindex, nofollow">
 </head>
@@ -42,8 +53,8 @@
 
 <header class="site-header">
   <p class="announce">
-    Fall little league camp starts Oct 25 &nbsp;·&nbsp; 8 sessions &nbsp;·&nbsp;
-    <a href="register.html">Register now</a>
+    Little League camp starts Sunday, Oct 25. &nbsp;·&nbsp;
+    <a href="register.html?program=little-league-fall-2026">Register</a>
   </p>
 
   <nav class="nav" aria-label="Main">
@@ -53,9 +64,9 @@
     </a>
 
     <ul class="nav__links">
-      <li><a class="nav__link" href="camps-and-clinics.html">Camps &amp; Clinics</a></li>
+      <li><a class="nav__link" href="camps-and-clinics.html">Camps</a></li>
       <li><a class="nav__link" href="lessons.html">Lessons</a></li>
-      <li><a class="nav__link" href="facility-and-rentals.html">Facility &amp; Rentals</a></li>
+      <li><a class="nav__link" href="facility-and-rentals.html">Rentals</a></li>
       <li><a class="nav__link" href="instructors.html">Instructors</a></li>
       <li><a class="nav__link" href="about.html">About</a></li>
     </ul>
@@ -80,7 +91,7 @@
       </li>
     </ul>
 
-    <a class="btn btn--primary btn--compact nav__cta" href="register.html">Register</a>
+    <a class="btn btn--primary btn--compact nav__cta" href="camps-and-clinics.html">Open camps</a>
 
     <button class="nav__toggle" type="button" data-menu-open
             aria-expanded="false" aria-controls="mobile-menu">
@@ -101,16 +112,17 @@
   </div>
 
   <ul class="menu__list">
-    <li><a href="camps-and-clinics.html">Camps &amp; Clinics</a></li>
+    <li><a href="camps-and-clinics.html">Camps</a></li>
     <li><a href="lessons.html">Lessons</a></li>
-    <li><a href="facility-and-rentals.html">Facility &amp; Rentals</a></li>
+    <li><a href="facility-and-rentals.html">Rentals</a></li>
     <li><a href="instructors.html">Instructors</a></li>
     <li><a href="about.html">About</a></li>
     <li><a href="contact.html">Contact</a></li>
   </ul>
 
   <div class="menu__foot">
-    <a class="btn btn--primary btn--block" href="register.html">Register</a>
+    <a class="btn btn--primary btn--block" href="camps-and-clinics.html">Open camps</a>
+    <a class="btn btn--ghost btn--block" href="tel:+12017736858">Call (201) 773-6858</a>
     <ul class="nav__social nav__social--menu">
       <li>
         <a href="https://www.instagram.com/dichiaroacademy" rel="noopener" aria-label="DiChiaro Academy on Instagram">
@@ -148,24 +160,25 @@
       <p class="eyebrow">For coaches, clubs and town programs</p>
       <h1 class="display-l">Bring your team indoors this winter.</h1>
       <p class="hero-light__lede body-l">
-        Over thirty teams train here between November and March. High school programs,
-        travel clubs and town little leagues, baseball and softball. No two blocks are
-        the same length, because no two seasons start on the same day.
+        High school, travel and town teams, baseball and softball, November to March.
       </p>
-      <p><a class="btn btn--primary" href="tel:+12017736858">Call (201) 773-6858</a></p>
+      <div class="hero__actions">
+        <a class="btn btn--primary" href="#ask-title">Plan your team&rsquo;s block</a>
+        <a class="btn btn--outline" href="tel:+12017736858">Call (201) 773-6858</a>
+      </div>
     </div>
 
     <div class="media media--3x1">
-      <img src="assets/img/dbsa-01-facility-in-use.jpg" alt="The full academy floor with nets up and a group working through stations" width="2400" height="1600" fetchpriority="high">
+      <picture><source type="image/webp" srcset="assets/img/gen/dbsa-35-tournament-team-480-a8194ecd.webp 480w, assets/img/gen/dbsa-35-tournament-team-800-a8194ecd.webp 800w, assets/img/gen/dbsa-35-tournament-team-1280-a8194ecd.webp 1280w" sizes="(min-width: 1344px) 1280px, calc(100vw - 40px)"><img src="assets/img/gen/dbsa-35-tournament-team-1280-a8194ecd.jpg" srcset="assets/img/gen/dbsa-35-tournament-team-480-a8194ecd.jpg 480w, assets/img/gen/dbsa-35-tournament-team-800-a8194ecd.jpg 800w, assets/img/gen/dbsa-35-tournament-team-1280-a8194ecd.jpg 1280w" sizes="(min-width: 1344px) 1280px, calc(100vw - 40px)" alt="An academy team with its trophies after a tournament" width="1424" height="1104" fetchpriority="high" data-slot="39" style="--focal: 50% 20%;"></picture>
       <span class="media__label">dbsa-01 · The full room with the nets up</span>
     </div>
 
-    <div class="stat-strip">
-      <div class="stat"><p class="data-l">30+</p><p class="meta">Teams each winter</p></div>
-      <div class="stat"><p class="data-l">6-10</p><p class="meta">Week blocks</p></div>
-      <div class="stat"><p class="data-l">5,500</p><p class="meta">Square feet, four cages</p></div>
-      <div class="stat"><p class="data-l">7 days</p><p class="meta">A week, year round</p></div>
-    </div>
+    <dl class="stat-strip">
+      <div class="stat"><dt>30+</dt><dd>Teams each winter</dd></div>
+      <div class="stat"><dt>6-10</dt><dd>Week blocks</dd></div>
+      <div class="stat"><dt>6,500</dt><dd>Square feet, four cages</dd></div>
+      <div class="stat"><dt>7 days</dt><dd>A week, year round</dd></div>
+    </dl>
   </div>
 </section>
 
@@ -178,9 +191,7 @@
       <p class="eyebrow">How it is put together</p>
       <h2 class="display-l" id="blocks-title">Your season sets the dates.</h2>
       <p class="sec-head__lede body-l">
-        Some programs want ten straight weeks from the first Sunday in December. Some want
-        six, skip President&rsquo;s week, and come back. We build the block around your
-        calendar and it does not change once it is set.
+        Six to ten weeks, built around your calendar.
       </p>
     </div>
 
@@ -188,22 +199,22 @@
       <article class="step">
         <p class="step__n">01</p>
         <h3>Call or send the form</h3>
-        <p>Tell us the team, the age group, roughly how many players and the weeks you want. Call <a href="tel:+12017736858">(201) 773-6858</a> if it is easier.</p>
+        <p>Team, age group, roster size and the weeks you want.</p>
       </article>
       <article class="step">
         <p class="step__n">02</p>
         <h3>We build your block</h3>
-        <p>A day, a time, and every date written out. You see the whole block before anything is confirmed, so a clash with a school event gets caught now rather than in January.</p>
+        <p>Every date written out before anything is confirmed.</p>
       </article>
       <article class="step">
         <p class="step__n">03</p>
         <h3>You get one link and a code</h3>
-        <p>Send both to your parents. They register, sign the waiver, and pay in about three minutes. You are not collecting checks at practice.</p>
+        <p>Parents register, sign the waiver and pay in about three minutes.</p>
       </article>
       <article class="step">
         <p class="step__n">04</p>
-        <h3>You see who has signed up</h3>
-        <p>A live roster of registered players and who is still outstanding, so the chasing is a list rather than a guess.</p>
+        <h3>You see who&rsquo;s signed up</h3>
+        <p>A live roster, so the chasing is a list, not a guess.</p>
       </article>
     </div>
   </div>
@@ -216,11 +227,7 @@
   <div class="container">
     <div class="sec-head">
       <p class="eyebrow">Billing</p>
-      <h2 class="display-l" id="billing-title">Two ways to settle it.</h2>
-      <p class="sec-head__lede body-l">
-        You choose once, when the block is set up. Parents never have to work out which
-        applies to them, because the registration page already knows.
-      </p>
+      <h2 class="display-l" id="billing-title">Two ways to pay.</h2>
     </div>
 
     <div class="options-grid options-grid--2">
@@ -228,65 +235,22 @@
         <p class="eyebrow">Option one</p>
         <h3 class="heading-m">Parents pay individually</h3>
         <p class="body-m">
-          Each family registers and pays for their own player at your program&rsquo;s rate.
-          Most town and travel blocks run this way.
+          Each family registers and pays for their own player.
         </p>
         <div class="option-card__foot">
-          <p class="meta">Parent signs waiver, pays online, gets the dates by email</p>
+          <p class="meta">Parent signs waiver, pays online</p>
         </div>
       </article>
       <article class="option-card">
         <p class="eyebrow">Option two</p>
         <h3 class="heading-m">The association is invoiced</h3>
         <p class="body-m">
-          You cover the block for the whole squad and we bill you once. Parents still
-          register, because we need the waiver and the contact details, but they are never
-          asked for payment.
+          We bill you once. Parents still register for the waiver.
         </p>
         <div class="option-card__foot">
           <p class="meta">One invoice, no parent checkout</p>
         </div>
       </article>
-    </div>
-
-    <div class="build-note">
-      <p class="meta">Needs confirming with Michael</p>
-      <p>
-        Two things before this page goes live. First, whether invoiced blocks are offered to
-        any association that asks or only to ones already set up that way, because the page
-        currently reads as an open choice. Second, whether there is a minimum roster size or
-        a deposit, which every coach reading this will want to know and which nothing on the
-        current site states.
-      </p>
-    </div>
-  </div>
-</section>
-
-<!-- ===================================================================== -->
-<!-- Who trains here                                                       -->
-<!-- ===================================================================== -->
-<section class="band band--ink" aria-labelledby="who-title">
-  <div class="container">
-    <div class="sec-head">
-      <p class="eyebrow eyebrow--dim">Already indoors</p>
-      <h2 class="display-l on-dark" id="who-title">Programs that train with us.</h2>
-    </div>
-
-    <div class="chip-row">
-      <span class="name-chip">Immaculate Heart Academy softball</span>
-      <span class="name-chip">Fair Lawn High School softball</span>
-      <span class="name-chip">Old Tappan High School</span>
-      <span class="name-chip">Ridgewood 12U, 13U, 14U</span>
-      <span class="name-chip">Fair Lawn Little League</span>
-    </div>
-
-    <div class="build-note">
-      <p class="meta">Needs confirming with Michael</p>
-      <p>
-        These five come from the flyers and the meeting notes, so they are real, but a list of
-        programs is a use of their name and should be cleared before it is published. If any
-        prefer not to be listed, the section works with as few as three.
-      </p>
     </div>
   </div>
 </section>
@@ -302,37 +266,36 @@
         <p class="eyebrow">Start a block</p>
         <h2 class="display-l" id="ask-title">Tell us about your team.</h2>
         <p class="sec-head__lede body-l">
-          Winter fills from October. If you know roughly when your season starts, that is
-          enough to begin.
+          Winter fills from October. A rough start date is enough.
         </p>
       </div>
 
-      <form class="form" data-proto-form novalidate>
+      <form class="form" data-enquiry-form="team-camps" novalidate>
         <div class="form__row">
           <div class="field">
             <label for="tc-name">Your name</label>
-            <input class="input" id="tc-name" name="name" type="text" autocomplete="name" placeholder="Jane Rodriguez" required>
+            <input class="input" id="tc-name" name="name" type="text" autocomplete="name" placeholder="Jane Rodriguez" maxlength="100" required>
           </div>
           <div class="field">
             <label for="tc-role">Your role</label>
-            <input class="input" id="tc-role" name="role" type="text" placeholder="Head coach, 12U" required>
+            <input class="input" id="tc-role" name="role" type="text" placeholder="Head coach, 12U" maxlength="100" required>
           </div>
         </div>
 
         <div class="form__row">
           <div class="field">
             <label for="tc-email">Email</label>
-            <input class="input" id="tc-email" name="email" type="email" autocomplete="email" inputmode="email" placeholder="jane@example.com" required>
+            <input class="input" id="tc-email" name="email" type="email" autocomplete="email" inputmode="email" placeholder="jane@example.com" maxlength="200" required>
           </div>
           <div class="field">
             <label for="tc-phone">Phone</label>
-            <input class="input" id="tc-phone" name="phone" type="tel" autocomplete="tel" inputmode="tel" placeholder="(201) 555 0148" required>
+            <input class="input" id="tc-phone" name="phone" type="tel" autocomplete="tel" inputmode="tel" placeholder="(201) 555 0148" maxlength="40" required>
           </div>
         </div>
 
         <div class="field">
           <label for="tc-team">Team or program</label>
-          <input class="input" id="tc-team" name="team" type="text" placeholder="Ridgewood 12U softball" required>
+          <input class="input" id="tc-team" name="team" type="text" placeholder="Ridgewood 12U softball" maxlength="150" required>
         </div>
 
         <div class="form__row">
@@ -365,17 +328,33 @@
           </div>
           <div class="field">
             <label for="tc-start">Preferred start</label>
-            <input class="input" id="tc-start" name="start" type="text" placeholder="First week of December" required>
+            <input class="input" id="tc-start" name="start" type="text" placeholder="First week of December" maxlength="100" required>
           </div>
         </div>
 
         <div class="field">
           <label for="tc-notes">Anything else</label>
-          <textarea class="input textarea" id="tc-notes" name="notes" rows="4" placeholder="Sunday mornings work best. We skip President's week."></textarea>
+          <textarea class="input textarea" id="tc-notes" name="notes" rows="4" placeholder="Sunday mornings work best. We skip President's week." maxlength="2000"></textarea>
         </div>
 
-        <p><button class="btn btn--primary" type="submit">Send enquiry</button></p>
-        <p class="meta">We reply within one working day. For anything urgent, call the facility.</p>
+        <label class="choice">
+          <input type="checkbox" id="tc-marketing" name="marketing_opt_in">
+          <span class="choice__copy">
+            <strong>Send me news about camps and clinics.</strong>
+            <span>You can unsubscribe at any time.</span>
+          </span>
+        </label>
+
+        <div class="form__hp" aria-hidden="true">
+          <label for="tc-trap">Leave this empty</label>
+          <input id="tc-trap" name="dbsa_trap" type="text" tabindex="-1" autocomplete="off" data-1p-ignore data-lpignore="true" data-form-type="other">
+        </div>
+        <p><button class="btn btn--primary" type="submit">Send team details</button></p>
+        <p class="field__error" role="alert" data-enquiry-error hidden>
+          That didn&rsquo;t send. Call <a href="tel:+12017736858">(201) 773-6858</a>
+          or email <a href="mailto:info@dichiarobaseball.com">info@dichiarobaseball.com</a>.
+        </p>
+        <p class="meta">We reply within one business day.</p>
       </form>
     </div>
 
@@ -388,8 +367,7 @@
       </div>
       <div class="wide-card__body">
         <p class="body-m">
-          Most blocks get set up in one phone call. The dates are the only hard part and they
-          are easier to talk through than to type.
+          Most blocks get set up in one phone call.
         </p>
         <p class="data-l"><a href="tel:+12017736858">(201) 773-6858</a></p>
         <p class="meta">18-01 Pollitt Drive, Fair Lawn, NJ 07410</p>
@@ -407,10 +385,9 @@
   <div class="crosslink__inner">
     <div class="crosslink__copy">
       <p class="eyebrow">Not a whole team</p>
-      <h2 class="heading-l" id="cross-title">Individual players have their own camps.</h2>
+      <h2 class="heading-l" id="cross-title">Just one player?</h2>
       <p class="body-m">
-        Little League Training Camp, Infield Camp and Monday Hit Nights are open to anyone,
-        with no team affiliation needed.
+        Our camps and clinics are open to anyone.
       </p>
     </div>
     <a class="btn btn--secondary" href="camps-and-clinics.html">See camps and clinics</a>
@@ -425,8 +402,9 @@
       <span>Pitching</span><span aria-hidden="true">•</span>
       <span>Catching</span><span aria-hidden="true">•</span>
       <span>HitTrax</span><span aria-hidden="true">•</span>
+      <span>Ages 6 and up</span><span aria-hidden="true">•</span>
       <span>Year round</span><span aria-hidden="true">•</span>
-      <span>Bergen County</span><span aria-hidden="true">•</span>
+      <span>Fair Lawn</span><span aria-hidden="true">•</span>
     </div>
   </div>
 </div>
@@ -452,29 +430,26 @@
         <h3>Programs</h3>
         <a href="camps-and-clinics.html#little-league-training-camp">Little League Training Camp</a>
         <a href="camps-and-clinics.html#infield-camp">Infield Camp</a>
-        <a href="camps-and-clinics.html#monday-hit-night">Monday Hit Nights</a>
-        <a href="camps-and-clinics.html#team-and-specialty">Team &amp; specialty camps</a>
-        <a href="team-camps.html">Team &amp; town camps</a>
+        <a href="camps-and-clinics.html#monday-hit-night">Monday Hit Night</a>
+        <a href="team-camps.html">Team camps</a>
         <a href="camps-and-clinics.html">All camps and clinics</a>
       </nav>
 
-      <nav class="site-footer__group" aria-label="Lessons and facility">
-        <h3>Lessons &amp; facility</h3>
+      <nav class="site-footer__group" aria-label="Lessons and rentals">
+        <h3>Lessons and rentals</h3>
         <a href="lessons.html#private">Private lessons</a>
         <a href="lessons.html#semi-private">Semi-private lessons</a>
-        <a href="lessons.html#packages">Lesson packages</a>
-        <a href="lessons.html#hittrax">HitTrax sessions</a>
-        <a href="facility-and-rentals.html">Facility rentals</a>
+        <a href="facility-and-rentals.html#hittrax">HitTrax sessions</a>
+        <a href="facility-and-rentals.html">Cage and facility rentals</a>
       </nav>
 
       <nav class="site-footer__group" aria-label="Academy">
         <h3>Academy</h3>
-        <a href="instructors.html">Our instructors</a>
-        <a href="about.html">About Lou</a>
+        <a href="instructors.html">Instructors</a>
+        <a href="about.html">About the academy</a>
         <a href="lous-journey.html">Lou&rsquo;s journey</a>
         <a href="contact.html">Contact</a>
-        <a href="register.html">Register</a>
-        <a href="waiver-and-policies.html">Waiver &amp; policies</a>
+        <a href="waiver-and-policies.html">Waiver and policies</a>
       </nav>
 
     </div>

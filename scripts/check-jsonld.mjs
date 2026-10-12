@@ -11,7 +11,9 @@
      - the facility carries an address, a phone and a url
      - every Event has a start before its end, a location and an offer
      - no Event date is invented: each one appears in programs.json
-     - no gated program appears anywhere in the output
+     - a gated or unlisted program appears only on its own page (round 12
+       gave each one a page; round 22 unlisted the team programs), and no
+       gated program's offer links to register.html: it is not sold here
    ========================================================================== */
 
 import { readFileSync, existsSync } from "node:fs";
@@ -26,9 +28,12 @@ const PAGES = [
 ];
 
 const data = JSON.parse(readFileSync("data/programs.json", "utf8"));
+/* The generated program pages (round 11 on) carry the Event data, one page
+   per live program, so they are read too. */
+for (const p of data.programs) if (p.status === "live") PAGES.push(`programs/${p.slug}.html`);
 const allDates = new Set();
 for (const p of data.programs) for (const d of (p.schedule && p.schedule.dates) || []) allDates.add(d);
-const gatedNames = data.programs.filter((p) => p.gated).map((p) => p.name);
+const gated = data.programs.filter((p) => p.gated || p.unlisted);
 
 let failures = 0;
 const fail = (m) => { failures++; console.log("  FAIL  " + m); };
@@ -95,8 +100,10 @@ for (const page of PAGES) {
       totalEvents += events.length;
     }
 
-    for (const name of gatedNames) {
-      if (body.includes(name)) fail(`gated program "${name}" appears in structured data`);
+    for (const g of gated) {
+      if (!body.includes(g.name)) continue;
+      if (page !== `programs/${g.slug}.html`) fail(`${g.gated ? "gated" : "unlisted"} program "${g.name}" appears in structured data on ${page}`);
+      if (g.gated && body.includes(`register.html?program=${g.slug}`)) fail(`gated program "${g.name}" is offered through register.html`);
     }
   }
   console.log("");

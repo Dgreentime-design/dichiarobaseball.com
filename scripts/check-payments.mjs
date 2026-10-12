@@ -1,0 +1,354 @@
+/* ==========================================================================
+   The money path, end to end, against the local dev server and the mock
+   provider. Reads the local file store to see what was written, so it only
+   runs against a server using that store (no AIRTABLE_TOKEN).
+
+     MOCK_WEBHOOK_SECRET=... node scripts/check-payments.mjs [http://localhost:8080]
+
+   The server must be running with PAYMENT_PROVIDER=mock and the same
+   MOCK_WEBHOOK_SECRET.
+
+   1. Happy path          approve at mock checkout, pending -> confirmed
+   2. Decline             never shows success, row pending or failed
+   3. Redirect, no pay    the return URL alone shows nothing confirmed
+   4. Duplicate webhook   same signed webhook twice, one confirmation
+   5. Bad signature       401, nothing moved, one signature_failed row a minute
+   6. Tampered amount     a lower amount in the request is ignored
+   7. Wrong amount        an approved webhook for the wrong amount confirms nothing
+   8. No outcome          a webhook with no approved or declined value confirms nothing
+   9. Unmatched           a signed webhook for no known session leaves one UNMATCHED row
+  10. Past option         an option whose sessions have all passed is refused
+                          like an unknown one, and is not offered
+  11. Slow webhook        after 60 seconds unconfirmed the page says it is still
+                          confirming, with the reference and a call button, and
+                          moves to confirmed when the webhook arrives, titled
+                          "You're registered." because this browser has no name
+  12. Full                a program marked "full": true in the data is refused at
+                          checkout with the generic error, writes no row, and
+                          is not offered to the register page. Runs a second
+                          server on port 8092 against a copy of the data with
+                          one program full, and puts the data back after
+  13. Opt-in              the news box ticked on the parent step is stored
+                          true with a time; check 1 stores false with none
+   ========================================================================== */
+
+import { chromium } from "playwright";
+import { readFileSync, writeFileSync } from "node:fs";
+import { spawn } from "node:child_process";
+import { sign } from "../api/_lib/providers/signature.js";
+import { randomBytes } from "node:crypto";
+
+const BASE = (process.argv[2] || "http://localhost:8080").replace(/\/+$/, "");
+const SECRET = process.env.MOCK_WEBHOOK_SECRET;
+if (!SECRET) { console.error("MOCK_WEBHOOK_SECRET must be set"); process.exit(2); }
+
+const STORE = new URL("../.data/registrations.json", import.meta.url);
+const rawStore = () => { try { return readFileSync(STORE, "utf8"); } catch { return "[]"; } };
+const rows = () => JSON.parse(rawStore());
+const row = (id) => rows().find((r) => r.registration_id === id);
+
+let failures = 0;
+const results = [];
+function check(name, fn) {
+  return fn().then(
+    () => { results.push(["PASS", name]); console.log(`  ok    ${name}`); },
+    (e) => { failures++; results.push(["FAIL", name, e.message]); console.log(`  FAIL  ${name}\n          ${e.message}`); }
+  );
+}
+const assert = (cond, msg) => { if (!cond) throw new Error(msg); };
+const wait = (ms) => new Promise((r) => setTimeout(r, ms));
+
+const PLAYER = { firstName: "Test", lastName: "Player", dateOfBirth: "01 / 02 / 2016", grade: "Grade 4" };
+const PARENT = { firstName: "Test", lastName: "Parent", email: "parent@example.com", phone: "(201) 555 0100" };
+
+async function startSession(extra = {}) {
+  const res = await fetch(`${BASE}/api/checkout/session`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      programSlug: "little-league-fall-2026", optionId: "full", paymentMethod: "online",
+      players: [PLAYER], parent: PARENT, waiverAccepted: true, photoConsent: false, ...extra
+    })
+  });
+  const data = await res.json();
+  assert(res.ok, `checkout/session ${res.status}: ${JSON.stringify(data)}`);
+  return data;
+}
+
+function webhook(sessionId, { status = "APPROVED", amount = 32000, secret = SECRET, header = "mock-signature", tamper } = {}) {
+  const body = JSON.stringify({
+    type: "PAYMENT", status, id: "mockpay_" + sessionId.replace(/^mock_/, ""),
+    data: sessionId, amount, createdTime: Date.now()
+  });
+  const headers = { "Content-Type": "application/json" };
+  if (secret) headers[header] = sign(body, secret);
+  return fetch(`${BASE}/api/webhooks/clover`, { method: "POST", headers, body: tamper ? tamper(body) : body });
+}
+
+/* Walks the real form to the payment page in a browser. */
+async function walkToCheckout(page, { optIn = false } = {}) {
+  await page.goto(`${BASE}/register.html?program=little-league-fall-2026`);
+  await page.fill("#p1-first", "Mia");
+  await page.fill("#p1-last", "Rodriguez");
+  await page.fill("#p1-dob", "03 / 14 / 2016");
+  await page.selectOption("#p1-grade", "Grade 4");
+  await page.fill("#g-first", "Elena");
+  await page.fill("#g-last", "Rodriguez");
+  await page.fill("#g-email", "elena@example.com");
+  await page.fill("#g-mobile", "(201) 555 0148");
+  if (optIn) await page.check("#marketing-opt-in");
+  await page.click('[data-step-form="1"] button[type=submit]');
+  await page.check("#waiver-agree");
+  await page.fill("#sign-name", "Elena Rodriguez");
+  await page.click('[data-step-form="2"] button[type=submit]');
+  await page.click('[data-step-form="3"] button[type=submit]');
+  await page.waitForURL(/\/api\/mock-checkout\?/);
+  const id = new URL(page.url()).searchParams.get("ref");
+  return id;
+}
+
+const title = (page) => page.textContent("[data-confirm-title]");
+
+console.log(`\nChecking payments against ${BASE}\n`);
+const browser = await chromium.launch();
+
+await check("1. Happy path: approve moves the row pending -> confirmed with the right amount", async () => {
+  const page = await browser.newPage();
+  const id = await walkToCheckout(page);
+  assert(row(id)?.status === "pending", `before approve: ${row(id)?.status}`);
+  assert((await page.textContent(".amount")).includes("$320.00"), "mock checkout does not show $320.00");
+  await page.click("button[value=approve]");
+  await page.waitForURL(new RegExp(`register\\.html\\?registration=${id}`));
+  await page.waitForFunction(() => /is registered/.test(document.querySelector("[data-confirm-title]").textContent), null, { timeout: 15000 });
+  assert((await title(page)) === "Mia is registered.", `confirmed title: ${await title(page)}`);
+  assert((await page.textContent("[data-due-status]")) === "Paid", "status is not Paid");
+  assert((await page.textContent("[data-due-amount]")) === "$320.00", "confirmation amount is not $320.00");
+  const r = row(id);
+  assert(r.status === "confirmed", `row is ${r.status}`);
+  assert(r.amount === 320, `row amount is ${r.amount}`);
+  assert(r.provider_order_id, "no provider_order_id");
+  assert(r.marketing_opt_in === false && !("marketing_opt_in_at" in r), "an unticked opt-in was not stored as false with no time");
+  await page.close();
+});
+
+await check("2. Decline: row moves to failed and the page never claims success", async () => {
+  const page = await browser.newPage();
+  const id = await walkToCheckout(page);
+  await page.click("button[value=decline]");
+  await page.waitForURL(new RegExp(`registration=${id}`));
+  const seen = [];
+  for (let i = 0; i < 12; i++) { seen.push(await title(page)); await wait(500); }
+  assert(!seen.some((t) => /registered\.$/.test(t)), `a success title appeared: ${seen.join(" | ")}`);
+  assert(seen.at(-1) === "The payment did not go through.", `final title: ${seen.at(-1)}`);
+  assert(["pending", "failed"].includes(row(id).status), `row is ${row(id).status}`);
+  assert(!row(id).provider_order_id, "a declined payment recorded an order ID");
+  await page.close();
+});
+
+await check("3. Redirect without payment: the return URL shows nothing confirmed", async () => {
+  const { registrationId: id } = await startSession();
+  const page = await browser.newPage();
+  await page.goto(`${BASE}/register.html?registration=${id}`);
+  const seen = [];
+  for (let i = 0; i < 10; i++) { seen.push(await title(page)); await wait(500); }
+  assert(seen.every((t) => t === "Confirming your payment."), `titles seen: ${[...new Set(seen)].join(" | ")}`);
+  assert((await page.textContent("[data-due-status]")) !== "Paid", "status shows Paid");
+  assert(row(id).status === "pending", `row is ${row(id).status}`);
+
+  /* And the old way in: #step-4 on its own must not open the confirmation. */
+  await page.goto(`${BASE}/register.html#step-4`);
+  await page.reload();
+  assert(await page.isHidden('[data-step="4"]'), "#step-4 alone opens the confirmation panel");
+  await page.close();
+});
+
+await check("4. Duplicate webhook: one confirmed registration, one order, no second row", async () => {
+  const { registrationId: id } = await startSession();
+  const session = row(id).checkout_session_id;
+  const before = rows().length;
+  const a = await webhook(session);
+  const b = await webhook(session);
+  assert(a.status === 200 && b.status === 200, `responses ${a.status}, ${b.status}`);
+  assert((await b.json()).duplicate === true, "second delivery was not treated as a duplicate");
+  const matching = rows().filter((r) => r.registration_id === id);
+  assert(matching.length === 1, `${matching.length} rows for ${id}`);
+  assert(rows().length === before, `row count went ${before} -> ${rows().length}`);
+  assert(matching[0].status === "confirmed", `row is ${matching[0].status}`);
+  assert(matching[0].provider_order_id === "mockpay_" + session.replace(/^mock_/, ""), "wrong order ID");
+});
+
+await check("5. Bad signature: 401, the registration untouched, one signature_failed row a minute with nothing from the request", async () => {
+  const { registrationId: id } = await startSession();
+  const session = row(id).checkout_session_id;
+  const before = rows();
+  const attempts = {
+    unsigned: await webhook(session, { secret: null }),
+    "wrong secret": await webhook(session, { secret: "not-the-secret" }),
+    "body changed after signing": await webhook(session, { tamper: (b) => b.replace("APPROVED", "APPROVED ") }),
+    "signature in the Clover header": await webhook(session, { header: "clover-signature" })
+  };
+  for (const [name, res] of Object.entries(attempts)) assert(res.status === 401, `${name}: ${res.status}`);
+  assert(row(id).status === "pending", `row is ${row(id).status}`);
+
+  /* Everything that was there is unchanged, and anything new is an alert. */
+  const after = rows();
+  const added = after.filter((r) => !before.some((b) => b.registration_id === r.registration_id));
+  assert(JSON.stringify(after.filter((r) => before.some((b) => b.registration_id === r.registration_id))) === JSON.stringify(before), "an existing row changed");
+  assert(added.length <= 1, `${added.length} rows added for four bad requests`);
+  assert(added.every((r) => /^SIGFAIL-\d{8}-\d{4}$/.test(r.registration_id) && r.status === "signature_failed"), "an added row is not a signature_failed alert");
+
+  /* This minute's alert exists, written now or earlier in the same minute,
+     and holds the time and the length, not the request. */
+  const minute = new Date().toISOString().slice(0, 16).replace(/[-:]/g, "").replace("T", "-");
+  const alert = after.find((r) => r.registration_id === `SIGFAIL-${minute}`) || added[0];
+  assert(alert, "no signature_failed row for this minute");
+  assert(/bytes/.test(alert.webhook_note || "") && /verification at \d{4}-/.test(alert.webhook_note || ""), "the alert note does not give the time and the length");
+  assert(/^\d+ bytes at \d{4}-\d\d-\d\dT/.test(alert.option || ""), "the alert's option field does not give the length and the time");
+  assert(!JSON.stringify(alert).includes(session) && !/APPROVED|mockpay_|signature=|v1=/.test(JSON.stringify(alert)), "the alert holds part of the request");
+});
+
+await check("6. Tampered amount: the server recomputes and ignores the submitted value", async () => {
+  const data = await startSession({ amountCents: 100, amount: 1, total: 1, price: 1 });
+  assert(data.amountCents === 32000, `response amount ${data.amountCents}`);
+  assert(new URL(data.redirectUrl, BASE).searchParams.get("amount") === "32000", "provider asked for the wrong amount");
+  assert(row(data.registrationId).amount === 320, `row amount ${row(data.registrationId).amount}`);
+});
+
+await check("7. Wrong amount: an approved webhook for less than the server price confirms nothing, flags the row", async () => {
+  const { registrationId: id } = await startSession();
+  const res = await webhook(row(id).checkout_session_id, { amount: 100 });
+  assert(res.status === 200, `response ${res.status}`);
+  assert((await res.json()).ignored === "needs review", "not reported as needs review");
+  assert(row(id).status === "needs_review", `row is ${row(id).status}`);
+  assert(/amount differs/.test(row(id).webhook_note || ""), "no webhook_note saying why");
+  assert(!row(id).provider_order_id, "an order ID was recorded as if paid");
+});
+
+await check("8. No outcome: a signed webhook with no approved or declined value confirms nothing", async () => {
+  const { registrationId: id } = await startSession();
+  const res = await webhook(row(id).checkout_session_id, { status: "PENDING" });
+  assert(res.status === 200, `response ${res.status}`);
+  assert((await res.json()).ignored === "unmatched", "not reported as unmatched");
+  assert(row(id).status === "pending", `row is ${row(id).status}`);
+  assert(/no recognisable outcome/.test(row(id).webhook_note || ""), "no webhook_note saying why");
+});
+
+await check("9. Unmatched: a signed webhook for no known session leaves one UNMATCHED row, and a redelivery adds none", async () => {
+  const before = rows().length;
+  /* Unique per run: the UNMATCHED row is named by a hash of the body, so a
+     fixed body would already exist from the last run. */
+  const ghost = "mock_" + randomBytes(12).toString("hex");
+  const body = JSON.stringify({ type: "PAYMENT", status: "APPROVED", id: "mockpay_ghost", data: ghost, amount: 32000, createdTime: Date.now() });
+  const send = () => fetch(`${BASE}/api/webhooks/clover`, {
+    method: "POST", body, headers: { "Content-Type": "application/json", "mock-signature": sign(body, SECRET) }
+  });
+  const a = await send(), b = await send();
+  assert(a.status === 200 && b.status === 200, `responses ${a.status}, ${b.status}`);
+  const recorded = (await a.json()).recorded;
+  const matches = rows().filter((r) => r.registration_id === recorded);
+  assert(/^UNMATCHED-/.test(recorded || ""), `recorded as ${recorded}`);
+  assert(matches.length === 1, `${matches.length} rows for ${recorded}`);
+  assert(rows().length === before + 1, `row count went ${before} -> ${rows().length}`);
+  assert(matches[0].status === "unmatched" && matches[0].provider_order_id === "mockpay_ghost", "row does not say unmatched with the order ID");
+  assert(/matched no registration/.test(matches[0].webhook_note || ""), "no webhook_note saying why");
+});
+
+await check("10. Past option: the September Hit Night package is refused at checkout and not offered", async () => {
+  const before = rows().length;
+  const res = await fetch(`${BASE}/api/checkout/session`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      programSlug: "hit-night-fall-2026", optionId: "sept", paymentMethod: "facility",
+      players: [PLAYER], parent: PARENT, waiverAccepted: true
+    })
+  });
+  const data = await res.json();
+  assert(res.status === 400, `checkout answered ${res.status}`);
+  assert(data.error === "Unknown option", `error was ${JSON.stringify(data.error)}`);
+  assert(rows().length === before, "a row was written");
+  const offered = (await (await fetch(`${BASE}/api/programs/hit-night-fall-2026`)).json()).options.map((o) => o.id);
+  assert(!offered.includes("sept"), `register options include sept: ${offered.join(",")}`);
+  assert(offered.includes("oct") || offered.includes("dec"), `no later package offered: ${offered.join(",")}`);
+});
+
+await check("11. Slow webhook: still confirming after 60 seconds, then confirmed when the webhook lands", async () => {
+  const { registrationId: id } = await startSession();
+  const session = row(id).checkout_session_id;
+  const page = await browser.newPage();
+  await page.goto(`${BASE}/register.html?registration=${id}`);
+  await wait(5000);
+  assert((await title(page)) === "Confirming your payment.", `at 5s: ${await title(page)}`);
+  assert(await page.isHidden("[data-confirm-call]"), "call button shown before a minute");
+  await page.waitForFunction(() => document.querySelector("[data-confirm-title]").textContent === "Still confirming your payment.", null, { timeout: 70000 });
+  const lede = await page.textContent("[data-confirm-lede]");
+  assert(/If your card was charged, your place is held\./.test(lede), `lede: ${lede}`);
+  assert((await page.textContent(".confirm-ref")) === `Reference ${id}`, "reference not shown");
+  assert(await page.isVisible('[data-confirm-call] a[href="tel:+12017736858"]'), "no call button");
+  assert(row(id).status === "pending", `row is ${row(id).status}`);
+  const res = await webhook(session);
+  assert(res.status === 200, `webhook ${res.status}`);
+  /* This browser never saw the player's name, and the status endpoint does
+     not return one, so the title must carry no name at all. */
+  await page.waitForFunction(() => /registered\.$/.test(document.querySelector("[data-confirm-title]").textContent), null, { timeout: 15000 });
+  assert((await title(page)) === "You’re registered.", `confirmed title: ${await title(page)}`);
+  assert(await page.isHidden("[data-confirm-call]"), "call button still shown once confirmed");
+  assert(row(id).status === "confirmed", `row is ${row(id).status}`);
+  await page.close();
+});
+
+await check("12. Full: a program marked full is refused at checkout, writes nothing, and is not offered", async () => {
+  const DATA = new URL("../data/programs.json", import.meta.url);
+  const original = readFileSync(DATA, "utf8");
+  const SLUG = "little-league-fall-2026";
+  const FULL_BASE = "http://localhost:8092";
+  let server;
+  try {
+    const data = JSON.parse(original);
+    data.programs.find((p) => p.slug === SLUG).full = true;
+    writeFileSync(DATA, JSON.stringify(data, null, 2) + "\n");
+    server = spawn(process.execPath, [new URL("./dev-server.mjs", import.meta.url).pathname, "8092"], { stdio: "ignore", env: { ...process.env, PAYMENT_PROVIDER: "mock" } });
+    for (let i = 0; i < 50; i++) { try { await fetch(FULL_BASE); break; } catch { await wait(100); } }
+
+    const before = rawStore();
+    const res = await fetch(`${FULL_BASE}/api/checkout/session`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ programSlug: SLUG, optionId: "full", paymentMethod: "online",
+        players: [PLAYER], parent: PARENT, waiverAccepted: true, photoConsent: false })
+    });
+    const body = await res.json();
+    assert(res.status === 400 && body.error === "Unknown program", `checkout ${res.status}: ${JSON.stringify(body)}`);
+    assert(rawStore() === before, "a registration row was written");
+    for (const method of ["facility", "check"]) {
+      const r = await fetch(`${FULL_BASE}/api/checkout/session`, {
+        method: "POST", headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ programSlug: SLUG, optionId: "full", paymentMethod: method,
+          players: [PLAYER], parent: PARENT, waiverAccepted: true, photoConsent: false })
+      });
+      assert(r.status === 400, `${method}: ${r.status}`);
+    }
+    assert(rawStore() === before, "a facility or check row was written");
+    const offered = await fetch(`${FULL_BASE}/api/programs/${SLUG}`);
+    assert(offered.status === 404, `/api/programs/${SLUG} ${offered.status}`);
+    const other = await fetch(`${FULL_BASE}/api/programs/little-league-winter-2027`);
+    assert(other.status === 200, `an open program was refused too: ${other.status}`);
+  } finally {
+    writeFileSync(DATA, original);
+    if (server) server.kill();
+  }
+  assert(readFileSync(DATA, "utf8") === original, "the data was not put back");
+});
+
+await check("13. Opt-in: ticked on the parent step is stored true with a time", async () => {
+  const page = await browser.newPage();
+  const id = await walkToCheckout(page, { optIn: true });
+  const r = row(id);
+  assert(r.marketing_opt_in === true && !Number.isNaN(Date.parse(r.marketing_opt_in_at)), `stored ${r.marketing_opt_in}, ${r.marketing_opt_in_at}`);
+  assert(r.amount === 320, `amount ${r.amount}`);
+  await page.close();
+});
+
+await browser.close();
+console.log(`\n${failures === 0 ? "All payment checks passed." : failures + " failure(s)."}`);
+process.exit(failures === 0 ? 0 : 1);

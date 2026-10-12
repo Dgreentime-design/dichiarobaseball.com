@@ -20,7 +20,7 @@
 
 /* --- Contents ------------------------------------------------------------ */
 
-.toc { position: sticky; top: var(--s-7); display: grid; gap: var(--s-4); }
+.toc { position: sticky; top: calc(var(--header-h) + var(--s-7)); display: grid; gap: var(--s-4); transition: top var(--dur-reveal) var(--ease-reveal); }
 .toc__label {
   font-family: var(--f-mono); font-weight: 500;
   font-size: var(--t-eyebrow); letter-spacing: var(--ls-eyebrow);
@@ -45,7 +45,7 @@
 /* --- Document body -------------------------------------------------------- */
 
 .doc { display: grid; gap: var(--s-11); max-width: 78ch; }
-.doc section { display: grid; gap: var(--s-4); scroll-margin-top: var(--s-7); }
+.doc section { display: grid; gap: var(--s-4); scroll-margin-top: calc(var(--header-h) + var(--s-7)); }
 .doc h2 { display: grid; grid-template-columns: 52px 1fr; gap: var(--s-3); align-items: baseline; }
 .doc h2 .num { font-family: var(--f-mono); font-weight: 400; font-size: var(--t-data-l); color: var(--c-red); }
 .doc p { font-size: var(--t-body-m); line-height: var(--lh-body); color: var(--c-muted); }

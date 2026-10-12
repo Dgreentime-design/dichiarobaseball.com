@@ -6,36 +6,47 @@
 <meta name="theme-color" content="#17120F">
 
 <link rel="icon" href="assets/img/mark.svg" type="image/svg+xml">
-<link rel="icon" href="assets/img/favicon.png" sizes="any">
-<link rel="apple-touch-icon" href="assets/img/favicon.png">
+<link rel="icon" href="assets/img/apple-touch-icon.png" type="image/png" sizes="180x180">
+<link rel="apple-touch-icon" href="assets/img/apple-touch-icon.png">
 
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;600;700;900&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<!-- Fonts are self-hosted (assets/fonts, declared in assets/css/fonts.css).
+     The two latin files carry every weight used above the fold. -->
+<link rel="preload" href="assets/fonts/archivo-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="assets/fonts/jetbrains-mono-latin.woff2" as="font" type="font/woff2" crossorigin>
 
-<link rel="stylesheet" href="assets/css/tokens.css">
-<link rel="stylesheet" href="assets/css/base.css">
-<link rel="stylesheet" href="assets/css/components.css">
-<link rel="stylesheet" href="assets/css/home.css">
-<link rel="stylesheet" href="assets/css/camps.css">
-<link rel="stylesheet" href="assets/css/pages.css">
-<link rel="stylesheet" href="assets/css/register.css">
-<link rel="stylesheet" href="assets/css/instructors.css">
-<link rel="stylesheet" href="assets/css/legal.css">
-<link rel="stylesheet" href="assets/css/program.css">
+<!-- One stylesheet, built by build.mjs from the files in assets/css/. -->
+<link rel="stylesheet" href="assets/css/site.min.css?v=8ee950e5">
+
+<!-- Analytics. Vercel Web Analytics: no cookies, so no consent banner. It
+     records nothing until it is enabled in the Vercel dashboard (project,
+     Analytics, Enable); until then the script below answers 404 and the
+     page is unaffected. -->
+<script>window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };</script>
+<script defer src="/_vercel/insights/script.js"></script>
+
+<!-- GOOGLE ANALYTICS SLOT. build.mjs writes the GA4 tag here when the
+     GA4_MEASUREMENT_ID variable is set, and nothing when it is not. Google
+     signals and ad personalisation are off; previews and local builds add
+     debug_mode so their traffic stays out of real reports. Events go through
+     window.dbsaTrack in site.js. The privacy policy's cookies section says so. -->
+
 
 <title>Contact · DiChiaro Baseball &amp; Softball Academy</title>
 <meta name="description" content="Contact DiChiaro Baseball &amp; Softball Academy, 18-01 Pollitt Drive, Fair Lawn NJ. Questions about camps, clinics, lessons or renting the facility.">
+<meta property="og:title" content="Contact · DiChiaro Baseball &amp; Softball Academy">
+<meta property="og:description" content="Contact DiChiaro Baseball &amp; Softball Academy, 18-01 Pollitt Drive, Fair Lawn NJ. Questions about camps, clinics, lessons or renting the facility.">
+<meta property="og:image" content="https://dichiarobaseball.com/assets/img/dbsa-01-facility-in-use.jpg">
+<meta name="twitter:title" content="Contact · DiChiaro Baseball &amp; Softball Academy">
+<meta name="twitter:description" content="Contact DiChiaro Baseball &amp; Softball Academy, 18-01 Pollitt Drive, Fair Lawn NJ. Questions about camps, clinics, lessons or renting the facility.">
+<meta name="twitter:image" content="https://dichiarobaseball.com/assets/img/dbsa-01-facility-in-use.jpg">
 <link rel="canonical" href="https://dichiarobaseball.com/contact.html">
 <meta property="og:type" content="website">
-<meta property="og:title" content="Contact · DiChiaro Baseball &amp; Softball Academy">
-<meta property="og:description" content="We answer messages the same day during opening hours.">
 <meta property="og:url" content="https://dichiarobaseball.com/contact.html">
 <meta name="twitter:card" content="summary_large_image">
 
 <meta name="robots" content="noindex, nofollow">
 
-<script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"SportsActivityLocation","@id":"https://dichiarobaseball.com/#facility","name":"DiChiaro Baseball & Softball Academy","description":"Year-round indoor baseball and softball instruction in Fair Lawn, New Jersey. Hitting, fielding and pitching for ages six to eighteen.","url":"https://dichiarobaseball.com/","telephone":"+1-201-773-6858","email":"info@dichiarobaseball.com","address":{"@type":"PostalAddress","streetAddress":"18-01 Pollitt Drive","addressLocality":"Fair Lawn","addressRegion":"NJ","postalCode":"07410","addressCountry":"US"},"image":"https://dichiarobaseball.com/assets/img/dbsa-01-facility-in-use.jpg","sameAs":["https://www.instagram.com/dichiaroacademy","https://www.facebook.com/dichiaroacademy"]}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"SportsActivityLocation","@id":"https://dichiarobaseball.com/#facility","name":"DiChiaro Baseball & Softball Academy","description":"Year-round indoor baseball and softball instruction in Fair Lawn, New Jersey. Hitting, fielding and pitching for ages 6 and up.","url":"https://dichiarobaseball.com/","telephone":"+1-201-773-6858","email":"info@dichiarobaseball.com","address":{"@type":"PostalAddress","streetAddress":"18-01 Pollitt Drive","addressLocality":"Fair Lawn","addressRegion":"NJ","postalCode":"07410","addressCountry":"US"},"image":"https://dichiarobaseball.com/assets/img/dbsa-01-facility-in-use.jpg","sameAs":["https://www.instagram.com/dichiaroacademy","https://www.facebook.com/dichiaroacademy"]}]}</script>
 </head>
 
 <body>
@@ -43,8 +54,8 @@
 
 <header class="site-header">
   <p class="announce">
-    Fall little league camp starts Oct 25 &nbsp;·&nbsp; 8 sessions &nbsp;·&nbsp;
-    <a href="register.html">Register now</a>
+    Little League camp starts Sunday, Oct 25. &nbsp;·&nbsp;
+    <a href="register.html?program=little-league-fall-2026">Register</a>
   </p>
 
   <nav class="nav" aria-label="Main">
@@ -54,9 +65,9 @@
     </a>
 
     <ul class="nav__links">
-      <li><a class="nav__link" href="camps-and-clinics.html">Camps &amp; Clinics</a></li>
+      <li><a class="nav__link" href="camps-and-clinics.html">Camps</a></li>
       <li><a class="nav__link" href="lessons.html">Lessons</a></li>
-      <li><a class="nav__link" href="facility-and-rentals.html">Facility &amp; Rentals</a></li>
+      <li><a class="nav__link" href="facility-and-rentals.html">Rentals</a></li>
       <li><a class="nav__link" href="instructors.html">Instructors</a></li>
       <li><a class="nav__link" href="about.html">About</a></li>
     </ul>
@@ -81,7 +92,7 @@
       </li>
     </ul>
 
-    <a class="btn btn--primary btn--compact nav__cta" href="register.html">Register</a>
+    <a class="btn btn--primary btn--compact nav__cta" href="camps-and-clinics.html">Open camps</a>
 
     <button class="nav__toggle" type="button" data-menu-open
             aria-expanded="false" aria-controls="mobile-menu">
@@ -102,16 +113,17 @@
   </div>
 
   <ul class="menu__list">
-    <li><a href="camps-and-clinics.html">Camps &amp; Clinics</a></li>
+    <li><a href="camps-and-clinics.html">Camps</a></li>
     <li><a href="lessons.html">Lessons</a></li>
-    <li><a href="facility-and-rentals.html">Facility &amp; Rentals</a></li>
+    <li><a href="facility-and-rentals.html">Rentals</a></li>
     <li><a href="instructors.html">Instructors</a></li>
     <li><a href="about.html">About</a></li>
     <li><a href="contact.html">Contact</a></li>
   </ul>
 
   <div class="menu__foot">
-    <a class="btn btn--primary btn--block" href="register.html">Register</a>
+    <a class="btn btn--primary btn--block" href="camps-and-clinics.html">Open camps</a>
+    <a class="btn btn--ghost btn--block" href="tel:+12017736858">Call (201) 773-6858</a>
     <ul class="nav__social nav__social--menu">
       <li>
         <a href="https://www.instagram.com/dichiaroacademy" rel="noopener" aria-label="DiChiaro Academy on Instagram">
@@ -140,14 +152,15 @@
 
 <main id="main">
 
+<script type="application/json" id="about-topics">{"hittrax":"Cage or facility rental","rental":"Cage or facility rental","cage-rental":"Cage or facility rental","full-facility":"Cage or facility rental","lesson":"Private lessons","private-lesson":"Private lessons","pitching-lesson":"Private lessons","semi-private":"Private lessons","spring-little-league":"Camps and clinics","little-league-fall-2026":"Camps and clinics","little-league-winter-2027":"Camps and clinics","little-league-march-2027":"Camps and clinics","infield-camp-2026-27":"Camps and clinics","hit-night-fall-2026":"Camps and clinics","hit-night-winter-2027":"Camps and clinics","iha-softball-winter-2027":"Camps and clinics","fair-lawn-hs-softball-2027":"Camps and clinics","old-tappan-hs-2026-27":"Camps and clinics"}</script>
+
 <section class="hero-light">
   <div class="hero-light__inner">
     <div class="hero-light__copy">
       <p class="eyebrow">Contact</p>
-      <h1 class="display-l">We&rsquo;d love to hear from you.</h1>
+      <h1 class="display-l">Ask us anything about camps, lessons or rentals.</h1>
       <p class="hero-light__lede body-l">
-        Questions about camps, clinics, lessons or renting the facility, this is the
-        place. We answer messages the same day during opening hours.
+        We reply within one business day.
       </p>
     </div>
   </div>
@@ -162,31 +175,31 @@
     <div class="form-card">
       <h2 class="heading-l" id="form-title">Send us a message</h2>
 
-      <form class="form" data-proto-form novalidate>
+      <form class="form" data-enquiry-form="contact" novalidate>
         <div class="form__row">
           <div class="field">
             <label for="first-name">First name</label>
-            <input class="input" id="first-name" name="first-name" type="text" autocomplete="given-name" placeholder="Jane" required>
+            <input class="input" id="first-name" name="first-name" type="text" autocomplete="given-name" placeholder="Jane" maxlength="100" required>
           </div>
           <div class="field">
             <label for="last-name">Last name</label>
-            <input class="input" id="last-name" name="last-name" type="text" autocomplete="family-name" placeholder="Rodriguez" required>
+            <input class="input" id="last-name" name="last-name" type="text" autocomplete="family-name" placeholder="Rodriguez" maxlength="100" required>
           </div>
         </div>
 
         <div class="form__row">
           <div class="field">
             <label for="email">Email</label>
-            <input class="input" id="email" name="email" type="email" autocomplete="email" inputmode="email" placeholder="jane@example.com" required>
+            <input class="input" id="email" name="email" type="email" autocomplete="email" inputmode="email" placeholder="jane@example.com" maxlength="200" required>
           </div>
           <div class="field">
             <label for="phone">Phone, optional</label>
-            <input class="input" id="phone" name="phone" type="tel" autocomplete="tel" inputmode="tel" placeholder="(201) 555 0148">
+            <input class="input" id="phone" name="phone" type="tel" autocomplete="tel" inputmode="tel" placeholder="(201) 555 0148" maxlength="40">
           </div>
         </div>
 
         <div class="field">
-          <label for="topic">What is this about</label>
+          <label for="topic">What&rsquo;s this about?</label>
           <select class="select" id="topic" name="topic" required>
             <option value="" selected disabled>Choose one</option>
             <option>Camps and clinics</option>
@@ -199,30 +212,36 @@
 
         <div class="field">
           <label for="message">Your message</label>
-          <textarea class="textarea" id="message" name="message" placeholder="Tell us the player's age and what you are after, and we can point you at the right program." required></textarea>
+          <textarea class="textarea" id="message" name="message" placeholder="Tell us the player's age and what you are after, and we can point you at the right program." maxlength="2000" required></textarea>
         </div>
 
+        <label class="choice">
+          <input type="checkbox" id="c-marketing" name="marketing_opt_in">
+          <span class="choice__copy">
+            <strong>Send me news about camps and clinics.</strong>
+            <span>You can unsubscribe at any time.</span>
+          </span>
+        </label>
+
+        <div class="form__hp" aria-hidden="true">
+          <label for="c-trap">Leave this empty</label>
+          <input id="c-trap" name="dbsa_trap" type="text" tabindex="-1" autocomplete="off" data-1p-ignore data-lpignore="true" data-form-type="other">
+        </div>
         <button class="btn btn--primary btn--block" type="submit">Send message</button>
+        <p class="field__error" role="alert" data-enquiry-error hidden>
+          That didn&rsquo;t send. Call <a href="tel:+12017736858">(201) 773-6858</a>
+          or email <a href="mailto:info@dichiarobaseball.com">info@dichiarobaseball.com</a>.
+        </p>
 
         <p class="form__privacy">
-          We use your details to answer this message and nothing else. No marketing list
-          unless you ask to join it.
+          We only use your details to answer you.
         </p>
       </form>
-
-      <div class="proto-notice" data-proto-notice hidden>
-        <p class="meta">Prototype</p>
-        <p>
-          Nothing was sent. This form is not connected yet. In the built site it writes
-          the message to the academy first, then syncs the contact to Constant Contact,
-          and an email lands with Michael.
-        </p>
-      </div>
     </div>
 
     <aside class="rail">
       <div class="media media--16x9">
-        <img src="assets/img/dbsa-18-map-fair-lawn.png" alt="Map showing the academy on Pollitt Drive in Fair Lawn" width="1200" height="800" loading="lazy">
+        <picture><source type="image/webp" srcset="assets/img/gen/dbsa-18-map-fair-lawn-480-bcc18de0.webp 480w, assets/img/gen/dbsa-18-map-fair-lawn-800-bcc18de0.webp 800w, assets/img/gen/dbsa-18-map-fair-lawn-1280-bcc18de0.webp 1280w" sizes="(min-width: 1024px) 440px, 100vw"><img src="assets/img/gen/dbsa-18-map-fair-lawn-1280-bcc18de0.jpg" srcset="assets/img/gen/dbsa-18-map-fair-lawn-480-bcc18de0.jpg 480w, assets/img/gen/dbsa-18-map-fair-lawn-800-bcc18de0.jpg 800w, assets/img/gen/dbsa-18-map-fair-lawn-1280-bcc18de0.jpg 1280w" sizes="(min-width: 1024px) 440px, 100vw" alt="Map showing the academy on Pollitt Drive in Fair Lawn" width="1600" height="1067" loading="lazy" decoding="async" data-slot="47"></picture>
         <span class="media__label">dbsa-18 · Static tile, pin on Pollitt Drive, tap opens directions</span>
       </div>
 
@@ -238,19 +257,16 @@
           <dt>Phone</dt>
           <dd>
             <a href="tel:+12017736858">(201) 773-6858</a>
-            <small>Quickest way to reach us about a same-day rental</small>
+            <small>Quickest for same-day rentals</small>
           </dd>
         </div>
         <div class="rail__detail">
           <dt>Email</dt>
           <dd><a href="mailto:info@dichiarobaseball.com">info@dichiarobaseball.com</a></dd>
         </div>
-        <div class="rail__detail rail__detail--pending">
+        <div class="rail__detail">
           <dt>Hours</dt>
-          <dd>
-            To confirm with Michael
-            <small>Placeholder, replace before launch</small>
-          </dd>
+          <dd>Call <a href="tel:+12017736858">(201) 773-6858</a> for today&rsquo;s hours.</dd>
         </div>
         <div class="rail__detail">
           <dt>Instagram</dt>
@@ -260,8 +276,8 @@
 
       <div class="nudge">
         <h2 class="heading-s">Already know what you want?</h2>
-        <p>Sign up for any open program online. No need to message first.</p>
-        <a class="btn btn--primary btn--block" href="register.html">Register now</a>
+        <p>Sign up online. No need to message first.</p>
+        <a class="btn btn--primary btn--block" href="camps-and-clinics.html">See camps and clinics</a>
       </div>
     </aside>
 
@@ -275,25 +291,21 @@
   <div class="container">
     <div class="sec-head">
       <p class="eyebrow">Before you write</p>
-      <h2 class="heading-xl" id="qa-title">The four things people ask us most.</h2>
+      <h2 class="heading-xl" id="qa-title">Quick answers.</h2>
     </div>
 
     <div class="qa-grid">
       <div class="qa">
         <h3>How do I sign up for a camp?</h3>
-        <p>Everything is online. Pick the program, add the player, sign the waiver and pay. It takes about three minutes and you get the dates by email straight away.</p>
+        <p>Online. Pick the program, add your player, sign the waiver and pay. About three minutes.</p>
       </div>
       <div class="qa">
         <h3>Do we have to sign a waiver?</h3>
-        <p>Yes, once per player per season. It is built into the sign-up, so there is nothing to print, sign and post back.</p>
+        <p>Yes, once per player per season. It&rsquo;s part of sign-up.</p>
       </div>
       <div class="qa">
         <h3>What ages do you take?</h3>
-        <p>Six to eighteen across the programs. If you are not sure which one fits, tell us the age and what they play and we will point you at the right one.</p>
-      </div>
-      <div class="qa">
-        <h3>Can I book with a specific coach?</h3>
-        <p>Yes. Name them in your message and we will check their availability. Softball pitchers, ask for Diana or Sam.</p>
+        <p>Ages 6 and up. Not sure which program? Tell us the age and position.</p>
       </div>
     </div>
   </div>
@@ -307,8 +319,9 @@
       <span>Pitching</span><span aria-hidden="true">•</span>
       <span>Catching</span><span aria-hidden="true">•</span>
       <span>HitTrax</span><span aria-hidden="true">•</span>
+      <span>Ages 6 and up</span><span aria-hidden="true">•</span>
       <span>Year round</span><span aria-hidden="true">•</span>
-      <span>Bergen County</span><span aria-hidden="true">•</span>
+      <span>Fair Lawn</span><span aria-hidden="true">•</span>
     </div>
   </div>
 </div>
@@ -334,29 +347,26 @@
         <h3>Programs</h3>
         <a href="camps-and-clinics.html#little-league-training-camp">Little League Training Camp</a>
         <a href="camps-and-clinics.html#infield-camp">Infield Camp</a>
-        <a href="camps-and-clinics.html#monday-hit-night">Monday Hit Nights</a>
-        <a href="camps-and-clinics.html#team-and-specialty">Team &amp; specialty camps</a>
-        <a href="team-camps.html">Team &amp; town camps</a>
+        <a href="camps-and-clinics.html#monday-hit-night">Monday Hit Night</a>
+        <a href="team-camps.html">Team camps</a>
         <a href="camps-and-clinics.html">All camps and clinics</a>
       </nav>
 
-      <nav class="site-footer__group" aria-label="Lessons and facility">
-        <h3>Lessons &amp; facility</h3>
+      <nav class="site-footer__group" aria-label="Lessons and rentals">
+        <h3>Lessons and rentals</h3>
         <a href="lessons.html#private">Private lessons</a>
         <a href="lessons.html#semi-private">Semi-private lessons</a>
-        <a href="lessons.html#packages">Lesson packages</a>
-        <a href="lessons.html#hittrax">HitTrax sessions</a>
-        <a href="facility-and-rentals.html">Facility rentals</a>
+        <a href="facility-and-rentals.html#hittrax">HitTrax sessions</a>
+        <a href="facility-and-rentals.html">Cage and facility rentals</a>
       </nav>
 
       <nav class="site-footer__group" aria-label="Academy">
         <h3>Academy</h3>
-        <a href="instructors.html">Our instructors</a>
-        <a href="about.html">About Lou</a>
+        <a href="instructors.html">Instructors</a>
+        <a href="about.html">About the academy</a>
         <a href="lous-journey.html">Lou&rsquo;s journey</a>
         <a href="contact.html">Contact</a>
-        <a href="register.html">Register</a>
-        <a href="waiver-and-policies.html">Waiver &amp; policies</a>
+        <a href="waiver-and-policies.html">Waiver and policies</a>
       </nav>
 
     </div>

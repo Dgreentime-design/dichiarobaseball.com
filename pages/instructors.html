@@ -28,24 +28,20 @@
 <!-- ===================================================================== -->
 <section class="hero">
   <div class="hero__media media media--16x9 media--note">
-    <img src="assets/img/dbsa-01-facility-in-use.jpg" alt="" width="2400" height="1600" fetchpriority="high">
+    {{img 48 hero}}
     <span class="media__label">shot list 05 &middot; the staff together on the turf</span>
   </div>
 
   <div class="hero__inner">
     <div class="hero__copy">
       <p class="eyebrow">The staff</p>
-      <h1 class="display-l">Seven instructors who<br>played the game first.</h1>
+      <h1 class="display-l">Coaches who played the game first.</h1>
       <p class="hero__lede body-l">
-        Between them: two Hall of Fame inductions, three players drafted by Major League
-        clubs, and a Cape Cod League All-Star who pitched at Fenway. Every one of them is
-        on the floor teaching, not on a website somewhere.
+        Two Major League draftees on staff, all still teaching on the floor.
       </p>
       <dl class="stat-strip stat-strip--dark">
-        <div class="stat"><dt>7</dt><dd>Instructors on staff</dd></div>
-        <div class="stat"><dt>2</dt><dd>Hall of Fame inductions</dd></div>
-        <div class="stat"><dt>3</dt><dd>MLB draft picks</dd></div>
-        <div class="stat"><dt>25</dt><dd>Years teaching here</dd></div>
+        <div class="stat"><dt>2</dt><dd>MLB draftees on staff</dd></div>
+        <div class="stat"><dt>Since 2010</dt><dd>Open in Fair Lawn</dd></div>
       </dl>
     </div>
   </div>
@@ -58,13 +54,13 @@
   <div class="filters__inner">
     <p class="filters__label" id="teaches-label">Teaches</p>
     <div class="filters__pills" role="group" aria-labelledby="teaches-label">
-      <button class="pill" type="button" data-filter="all"      aria-pressed="true">All seven</button>
+      <button class="pill" type="button" data-filter="all"      aria-pressed="true">All instructors</button>
       <button class="pill" type="button" data-filter="hitting"  aria-pressed="false">Hitting</button>
       <button class="pill" type="button" data-filter="fielding" aria-pressed="false">Fielding</button>
       <button class="pill" type="button" data-filter="pitching" aria-pressed="false">Pitching</button>
       <button class="pill" type="button" data-filter="catching" aria-pressed="false">Catching</button>
     </div>
-    <p class="filters__count" data-filter-count aria-live="polite">Showing 7</p>
+    <p class="filters__count" data-filter-count aria-live="polite">Showing 6</p>
   </div>
 </section>
 
@@ -80,14 +76,13 @@
             <img src="assets/img/dbsa-10-portrait-lou-dichiaro.jpg" alt="Lou DiChiaro" width="1600" height="2000" loading="lazy">
             <span class="media__label">dbsa-10-portrait-lou-dichiaro · Head and shoulders, net behind</span>
           </div>
-          <span class="chip">Owner</span>
         </div>
 
         <div class="person__body">
           <div class="person__collapsed">
             <div class="person__identity">
               <h3 class="heading-m">Lou DiChiaro</h3>
-              <p class="person__role">Owner, professional instructor</p>
+              <p class="person__role">Founder and head instructor</p>
             </div>
             <p class="person__teaches">Hitting · Fielding · Baseball · Softball</p>
             <ul class="person__creds">
@@ -101,7 +96,7 @@
             <div class="person__head">
               <div class="person__identity">
                 <h3 class="heading-l">Lou DiChiaro</h3>
-                <p class="person__role">Owner, professional instructor · Hitting · Fielding · Baseball · Softball</p>
+                <p class="person__role">Founder and head instructor · Hitting · Fielding · Baseball · Softball</p>
               </div>
             </div>
 
@@ -124,13 +119,12 @@
           <div class="bio-block">
             <h4>At the academy</h4>
             <ul>
-              <li>Owner and instructor since 2000. Teaches hitting and fielding for both baseball and softball players.</li>
+              <li>Founder and head instructor since 2000. Teaches hitting and fielding for both baseball and softball players.</li>
             </ul>
           </div>
 
           <div class="person__cta">
-            <a class="btn btn--primary" href="contact.html?about=lesson-lou-dichiaro">Book a lesson with Lou</a>
-            <a class="arrow-link" href="camps-and-clinics.html"><span>See camp dates</span><span aria-hidden="true">&rarr;</span></a>
+            <a class="arrow-link" href="camps-and-clinics.html"><span>See Lou&rsquo;s camps</span><span aria-hidden="true">&rarr;</span></a>
           </div>
           </div>
 
@@ -181,7 +175,7 @@
             </ul>
           </div>
           <div class="bio-block">
-            <h4>Honours</h4>
+            <h4>Honors</h4>
             <ul>
               <li>Bergen County Hall of Fame, 1998. Chowan Athletic Hall of Fame, 2012.</li>
               <li>Semi-pro league MVP, four-time All-Star, 25th Anniversary All-Met Team, 1999 Over 30 New Jersey Player of the Year.</li>
@@ -195,7 +189,6 @@
           </div>
 
           <div class="person__cta">
-            <a class="btn btn--primary" href="contact.html?about=lesson-fran-fitzgerald">Book a lesson with Fran</a>
             <a class="arrow-link" href="camps-and-clinics.html"><span>See camp dates</span><span aria-hidden="true">&rarr;</span></a>
           </div>
           </div>
@@ -209,14 +202,9 @@
 
       <article class="person person--pending" id="gianna-sarlo" data-person data-tags="">
         <div class="person__media">
-          <!-- No photograph has been supplied for Gianna, so the card does not
-               ask for one. media--empty is set here rather than left to the
-               error handler in site.js: the handler produces the same labelled
-               placeholder, but only after a request has 404ed, which puts a
-               real error in the server logs for a file that is missing by
-               design. Add the <img> back when the academy supplies the photo. -->
-          <div class="media media--4x3 media--empty">
-            <span class="media__label">dbsa-19-portrait-gianna-sarlo · Head and shoulders, net behind</span>
+          <div class="media media--4x3">
+            {{img 56}}
+            <span class="media__label">dbsa-29-portrait-gianna-sarlo · Head and shoulders, the D behind</span>
           </div>
         </div>
 
@@ -226,11 +214,8 @@
               <h3 class="heading-m">Gianna Sarlo</h3>
               <p class="person__role">Instructor</p>
             </div>
-            <p class="person__teaches">Disciplines to confirm</p>
             <ul class="person__creds">
-            <li>Listed on the current site, bio sheet not supplied</li>
-            <li>Playing and coaching record to come from the academy</li>
-            <li>Disciplines and age groups to confirm</li>
+            <li>Bio coming soon.</li>
             </ul>
           </div>
 
@@ -238,21 +223,16 @@
             <div class="person__head">
               <div class="person__identity">
                 <h3 class="heading-l">Gianna Sarlo</h3>
-                <p class="person__role">Instructor · Disciplines to confirm</p>
+                <p class="person__role">Instructor</p>
               </div>
             </div>
 
           <div class="bio-block">
-            <h4>Bio to come</h4>
             <ul>
-              <li>Gianna is listed on the current dichiarobaseball.com staff page, but the academy has not supplied a bio sheet for her, so there is nothing here yet that would be true.</li>
-              <li>This card is built and ready. It needs her playing and coaching record, the disciplines she teaches, and a portrait, and it fills in exactly like the others.</li>
+              <li>Bio coming soon.</li>
             </ul>
           </div>
 
-          <div class="person__cta">
-            <a class="btn btn--outline" href="contact.html?about=instructors">Ask about availability</a>
-          </div>
           </div>
 
           <button class="person__toggle" type="button" data-person-toggle aria-expanded="false" aria-controls="gianna-sarlo">
@@ -314,7 +294,6 @@
           </div>
 
           <div class="person__cta">
-            <a class="btn btn--primary" href="contact.html?about=lesson-christopher-dichiaro">Book a lesson with Christopher</a>
             <a class="arrow-link" href="camps-and-clinics.html"><span>See camp dates</span><span aria-hidden="true">&rarr;</span></a>
           </div>
           </div>
@@ -377,7 +356,6 @@
           </div>
 
           <div class="person__cta">
-            <a class="btn btn--primary" href="contact.html?about=lesson-mike-warden">Book a lesson with Mike</a>
             <a class="arrow-link" href="camps-and-clinics.html"><span>See camp dates</span><span aria-hidden="true">&rarr;</span></a>
           </div>
           </div>
@@ -440,7 +418,6 @@
           </div>
 
           <div class="person__cta">
-            <a class="btn btn--primary" href="contact.html?about=lesson-scott-fischer">Book a lesson with Scott</a>
             <a class="arrow-link" href="camps-and-clinics.html"><span>See camp dates</span><span aria-hidden="true">&rarr;</span></a>
           </div>
           </div>
@@ -451,112 +428,18 @@
           </button>
         </div>
       </article>
-
-      <article class="person" id="eric-pfisterer" data-person data-tags="pitching">
-        <div class="person__media">
-          <div class="media media--4x3">
-            <img src="assets/img/dbsa-12-portrait-eric-pfisterer.jpg" alt="Eric Pfisterer" width="1600" height="2000" loading="lazy">
-            <span class="media__label">dbsa-12-portrait-eric-pfisterer · Head and shoulders, net behind</span>
-          </div>
-        </div>
-
-        <div class="person__body">
-          <div class="person__collapsed">
-            <div class="person__identity">
-              <h3 class="heading-m">Eric Pfisterer</h3>
-              <p class="person__role">Professional instructor</p>
-            </div>
-            <p class="person__teaches">Pitching · Baseball</p>
-            <ul class="person__creds">
-            <li>Drafted 15th round, 2008, Cincinnati Reds</li>
-            <li>Atlanta Braves farm system. Duke scholarship</li>
-            <li>Cape Cod All-Star who pitched at Fenway Park</li>
-            </ul>
-          </div>
-
-          <div class="person__expanded">
-            <div class="person__head">
-              <div class="person__identity">
-                <h3 class="heading-l">Eric Pfisterer</h3>
-                <p class="person__role">Professional instructor · Pitching · Baseball</p>
-              </div>
-            </div>
-
-          <div class="bio-block">
-            <h4>Playing career</h4>
-            <ul>
-              <li>Played professionally in the Atlanta Braves farm system.</li>
-              <li>Cape Cod League, Wareham Gatemen, 2009 to 2010. Six and three over 98 innings with 89 strikeouts and a 3.14 ERA. Selected to the 2009 All-Star game and pitched at Fenway Park.</li>
-              <li>Duke University. Four-year baseball scholarship, ACC All-Academic Baseball Team for pitching, ACC Academic Honor Roll.</li>
-              <li>Don Bosco Prep, 2008 33-0 national championship team. Batted .525 with four home runs and 48 RBI, pitched 10-0 with a 1.60 ERA and 90 strikeouts. ESPN First Team All-American, First Team All-State, First Team All-County, Player of the Year for North Jersey. Drafted in the 15th round of the 2008 MLB draft by the Cincinnati Reds.</li>
-            </ul>
-          </div>
-          <div class="bio-block">
-            <h4>At the academy</h4>
-            <ul>
-              <li>Teaches pitching for baseball players.</li>
-            </ul>
-          </div>
-
-          <div class="person__cta">
-            <a class="btn btn--primary" href="contact.html?about=lesson-eric-pfisterer">Book a lesson with Eric</a>
-            <a class="arrow-link" href="camps-and-clinics.html"><span>See camp dates</span><span aria-hidden="true">&rarr;</span></a>
-          </div>
-          </div>
-
-          <button class="person__toggle" type="button" data-person-toggle aria-expanded="false" aria-controls="eric-pfisterer">
-            <span data-toggle-label>Read full bio</span>
-            <span class="sign" aria-hidden="true">+</span>
-          </button>
-        </div>
-      </article>
   </div>
 
   <p class="programs__empty body-m" data-filter-empty hidden>
-    Nobody on the current roster is listed for that discipline.
-    <a href="contact.html" class="arrow-link">Ask us who would suit <span aria-hidden="true">&rarr;</span></a>
+    No instructor listed for that yet.
+    <a href="contact.html" class="arrow-link">Ask us who fits <span aria-hidden="true">&rarr;</span></a>
   </p>
 
   <div class="container">
-    <div class="build-note">
-      <p class="meta">Needs confirming with Michael</p>
-      <p>
-        This page matches the current dichiarobaseball.com staff list exactly, which is
-        seven names. Two consequences worth a conversation. Gianna Sarlo is on the live
-        site but the academy has not supplied a bio sheet, so her card is built and empty
-        rather than filled with something invented, and she carries no discipline so she
-        appears only under All seven. Diana Schraer and Sam Keating have full bio sheets
-        and appear on the Lessons page as the softball pitching instructors, but are not
-        on the live staff list, so they are not here. If they are on staff, adding them
-        also gets back a third Hall of Fame induction and two dedicated softball pitching
-        specialists, which nothing on the current site mentions.
-      </p>
-      <p>
-        Separately, a count in a headline goes stale the moment the roster changes.
-        Recommend dropping the number once the roster is settled.
-      </p>
-    </div>
-  </div>
-</section>
-
-<!-- ===================================================================== -->
-<!-- Book a lesson band                                                    -->
-<!-- ===================================================================== -->
-<section class="band band--ink" aria-labelledby="book-band-title">
-  <div class="register__inner">
-    <div class="register__copy">
-      <p class="eyebrow eyebrow--dim">Private instruction</p>
-      <h2 class="display-l on-dark" id="book-band-title">Pick the instructor.<br>Pick the skill. Get to work.</h2>
-      <p class="body-m dim">
-        One-on-one and small group lessons run year round, seven days a week. Tell us who
-        you want to work with and what you want to fix.
-      </p>
-    </div>
-    <div class="register__actions">
-      <a class="btn btn--primary" href="lessons.html">Book a private lesson</a>
-      <a class="btn btn--ghost" href="camps-and-clinics.html">See camps and clinics</a>
-      <p class="body-s dim">New families complete the waiver once, at first booking.</p>
-    </div>
+    <!-- Where the closing "Pick the instructor." band was (round 22) -->
+    <p class="chip-row__action">
+      <a class="arrow-link" href="lessons.html"><span>Book a private lesson</span><span aria-hidden="true">&rarr;</span></a>
+    </p>
   </div>
 </section>
 

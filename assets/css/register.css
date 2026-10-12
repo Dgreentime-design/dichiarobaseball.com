@@ -119,18 +119,23 @@
   .qa:first-child { border-top: 1px solid var(--c-line); }
 }
 
-/* --- Prototype notice ----------------------------------------------------
-   Shown when a form is submitted in the prototype. The form is not wired to
-   anything, and saying so beats a fake success message. */
+/* --- Enquiry forms ------------------------------------------------------
+   The Contact and Team camps forms. On success the form is replaced by
+   .form-done, which takes focus. The honeypot is off screen and out of the
+   tab order, so only a bot fills it. */
 
-.proto-notice {
+.form-done {
   display: grid; gap: 10px;
   background: var(--c-turf-bg); color: var(--c-turf);
   border-radius: var(--r-2); padding: var(--s-6) var(--s-7);
 }
-.proto-notice .meta { color: var(--c-turf); }
-.proto-notice p { font-size: var(--t-body-s); line-height: var(--lh-body); }
-.proto-notice[hidden] { display: none; }
+.form-done h3 { color: var(--c-turf); }
+.form-done h3:focus { outline: none; }
+.form-done p { font-size: var(--t-body-s); line-height: var(--lh-body); }
+.form-done [data-enquiry-ref] { white-space: nowrap; }
+.form__hp { position: absolute; left: -10000px; width: 1px; height: 1px; overflow: hidden; }
+.field__error[hidden] { display: none; }
+.field__error a { color: inherit; }
 
 /* ==========================================================================
    Registration flow
@@ -151,8 +156,10 @@
   background: var(--c-white); box-shadow: inset 0 0 0 1px var(--c-line);
   font-family: var(--f-mono); font-size: var(--t-eyebrow); color: var(--c-muted);
 }
+/* One size at every width, 12px, never smaller. On a phone the labels wrap
+   under their markers rather than shrinking. */
 .progress__label {
-  font-family: var(--f-mono); font-size: var(--t-eyebrow);
+  font-family: var(--f-mono); font-size: 0.75rem;
   letter-spacing: var(--ls-meta); text-transform: uppercase; color: var(--c-muted);
   white-space: nowrap;
 }
@@ -165,17 +172,25 @@
   /* Stack rather than hide. The step names are content, so every breakpoint
      shows all three. */
   .progress__inner { align-items: flex-start; gap: 8px; }
-  .progress__step { flex-direction: column; align-items: center; gap: 8px; text-align: center; }
-  .progress__label { font-size: 9px; letter-spacing: .06em; white-space: normal; }
+  /* Equal columns, the last one included, so each connector can be sized
+     from its own step and land 8px short of the next marker. */
+  .progress__step, .progress__step:last-child { flex: 1 1 0; min-width: 0; flex-direction: column; align-items: center; gap: 8px; text-align: center; }
+  .progress__label { white-space: normal; }
   .progress__rule { display: none; }
   .progress__step:not(:last-child) { position: relative; }
   .progress__step:not(:last-child)::after {
     content: ""; position: absolute; top: 16px; left: calc(50% + 24px);
-    width: calc(100% - 48px); height: 1px; background: var(--c-line);
+    width: calc(100% - 40px); height: 1px; background: var(--c-line);
   }
 }
 
 /* --- Layout -------------------------------------------------------------- */
+
+/* Every panel starts hidden while register.js loads the program, so the
+   footer used to paint at the top and then jump a whole form's height (CLS
+   0.844). Until a panel shows, main holds the screen and the footer starts
+   below the fold. Once one shows this no longer applies. */
+main:has(> .step-panel):not(:has(> .step-panel:not([hidden]))) { min-height: 100vh; }
 
 .reg { padding: var(--band-y) var(--gutter); background: var(--c-bone); }
 .reg__inner {
@@ -215,7 +230,8 @@
 /* --- Sticky summary ------------------------------------------------------ */
 
 .summary {
-  position: sticky; top: var(--s-6);
+  position: sticky; top: calc(var(--header-h) + var(--s-6));
+  transition: top var(--dur-reveal) var(--ease-reveal);
   background: var(--c-white); border: 1px solid var(--c-line);
   border-radius: var(--r-2); padding: var(--s-7);
   display: grid; gap: var(--s-6);
@@ -305,6 +321,14 @@
 .handoff__step:first-of-type { border-top: 0; }
 .handoff__step dt { font-family: var(--f-mono); font-size: var(--t-data-m); color: var(--c-red); }
 .handoff__step dd { margin: 0; font-size: var(--t-body-s); color: var(--c-muted); }
+
+/* The confirmation timeline reuses the steps with words for labels (Today,
+   Week before, Day one) instead of 01 to 03, which overflowed the 34px
+   column. The label column takes the width of the widest label, shared by
+   every row through subgrid, so the rows still line up. */
+.handoff__steps--labels { grid-template-columns: max-content 1fr; column-gap: var(--s-4); }
+.handoff__steps--labels .handoff__step { grid-column: 1 / -1; grid-template-columns: subgrid; }
+.handoff__steps--labels dt { white-space: nowrap; }
 .hold-note {
   background: var(--c-turf-bg); color: var(--c-turf);
   border-radius: var(--r-2); padding: var(--s-5) var(--s-6);
@@ -319,10 +343,15 @@
   display: flex; align-items: flex-end; justify-content: space-between; gap: var(--s-8); flex-wrap: wrap;
 }
 .confirm-band__copy { display: grid; gap: var(--s-4); max-width: 820px; }
+/* Shown only while a payment is taking longer than a minute to confirm. */
+.confirm-band__call { margin-top: var(--s-3); }
+.confirm-band__call[hidden] { display: none; }
 .confirm-band h2 { color: var(--c-white); }
 .confirm-band p { color: rgba(255,255,255,.86); }
-.confirm-band .eyebrow { color: var(--c-turf-light); }
-.confirm-band .eyebrow::before { background: var(--c-turf-light); }
+/* Open question for Daniel: neither eyebrow color reads on the green band
+   (bright red 2.99:1, muted 1.4:1), so it keeps the light green it had, set
+   through the same custom property as every other background. */
+.confirm-band { --eyebrow-color: var(--c-turf-light); }
 .confirm-ref {
   font-family: var(--f-mono); font-size: var(--t-data-m);
   background: rgba(0,0,0,.25); border-radius: var(--r-1); padding: 12px 18px; color: var(--c-white);

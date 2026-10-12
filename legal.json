@@ -4,7 +4,7 @@
     "eyebrow": "Waiver and policies",
     "title": "Waiver &amp; policies",
     "lede": "Every player needs a signed waiver before their first session. It covers the whole season, not one program, so you sign it once and we carry it forward.",
-    "updated": "Last updated 14 September 2026",
+    "updated": "Last updated Oct 8, 2026",
     "description": "The participation waiver, refund terms and academy policies for DiChiaro Baseball &amp; Softball Academy.",
     "sections": [
       {
@@ -21,7 +21,7 @@
           },
           {
             "t": "p",
-            "text": "One signature covers the player for the season. If they join a second camp two months later, the step is skipped and the confirmation shows the date you signed."
+            "text": "One signature covers the player for the season."
           }
         ]
       },
@@ -36,7 +36,7 @@
           {
             "t": "ul",
             "items": [
-              "Acknowledgement of the risks of athletic participation",
+              "Acknowledgment of the risks of athletic participation",
               "Consent to emergency medical treatment",
               "Release of liability for the academy, its staff and the premises",
               "Confirmation that the player is medically fit to take part"
@@ -72,7 +72,7 @@
           },
           {
             "t": "p",
-            "text": "Lesson packages are not refundable once purchased. This is stated at the point of sale, on the package itself, and on the receipt."
+            "text": "Lesson packages are not refundable once purchased. This is stated at the point of sale, on the package itself, and on the confirmation screen."
           },
           {
             "t": "note",
@@ -96,7 +96,7 @@
       },
       {
         "num": "06",
-        "title": "Behaviour in the facility",
+        "title": "Behavior in the facility",
         "blocks": [
           {
             "t": "p",
@@ -125,7 +125,7 @@
     "eyebrow": "Privacy",
     "title": "Privacy policy",
     "lede": "We collect what we need to run a booking and nothing else. We do not sell data, and we never see your card number.",
-    "updated": "Last updated 14 September 2026",
+    "updated": "Last updated Oct 12, 2026",
     "description": "What DiChiaro Baseball &amp; Softball Academy collects, why, how long it is kept, and what a parent can ask to have removed.",
     "sections": [
       {
@@ -168,7 +168,11 @@
         "blocks": [
           {
             "t": "p",
-            "text": "To run the booking, to know who is in the building on a given day, to reach a parent if something happens during a session, and to email confirmations, reminders and receipts."
+            "text": "To run the booking, to know who is in the building on a given day, and to reach a parent if something happens during a session."
+          },
+          {
+            "t": "p",
+            "text": "Messages sent through the Contact and Team camps forms are stored so we can reply to them, and are not added to a marketing list unless you tick the box asking for news about camps and clinics."
           },
           {
             "t": "p",
@@ -182,14 +186,14 @@
         "blocks": [
           {
             "t": "p",
-            "text": "Only the services that make the booking work."
+            "text": "Only the services that run the site and the bookings."
           },
           {
             "t": "ul",
             "items": [
               "Clover, which processes the payment",
-              "Constant Contact, which sends confirmations, reminders and receipts",
-              "Our website and database host"
+              "Our website and database host",
+              "Google, which receives anonymous site-usage data through Google Analytics, never names, emails or player details (see section 08)"
             ]
           }
         ]
@@ -200,7 +204,7 @@
         "blocks": [
           {
             "t": "p",
-            "text": "Confirmations, reminders and receipts are part of the booking and are sent whether or not you join a mailing list."
+            "text": "Keep your reference number. It is your proof of registration."
           },
           {
             "t": "p",
@@ -242,7 +246,7 @@
         "blocks": [
           {
             "t": "p",
-            "text": "The site uses the small number of cookies needed to keep a booking together between pages. If analytics are added later, they will be named here and you will be asked first."
+            "text": "We use Google Analytics to understand how families use the site, such as which programs they look at and where a registration gets stuck. It sets cookies that count visits without telling us who you are, and we have turned off Google&rsquo;s advertising features. We never send your name, email or your player&rsquo;s details to Google. You can opt out with Google&rsquo;s browser add-on at <a href=\"https://tools.google.com/dlpage/gaoptout\">tools.google.com/dlpage/gaoptout</a>. A booking in progress is kept in your browser&rsquo;s session storage, which clears when you close the tab. We also count visits with Vercel Web Analytics, which sets no cookies."
           }
         ]
       },
@@ -263,7 +267,7 @@
     "eyebrow": "Terms",
     "title": "Terms &amp; conditions",
     "lede": "The rules that apply when you book a program, a lesson or the facility with us, written in language a parent can read in one go.",
-    "updated": "Last updated 14 September 2026",
+    "updated": "Last updated Oct 8, 2026",
     "description": "The terms that apply to booking a program, a lesson or the facility at DiChiaro Baseball &amp; Softball Academy.",
     "sections": [
       {
@@ -282,11 +286,11 @@
         "blocks": [
           {
             "t": "p",
-            "text": "A booking is confirmed when payment has been taken and you have received a confirmation email, not when you submit the form."
+            "text": "Your booking is confirmed when the confirmation screen shows your reference number."
           },
           {
             "t": "p",
-            "text": "Places on camps and clinics are capped. If a program fills while you are part way through checkout we will tell you and offer the waitlist rather than take the money."
+            "text": "Places on camps and clinics are capped."
           }
         ]
       },
@@ -328,7 +332,7 @@
         "blocks": [
           {
             "t": "p",
-            "text": "Everyone in the building follows the instructions of the coaching staff. We can ask a player or a spectator to leave if behaviour puts anyone at risk, and no refund is due in that case."
+            "text": "Everyone in the building follows the instructions of the coaching staff. We can ask a player or a spectator to leave if behavior puts anyone at risk, and no refund is due in that case."
           },
           {
             "t": "p",

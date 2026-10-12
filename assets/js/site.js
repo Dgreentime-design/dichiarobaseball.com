@@ -6,6 +6,51 @@
 (function () {
   "use strict";
 
+  /* --- Analytics ---------------------------------------------------------
+     Every GA4 event goes through window.dbsaTrack(name, params, done). It
+     does nothing when the tag is not on the page and swallows any error,
+     so analytics can never change what a page does. Params are opaque IDs,
+     program slugs, prices, steps and error categories, never anything a
+     family typed.
+
+     done, when given, is called exactly once: when GA confirms the event,
+     after 800ms, or at once if the tag is missing, blocked or not loaded
+     yet (window.dbsaGa is set by the tag's onload and onerror). Use it
+     only to hold a navigation that would otherwise drop the event. */
+
+  window.dbsaTrack = function (name, params, done) {
+    var called = false;
+    var finish = function () {
+      if (called) return;
+      called = true;
+      if (done) { try { done(); } catch (e) { /* the caller's own code */ } }
+    };
+    try {
+      if (typeof window.gtag !== "function") { finish(); return; }
+      var p = {};
+      for (var k in params) if (Object.prototype.hasOwnProperty.call(params, k)) p[k] = params[k];
+      if (done && window.dbsaGa === "ready") {
+        p.transport_type = "beacon";
+        p.event_callback = finish;
+        setTimeout(finish, 800);
+        window.gtag("event", name, p);
+        return;
+      }
+      window.gtag("event", name, p);
+    } catch (e) { /* analytics never breaks the page */ }
+    finish();
+  };
+
+  /* view_item on a program page: the build writes the program's slug,
+     title, sport and "from" price into #ga-item. */
+  try {
+    var gaItem = document.getElementById("ga-item");
+    if (gaItem) {
+      var item = JSON.parse(gaItem.textContent);
+      window.dbsaTrack("view_item", { currency: "USD", value: item.price, items: [Object.assign({ quantity: 1 }, item)] });
+    }
+  } catch (e) { /* no item, no event */ }
+
   /* --- Image placeholders -----------------------------------------------
      Until the final photography lands, an image file that is not on disk
      falls back to the labelled placeholder from the Figma comps rather
@@ -35,6 +80,7 @@
     menu.setAttribute("aria-hidden", String(!open));
     openBtn.setAttribute("aria-expanded", String(open));
     document.body.classList.toggle("is-locked", open);
+    if (open) document.documentElement.classList.remove("header-condensed");
     if (open) {
       lastFocused = document.activeElement;
       var first = menu.querySelector("a, button");
@@ -42,6 +88,66 @@
     } else if (lastFocused) {
       lastFocused.focus();
     }
+  }
+
+  /* --- Sticky header -------------------------------------------------------
+     The header sticks once it has been measured. Scrolling down past its
+     own height slides it up by the announcement bar's height, so the bar
+     leaves and the nav stays. Scrolling up by any amount brings the bar
+     back, and at the top of the page it is always shown.
+
+     Heights are measured, never hardcoded: the bar wraps to two lines on a
+     phone. A ResizeObserver keeps --announce-h and --header-full current,
+     and the CSS works out --header-h, the height actually on screen, which
+     everything else that sticks and every anchor target sits below.
+
+     The scroll listener is passive and runs at most once a frame. A 6px dead
+     zone stops trackpad jitter flickering the bar. It never hides while the
+     mobile menu is open, or while keyboard focus is inside the bar. */
+
+  var root = document.documentElement;
+  var header = document.querySelector(".site-header");
+  var bar = header && header.querySelector(".announce");
+  var DEAD_ZONE = 6;
+  var lastY = window.scrollY;
+  var ticking = false;
+
+  function setCondensed(on) {
+    root.classList.toggle("header-condensed", on);
+  }
+
+  function menuOpen() {
+    return !!menu && menu.getAttribute("data-open") === "true";
+  }
+
+  function measureHeader() {
+    root.style.setProperty("--announce-h", bar.offsetHeight + "px");
+    root.style.setProperty("--header-full", header.offsetHeight + "px");
+  }
+
+  function onScroll() {
+    ticking = false;
+    var y = window.scrollY;
+    var delta = y - lastY;
+    if (y <= header.offsetHeight || menuOpen() || bar.contains(document.activeElement)) {
+      setCondensed(false);
+      lastY = y;
+      return;
+    }
+    if (Math.abs(delta) < DEAD_ZONE) return;
+    setCondensed(delta > 0);
+    lastY = y;
+  }
+
+  if (header && bar) {
+    measureHeader();
+    if (window.ResizeObserver) new ResizeObserver(measureHeader).observe(header);
+    else window.addEventListener("resize", measureHeader);
+    root.classList.add("has-sticky-header");
+    window.addEventListener("scroll", function () {
+      if (!ticking) { ticking = true; window.requestAnimationFrame(onScroll); }
+    }, { passive: true });
+    bar.addEventListener("focusin", function () { setCondensed(false); });
   }
 
   if (openBtn) openBtn.addEventListener("click", function () { setMenu(true); });
@@ -131,24 +237,115 @@
     });
   });
 
-  /* --- Prototype forms ----------------------------------------------------
-     The marketing forms are not wired to anything yet. Rather than fake a
-     success message, the form validates, then says plainly that nothing was
-     sent and what the built version will do. */
+  /* --- Add to calendar ---------------------------------------------------
+     A disclosure: the button opens and closes a list of links. Escape
+     closes it and returns focus to the button, and so does a click
+     anywhere else. */
 
-  Array.prototype.forEach.call(document.querySelectorAll("[data-proto-form]"), function (form) {
+  Array.prototype.forEach.call(document.querySelectorAll("[data-cal]"), function (cal) {
+    var button = cal.querySelector(".cal__toggle");
+    var menu = cal.querySelector(".cal__menu");
+    if (!button || !menu) return;
+    var set = function (open) {
+      button.setAttribute("aria-expanded", open ? "true" : "false");
+      menu.hidden = !open;
+    };
+    button.addEventListener("click", function () { set(menu.hidden); });
+    cal.addEventListener("keydown", function (e) {
+      if (e.key === "Escape" && !menu.hidden) { set(false); button.focus(); }
+    });
+    document.addEventListener("click", function (e) {
+      if (!menu.hidden && !cal.contains(e.target)) set(false);
+    });
+  });
+
+  /* --- Enquiry forms -----------------------------------------------------
+     Contact and Team camps post to /api/enquiry, which saves the message
+     for the academy. Success replaces the form with the reference and moves
+     focus there. Failure keeps what was typed and gives the phone number
+     and email instead. The time since the page loaded goes with the
+     message, because a submit under 3 seconds is a bot. */
+
+  var loadedAt = Date.now();
+  var about = new URLSearchParams(window.location.search).get("about") || "";
+
+  var topics = document.getElementById("about-topics");
+  var topicSelect = document.getElementById("topic");
+  if (topics && topicSelect && about) {
+    try {
+      var topic = JSON.parse(topics.textContent)[about];
+      if (topic) topicSelect.value = topic;
+    } catch (e) { /* no preselection */ }
+  }
+
+  Array.prototype.forEach.call(document.querySelectorAll("[data-enquiry-form]"), function (form) {
+    var button = form.querySelector("button[type=submit]");
+    var label = button ? button.textContent : "";
+    var error = form.querySelector("[data-enquiry-error]");
+
     form.addEventListener("submit", function (e) {
       e.preventDefault();
       var ok = true;
       Array.prototype.forEach.call(form.querySelectorAll("[required]"), function (el) {
         var field = el.closest(".field");
-        var bad = !el.value || (el.type === "email" && el.value.indexOf("@") === -1);
+        var bad = !el.value.trim() || (el.type === "email" && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(el.value.trim()));
         if (field) field.classList.toggle("is-invalid", bad);
         if (bad && ok) { el.focus(); ok = false; }
       });
       if (!ok) return;
-      var notice = document.querySelector("[data-proto-notice]");
-      if (notice) { notice.hidden = false; notice.scrollIntoView({ block: "nearest", behavior: "smooth" }); }
+
+      var fields = {};
+      Array.prototype.forEach.call(form.elements, function (el) {
+        if (el.name && el.name !== "dbsa_trap") fields[el.name] = el.type === "checkbox" ? el.checked : el.value;
+      });
+
+      if (error) error.hidden = true;
+      button.disabled = true;
+      button.textContent = "Sending...";
+
+      /* The two values the server judges spam by. It answers spam with the
+         same success as a real save, on purpose, so the page applies the
+         same rule (api/enquiry.js: trap filled, or under 3 seconds) to
+         count only real messages as leads. */
+      var elapsedMs = Date.now() - loadedAt;
+      var trap = form.elements.dbsa_trap ? form.elements.dbsa_trap.value : "";
+      var saved = !trap.trim() && elapsedMs >= 3000;
+
+      fetch("/api/enquiry", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          form: form.getAttribute("data-enquiry-form"),
+          fields: fields,
+          about: about,
+          pageUrl: window.location.pathname + window.location.search,
+          elapsedMs: elapsedMs,
+          trap: trap
+        })
+      })
+        .then(function (res) {
+          return res.json().catch(function () { return {}; }).then(function (data) {
+            if (!res.ok || !data.reference) throw new Error(String(res.status));
+            return data;
+          });
+        })
+        .then(function (data) {
+          var done = document.createElement("div");
+          done.className = "form-done";
+          done.innerHTML = '<h3 class="heading-m" tabindex="-1">Thanks, we\u2019ve got your message.</h3>' +
+            "<p>We reply within one business day. Your reference is <span data-enquiry-ref></span>.</p>";
+          done.querySelector("[data-enquiry-ref]").textContent = data.reference;
+          form.parentNode.replaceChild(done, form);
+          done.querySelector("h3").focus();
+          /* A real save only, and the form's name only, never what was
+             written in it. */
+          if (saved) window.dbsaTrack("generate_lead", { form: form.getAttribute("data-enquiry-form") });
+        })
+        .catch(function () {
+          button.disabled = false;
+          button.textContent = label;
+          if (error) error.hidden = false;
+        });
     });
   });
 
