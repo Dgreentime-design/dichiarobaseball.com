@@ -303,6 +303,14 @@
       button.disabled = true;
       button.textContent = "Sending...";
 
+      /* The two values the server judges spam by. It answers spam with the
+         same success as a real save, on purpose, so the page applies the
+         same rule (api/enquiry.js: trap filled, or under 3 seconds) to
+         count only real messages as leads. */
+      var elapsedMs = Date.now() - loadedAt;
+      var trap = form.elements.dbsa_trap ? form.elements.dbsa_trap.value : "";
+      var saved = !trap.trim() && elapsedMs >= 3000;
+
       fetch("/api/enquiry", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -311,8 +319,8 @@
           fields: fields,
           about: about,
           pageUrl: window.location.pathname + window.location.search,
-          elapsedMs: Date.now() - loadedAt,
-          trap: form.elements.dbsa_trap ? form.elements.dbsa_trap.value : ""
+          elapsedMs: elapsedMs,
+          trap: trap
         })
       })
         .then(function (res) {
@@ -329,8 +337,9 @@
           done.querySelector("[data-enquiry-ref]").textContent = data.reference;
           form.parentNode.replaceChild(done, form);
           done.querySelector("h3").focus();
-          /* The form's name only, never what was written in it. */
-          window.dbsaTrack("generate_lead", { form: form.getAttribute("data-enquiry-form") });
+          /* A real save only, and the form's name only, never what was
+             written in it. */
+          if (saved) window.dbsaTrack("generate_lead", { form: form.getAttribute("data-enquiry-form") });
         })
         .catch(function () {
           button.disabled = false;

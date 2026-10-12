@@ -38,9 +38,12 @@ its own, so the variables must already be there or that build runs without them.
    | `AIRTABLE_TABLE_NAME` | `Registrations` (exists already: **Edit**, re-type it to be sure) |
    | `ENQUIRIES_TABLE_NAME` | `Enquiries` |
    | `SITE_ORIGIN` | `https://dichiarobaseball.com` exactly, no slash at the end |
+   | `GA4_MEASUREMENT_ID` | the `G-...` ID from GA4. The one exception: tick **Production and Preview**, Sensitive off (it is public, it appears in every page) |
 
    `CLOVER_WEBHOOK_SECRET` comes at 2:00pm. Never add `MOCK_WEBHOOK_SECRET` to Production.
-   **Check:** the list shows all nine names with "Production".
+   **Check:** the list shows all ten names with "Production", and
+   `GA4_MEASUREMENT_ID` also with "Preview". Without it the live site
+   launches with no GA: the build writes the tag only when it is set.
 2. **GitHub:** github.com/Dgreentime-design/dichiarobaseball.com, **Pull
    requests**, **New pull request**, base `main`, compare `review`, **Create
    pull request**, **Merge pull request**, **Confirm merge**. No build step

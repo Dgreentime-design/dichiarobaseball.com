@@ -192,7 +192,8 @@
             "t": "ul",
             "items": [
               "Clover, which processes the payment",
-              "Our website and database host"
+              "Our website and database host",
+              "Google, which receives anonymous site-usage data through Google Analytics, never names, emails or player details (see section 08)"
             ]
           }
         ]
