@@ -309,8 +309,8 @@ function calendarControl(id, links, ics = links.ics) {
         <button class="btn btn--ghost btn--compact cal__toggle" type="button" aria-expanded="false" aria-controls="${id}">Add to calendar</button>
         <ul class="cal__menu" id="${id}" hidden>
           <li><a href="${a(ics)}" download>Apple Calendar <span class="cal__note">or Outlook on a computer</span></a></li>
-          <li><a href="${a(links.google)}" target="_blank" rel="noopener">Google Calendar</a></li>
-          <li><a href="${a(links.outlook)}" target="_blank" rel="noopener">Outlook.com</a></li>
+          <li><a href="${a(links.google)}" target="_blank" rel="noopener">Google Calendar<span class="visually-hidden"> (opens in a new tab)</span></a></li>
+          <li><a href="${a(links.outlook)}" target="_blank" rel="noopener">Outlook.com<span class="visually-hidden"> (opens in a new tab)</span></a></li>
         </ul>
       </div>`;
 }
@@ -545,8 +545,47 @@ function rootRelative(html) {
     (_, attr, url) => `${attr}="/${url.replace(/^\.\//, "")}"`);
 }
 
+/* The visible page only: the <head>, scripts, styles, form options and
+   textareas pass through untouched, so no meta description, JSON-LD or
+   inline data is ever rewritten. */
+function inBody(html, fn) {
+  return html.split(/(<head>[\s\S]*?<\/head>|<script\b[\s\S]*?<\/script>|<style\b[\s\S]*?<\/style>|<select\b[\s\S]*?<\/select>|<textarea\b[\s\S]*?<\/textarea>)/i)
+    .map((part, i) => (i % 2 ? part : fn(part))).join("");
+}
+
+/* A link that leaves dichiarobaseball.com opens in a new tab and says so to
+   a screen reader. The partials and templates already carry it; this pass
+   makes sure anything else the build writes, from legal.json or the data,
+   can never ship without it. tel: and mailto: are not touched. */
+const NEW_TAB = '<span class="visually-hidden"> (opens in a new tab)</span>';
+function outbound(html) {
+  return inBody(html, (part) => part.replace(/<a\b([^>]*?)\bhref="(https?:\/\/[^"]+)"([^>]*)>([\s\S]*?)<\/a>/g, (m, pre, url, post, inner) => {
+    let host = "";
+    try { host = new URL(url.replace(/&amp;/g, "&")).hostname; } catch { return m; }
+    if (/(^|\.)dichiarobaseball\.com$/.test(host)) return m;
+    let attrs = `${pre}href="${url}"${post}`.replace(/\s+target="[^"]*"/, "");
+    attrs += ' target="_blank"';
+    if (!/\brel="[^"]*\bnoopener\b/.test(attrs)) {
+      attrs = /\brel="/.test(attrs) ? attrs.replace(/\brel="/, 'rel="noopener ') : `${attrs} rel="noopener"`;
+    }
+    attrs = attrs.replace(/\baria-label="([^"]*)"/, (a, l) => (/new tab/i.test(l) ? a : `aria-label="${l} (opens in a new tab)"`));
+    return `<a${attrs}>${/new tab/i.test(inner) ? inner : inner + NEW_TAB}</a>`;
+  }));
+}
+
+/* A time range is one unit and never breaks inside itself (2:30pm- on one
+   line, 4:00pm on the next). The line breaks between the day and the time
+   instead. Text between tags only, never an attribute. */
+const TIME_RANGE = /\b\d{1,2}(?::\d{2})?(?:\s?[ap]m)?\s?(?:-|–|&ndash;|to)\s?\d{1,2}(?::\d{2})?\s?[ap]m\b/gi;
+function keepTimes(html) {
+  return inBody(html, (part) => part.replace(/>([^<]+)</g, (m, text) =>
+    `>${text.replace(TIME_RANGE, (r) => `<span class="nowrap">${r}</span>`)}<`));
+}
+
 function write(file, html) {
   if (file === "404.html") html = rootRelative(html);
+  html = keepTimes(html);
+  html = outbound(html);
   html = applyFull(html);
   html = setMeta(html);
   html = setOrigin(html);
@@ -1066,7 +1105,7 @@ function venuesBlock(p, c) {
             <span class="venue__count">${n} of ${facts.total} sessions</span>
           </div>
           <address>${esc(parts[0])}<br>${esc(parts.slice(1).join(", ").replace(/, (\d{5})$/, " $1"))}</address>${vc.when ? `\n          <p class="venue__when">${fill(vc.when, facts)}</p>` : ""}
-          <a class="btn btn--outline btn--compact" href="https://maps.google.com/?q=${q}" rel="noopener">Get directions</a>
+          <a class="btn btn--outline btn--compact" href="https://maps.google.com/?q=${q}" target="_blank" rel="noopener">Get directions<span class="visually-hidden"> (opens in a new tab)</span></a>
         </div>
       </article>`;
   };

@@ -28,8 +28,11 @@ export default {
     section: 'section, footer',
     // the header and menu, the decorative marquee, review notes and image
     // labels (both come off before launch) are not measured
-    // .form__hp is the enquiry forms' honeypot, off screen on purpose
-    skip: ['.site-header', '.menu', '.marquee', 'noscript', '.build-note', '.media__label', '.hero__scroll', '.form__hp'],
+    // .form__hp is the enquiry forms' honeypot, off screen on purpose.
+    // .visually-hidden is screen reader text such as "(opens in a new tab)",
+    // clipped to 1px; its text rects still extend past the box, so the
+    // overlap gate would read it as overlapping the link beside it.
+    skip: ['.site-header', '.menu', '.marquee', 'noscript', '.build-note', '.media__label', '.hero__scroll', '.form__hp', '.visually-hidden'],
     reveal: '[data-reveal]',
     menuButton: '.nav__toggle',
   },

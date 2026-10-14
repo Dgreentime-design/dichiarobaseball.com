@@ -15,7 +15,7 @@
 <link rel="preload" href="assets/fonts/jetbrains-mono-latin.woff2" as="font" type="font/woff2" crossorigin>
 
 <!-- One stylesheet, built by build.mjs from the files in assets/css/. -->
-<link rel="stylesheet" href="assets/css/site.min.css?v=8ee950e5">
+<link rel="stylesheet" href="assets/css/site.min.css?v=1b486a98">
 
 <!-- Analytics. Vercel Web Analytics: no cookies, so no consent banner. It
      records nothing until it is enabled in the Vercel dashboard (project,
@@ -73,20 +73,22 @@
 
     <ul class="nav__social">
       <li>
-        <a href="https://www.instagram.com/dichiaroacademy" rel="noopener" aria-label="DiChiaro Academy on Instagram">
+        <a href="https://www.instagram.com/dichiaroacademy" rel="noopener" target="_blank">
           <svg viewBox="0 0 24 24" width="20" height="20" fill="none" aria-hidden="true" focusable="false">
             <rect x="2.6" y="2.6" width="18.8" height="18.8" rx="5.2" stroke="currentColor" stroke-width="2"/>
             <circle cx="12" cy="12" r="4.1" stroke="currentColor" stroke-width="2"/>
             <circle cx="17.4" cy="6.6" r="1.4" fill="currentColor"/>
           </svg>
+          <span class="visually-hidden">DiChiaro Academy on Instagram (opens in a new tab)</span>
         </a>
       </li>
       <li>
-        <a href="https://www.facebook.com/dichiaroacademy" rel="noopener" aria-label="DiChiaro Academy on Facebook">
+        <a href="https://www.facebook.com/dichiaroacademy" rel="noopener" target="_blank">
           <svg viewBox="0 0 24 24" width="20" height="20" fill="none" aria-hidden="true" focusable="false">
             <circle cx="12" cy="12" r="9.4" stroke="currentColor" stroke-width="2"/>
             <path d="M13.9 12.4h2.1l.33-2.6H13.9V8.15c0-.75.21-1.26 1.29-1.26h1.37V4.56c-.24-.03-1.05-.1-2-.1-1.98 0-3.34 1.21-3.34 3.43V9.8H9.1v2.6h2.12v6.66h2.68V12.4Z" fill="currentColor"/>
           </svg>
+          <span class="visually-hidden">DiChiaro Academy on Facebook (opens in a new tab)</span>
         </a>
       </li>
     </ul>
@@ -125,20 +127,22 @@
     <a class="btn btn--ghost btn--block" href="tel:+12017736858">Call (201) 773-6858</a>
     <ul class="nav__social nav__social--menu">
       <li>
-        <a href="https://www.instagram.com/dichiaroacademy" rel="noopener" aria-label="DiChiaro Academy on Instagram">
+        <a href="https://www.instagram.com/dichiaroacademy" rel="noopener" target="_blank">
           <svg viewBox="0 0 24 24" width="22" height="22" fill="none" aria-hidden="true" focusable="false">
             <rect x="2.6" y="2.6" width="18.8" height="18.8" rx="5.2" stroke="currentColor" stroke-width="2"/>
             <circle cx="12" cy="12" r="4.1" stroke="currentColor" stroke-width="2"/>
             <circle cx="17.4" cy="6.6" r="1.4" fill="currentColor"/>
           </svg>
+          <span class="visually-hidden">DiChiaro Academy on Instagram (opens in a new tab)</span>
         </a>
       </li>
       <li>
-        <a href="https://www.facebook.com/dichiaroacademy" rel="noopener" aria-label="DiChiaro Academy on Facebook">
+        <a href="https://www.facebook.com/dichiaroacademy" rel="noopener" target="_blank">
           <svg viewBox="0 0 24 24" width="22" height="22" fill="none" aria-hidden="true" focusable="false">
             <circle cx="12" cy="12" r="9.4" stroke="currentColor" stroke-width="2"/>
             <path d="M13.9 12.4h2.1l.33-2.6H13.9V8.15c0-.75.21-1.26 1.29-1.26h1.37V4.56c-.24-.03-1.05-.1-2-.1-1.98 0-3.34 1.21-3.34 3.43V9.8H9.1v2.6h2.12v6.66h2.68V12.4Z" fill="currentColor"/>
           </svg>
+          <span class="visually-hidden">DiChiaro Academy on Facebook (opens in a new tab)</span>
         </a>
       </li>
     </ul>
@@ -174,10 +178,10 @@
 <!-- ===================================================================== -->
 <!-- Filters                                                               -->
 <!-- ===================================================================== -->
-<section class="filters" aria-label="Filter programs">
-  <div class="filters__inner">
+<section class="filters filters--scroll" aria-label="Filter programs">
+  <div class="filters__inner" data-filter-scroller>
     <p class="filters__label" id="filter-label">Filter</p>
-    <div class="filters__pills" role="group" aria-labelledby="filter-label">
+    <div class="filters__pills" role="group" aria-label="Filter programs">
       <button class="pill" type="button" data-filter="all"        aria-pressed="true">All programs</button>
       <button class="pill" type="button" data-filter="baseball"   aria-pressed="false">Baseball</button>
       <button class="pill" type="button" data-filter="softball"   aria-pressed="false">Softball</button>
@@ -186,7 +190,7 @@
       <button class="pill" type="button" data-filter="weekends"   aria-pressed="false">Weekends</button>
       <button class="pill" type="button" data-filter="weeknights" aria-pressed="false">Weeknights</button>
     </div>
-    <p class="filters__count" data-filter-count aria-live="polite">Showing 5</p>
+    <p class="filters__count visually-hidden" data-filter-count aria-live="polite">Showing 5</p>
   </div>
 </section>
 
@@ -215,14 +219,14 @@
         </p>
         <dl class="card__facts">
           <div class="card__fact"><dt>Day</dt><dd>Sundays</dd></div>
-          <div class="card__fact"><dt>Time</dt><dd>2:30pm-4:00pm</dd></div>
+          <div class="card__fact"><dt>Time</dt><dd><span class="nowrap">2:30pm-4:00pm</span></dd></div>
           <div class="card__fact"><dt>Sessions</dt><dd>8</dd></div>
           <div class="card__fact"><dt>Dates</dt><dd>Oct 25 to Dec 13, 2026</dd></div>
           <div class="card__fact"><dt>Price</dt><dd>$320</dd></div>
         </dl>
         <div class="card__actions">
-          <a class="btn btn--primary" href="register.html?program=little-league-fall-2026">Register for this camp</a>
-          <a class="btn btn--outline" href="programs/little-league-fall-2026.html">See dates and details</a>
+          <a class="btn btn--primary" href="register.html?program=little-league-fall-2026"><span class="label-short">Register<span class="visually-hidden"> for Little League Training Camp, fall 2026</span></span><span class="label-long">Register for this camp<span class="visually-hidden"> (Little League Training Camp, fall 2026)</span></span></a>
+          <a class="btn btn--outline" href="programs/little-league-fall-2026.html"><span class="label-short">More information<span class="visually-hidden"> about Little League Training Camp, fall 2026</span></span><span class="label-long">See dates and details<span class="visually-hidden"> for Little League Training Camp, fall 2026</span></span></a>
         </div>
       </div>
     </article>
@@ -246,14 +250,14 @@
         </p>
         <dl class="card__facts">
           <div class="card__fact"><dt>Day</dt><dd>Saturdays</dd></div>
-          <div class="card__fact"><dt>Time</dt><dd>9:00am and 10:30am<br>Last 4 sessions at the Superdome, 8am to 10am</dd></div>
+          <div class="card__fact"><dt>Time</dt><dd>9:00am and 10:30am<br>Last 4 sessions at the Superdome, <span class="nowrap">8am to 10am</span></dd></div>
           <div class="card__fact"><dt>Sessions</dt><dd>15</dd></div>
           <div class="card__fact"><dt>Dates</dt><dd>Nov 14, 2026 to Mar 6, 2027</dd></div>
           <div class="card__fact"><dt>Price</dt><dd>$950</dd></div>
         </dl>
         <div class="card__actions">
-          <a class="btn btn--primary" href="register.html?program=infield-camp-2026-27">Register for this camp</a>
-          <a class="btn btn--outline" href="programs/infield-camp-2026-27.html">See dates and details</a>
+          <a class="btn btn--primary" href="register.html?program=infield-camp-2026-27"><span class="label-short">Register<span class="visually-hidden"> for Lou DiChiaro&rsquo;s Infield Camp</span></span><span class="label-long">Register for this camp<span class="visually-hidden"> (Lou DiChiaro&rsquo;s Infield Camp)</span></span></a>
+          <a class="btn btn--outline" href="programs/infield-camp-2026-27.html"><span class="label-short">More information<span class="visually-hidden"> about Lou DiChiaro&rsquo;s Infield Camp</span></span><span class="label-long">See dates and details<span class="visually-hidden"> for Lou DiChiaro&rsquo;s Infield Camp</span></span></a>
         </div>
       </div>
     </article>
@@ -283,8 +287,8 @@
           <div class="card__fact"><dt>Price</dt><dd>$30 per session<br>Monthly packages</dd></div>
         </dl>
         <div class="card__actions">
-          <a class="btn btn--primary" href="register.html?program=hit-night-fall-2026">Register for Hit Night</a>
-          <a class="btn btn--outline" href="programs/hit-night-fall-2026.html">See dates and details</a>
+          <a class="btn btn--primary" href="register.html?program=hit-night-fall-2026"><span class="label-short">Register<span class="visually-hidden"> for Monday Hit Nights</span></span><span class="label-long">Register for Hit Night<span class="visually-hidden"> (Monday Hit Nights)</span></span></a>
+          <a class="btn btn--outline" href="programs/hit-night-fall-2026.html"><span class="label-short">More information<span class="visually-hidden"> about Monday Hit Nights</span></span><span class="label-long">See dates and details<span class="visually-hidden"> for Monday Hit Nights</span></span></a>
         </div>
       </div>
     </article>
@@ -308,14 +312,14 @@
         </p>
         <dl class="card__facts">
           <div class="card__fact"><dt>Day</dt><dd>Sundays</dd></div>
-          <div class="card__fact"><dt>Time</dt><dd>2:30pm-4:00pm</dd></div>
+          <div class="card__fact"><dt>Time</dt><dd><span class="nowrap">2:30pm-4:00pm</span></dd></div>
           <div class="card__fact"><dt>Sessions</dt><dd>9</dd></div>
           <div class="card__fact"><dt>Dates</dt><dd>Jan 3 to Feb 28, 2027</dd></div>
           <div class="card__fact"><dt>Price</dt><dd>$350</dd></div>
         </dl>
         <div class="card__actions">
-          <a class="btn btn--primary" href="register.html?program=little-league-winter-2027">Register for this camp</a>
-          <a class="btn btn--outline" href="programs/little-league-winter-2027.html">See dates and details</a>
+          <a class="btn btn--primary" href="register.html?program=little-league-winter-2027"><span class="label-short">Register<span class="visually-hidden"> for Little League Training Camp, winter 2027</span></span><span class="label-long">Register for this camp<span class="visually-hidden"> (Little League Training Camp, winter 2027)</span></span></a>
+          <a class="btn btn--outline" href="programs/little-league-winter-2027.html"><span class="label-short">More information<span class="visually-hidden"> about Little League Training Camp, winter 2027</span></span><span class="label-long">See dates and details<span class="visually-hidden"> for Little League Training Camp, winter 2027</span></span></a>
         </div>
       </div>
     </article>
@@ -339,14 +343,14 @@
         </p>
         <dl class="card__facts">
           <div class="card__fact"><dt>Day</dt><dd>Sundays</dd></div>
-          <div class="card__fact"><dt>Time</dt><dd>2:30pm-4:00pm</dd></div>
+          <div class="card__fact"><dt>Time</dt><dd><span class="nowrap">2:30pm-4:00pm</span></dd></div>
           <div class="card__fact"><dt>Sessions</dt><dd>4</dd></div>
           <div class="card__fact"><dt>Dates</dt><dd>Mar 7 to Mar 28, 2027</dd></div>
           <div class="card__fact"><dt>Price</dt><dd>$165</dd></div>
         </dl>
         <div class="card__actions">
-          <a class="btn btn--secondary" href="contact.html?about=spring-little-league">Ask about the spring camp</a>
-          <a class="btn btn--outline" href="programs/little-league-march-2027.html">See dates and details</a>
+          <a class="btn btn--secondary" href="contact.html?about=spring-little-league"><span class="label-short">Ask about spring<span class="visually-hidden"> camp (Little League Training Camp, March 2027)</span></span><span class="label-long">Ask about the spring camp<span class="visually-hidden"> (Little League Training Camp, March 2027)</span></span></a>
+          <a class="btn btn--outline" href="programs/little-league-march-2027.html"><span class="label-short">More information<span class="visually-hidden"> about Little League Training Camp, March 2027</span></span><span class="label-long">See dates and details<span class="visually-hidden"> for Little League Training Camp, March 2027</span></span></a>
         </div>
       </div>
     </article>
@@ -495,7 +499,7 @@
       <p>&copy; 2026 DiChiaro Baseball &amp; Softball Academy</p>
       <span class="spacer"></span>
       <span class="legal-links">
-        <a href="https://www.instagram.com/dichiaroacademy" rel="noopener">@dichiaroacademy</a>
+        <a href="https://www.instagram.com/dichiaroacademy" rel="noopener" target="_blank">@dichiaroacademy<span class="visually-hidden"> (opens in a new tab)</span></a>
         <a href="privacy-policy.html">Privacy</a>
         <a href="terms-and-conditions.html">Terms</a>
       </span>

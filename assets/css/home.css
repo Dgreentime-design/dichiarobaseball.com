@@ -97,6 +97,132 @@
   .hero__scroll { display: none; }
 }
 
+/* --- Home video hero ------------------------------------------------------
+   .hero--video is Home only. Everything here is scoped to it, so the shared
+   .hero above, and every page that uses it, renders exactly as before.
+   Values from the approved Claude Design canvas "DiChiaro Home Hero".
+
+   The poster (a <picture>) is the LCP image and the still for reduced
+   motion, Save-Data and no autoplay. The video sits over it at opacity 0
+   and fades in once it is actually playing. The loop is a hard cut every
+   15s, on purpose: no crossfade. */
+
+.hero--video { min-height: clamp(660px, 100svh, 720px); }
+.hero--video .hero__media { background: var(--c-ink); }
+.hero--video .hero__poster img,
+.hero--video .hero__video {
+  position: absolute; inset: 0; width: 100%; height: 100%;
+  object-fit: cover; object-position: 62% 50%;
+}
+.hero--video .hero__video { opacity: 0; transition: opacity 900ms var(--ease-reveal); }
+/* The poster must stay the LCP element. Chrome reports a new LCP entry
+   only for something strictly larger, and it sizes an image by its
+   natural size but a video by its whole box, so at most widths the video's
+   first frame came out a few hundred square pixels larger and replaced the
+   poster as the LCP. Trimming the bottom is not enough, because a short
+   viewport cuts the hero off before its bottom edge, so on a desktop the
+   video starts 2px in from the left, under a solid ink edge in the scrim
+   where it is .95 anyway. On a phone it stops 2px short of the bottom,
+   where the scrim is fully opaque. Either way the still poster never shows
+   beside the moving video. Checked at 1024x768, 1200x800, 1280x650 and
+   the phone sizes, where the video had been winning. */
+.hero--video .hero__video { left: 2px; width: calc(100% - 2px); }
+.hero--video .hero__video.is-playing { opacity: 1; }
+
+/* Desktop scrim: dark on the left behind the copy, nearly clear on the right
+   so the action reads, and a shade along the bottom. Replaces the shared
+   scrim for this hero only.
+
+   The canvas gives its stops in percent of a 1440 frame, but the copy is
+   in pixels, so at 1024 and 768 the lede ran out past the dark part onto
+   bright video (1.0:1 at worst). The stops are tied to where the lede
+   actually ends instead (--lede-end): the scrim holds at least .86 to just
+   past it, which keeps the lede at 4.5:1 even over a white pixel, then
+   falls off over the same distances as the canvas. At 1440 that is the
+   canvas curve starting about 90px later. Between 768 and 1199 the lede is
+   480px wide, so a tablet still shows the right third of the video. */
+.hero--video {
+  --lede-w: 640px;
+  --lede-end: calc(max(var(--gutter), (100% - var(--container)) / 2) + var(--lede-w));
+}
+@media (max-width: 1199px) { .hero--video { --lede-w: 480px; } }
+.hero--video .hero__media::before {
+  background:
+    linear-gradient(0deg, rgba(23,18,15,.55) 0%, rgba(23,18,15,0) 24%),
+    linear-gradient(90deg,
+      rgb(23,18,15) 0 2px,
+      rgba(23,18,15,.95) 2px,
+      rgba(23,18,15,.93) calc(var(--lede-end) - 100px),
+      rgba(23,18,15,.87) calc(var(--lede-end) + 10px),
+      rgba(23,18,15,.56) calc(var(--lede-end) + 170px),
+      rgba(23,18,15,.26) calc(var(--lede-end) + 340px),
+      rgba(23,18,15,.08) calc(var(--lede-end) + 540px),
+      rgba(23,18,15,.02) 100%);
+}
+
+/* The copy starts on the same edge as the nav logo and every band: the
+   container plus its gutters, not the container with the gutter inside it
+   as the shared hero has it. */
+.hero--video .hero__inner { max-width: calc(var(--container) + 2 * var(--gutter)); }
+.hero--video .hero__copy { max-width: 760px; gap: var(--s-6); padding: var(--s-13) 0; }
+.hero--video h1 { font-size: max(var(--t-display-xl), 2.5rem); }
+.hero--video .hero__lede { color: var(--c-dim); max-width: min(58ch, var(--lede-w)); }
+.hero--video .hero__actions { margin-top: var(--s-3); }
+/* The Scroll label is hidden on Home only; the markup stays in index.html. */
+.hero--video .hero__scroll { display: none; }
+
+/* 768 to 899 the shared hero switches to its phone layout. This hero keeps
+   its desktop layout down to 768, so those rules are undone here. */
+@media (min-width: 768px) and (max-width: 899px) {
+  .hero--video .hero__inner { align-self: center; margin-top: 0; background: none; }
+  .hero--video .hero__copy { padding: var(--s-13) 0; }
+  .hero--video .hero__actions { display: flex; }
+}
+
+/* Phone: the 4:5 video across the top (488px tall at 390), the copy
+   anchored to the bottom over a scrim that rises from it. About 760px in
+   all at 390, and it grows with the video on a wider phone. */
+@media (max-width: 767px) {
+  .hero--video { min-height: max(760px, calc(125vw + 272px)); }
+  .hero--video .hero__media { inset: 0 0 auto; aspect-ratio: 4 / 5; }
+  .hero--video .hero__poster img,
+  .hero--video .hero__video { object-position: 50% 40%; }
+  .hero--video .hero__video { left: 0; width: 100%; height: calc(100% - 2px); }
+
+  .hero--video .hero__media::before {
+    background: linear-gradient(0deg,
+      rgba(23,18,15,1) 0%, rgba(23,18,15,.97) 40%, rgba(23,18,15,.78) 52%,
+      rgba(23,18,15,.34) 64%, rgba(23,18,15,.08) 78%, rgba(23,18,15,0) 100%);
+  }
+  .hero--video .hero__inner { align-self: end; margin-top: 0; background: none; padding: 0 var(--gutter) var(--s-8); }
+  .hero--video .hero__copy { gap: var(--s-5); padding: 0; }
+  .hero--video .hero__actions { display: grid; gap: var(--s-3); margin-top: 0; }
+  .hero--video .hero__actions .btn { width: 100%; min-height: var(--s-9); }
+}
+
+/* Load animation, once per page load. The copy rises 16px and fades in,
+   item by item. hero-intro is set on <html> by an inline script in the
+   page head, so without JavaScript the copy is simply there. */
+@keyframes hero-rise {
+  from { opacity: 0; transform: translateY(16px); }
+  to   { opacity: 1; transform: none; }
+}
+.hero-intro .hero--video .hero__copy > * {
+  opacity: 0;
+  animation: hero-rise var(--dur-reveal) var(--ease-reveal) both;
+}
+.hero-intro .hero--video .hero__copy > :nth-child(1) { animation-delay: 150ms; }
+.hero-intro .hero--video .hero__copy > :nth-child(2) { animation-delay: 250ms; }
+.hero-intro .hero--video .hero__copy > :nth-child(3) { animation-delay: 380ms; }
+.hero-intro .hero--video .hero__copy > :nth-child(4) { animation-delay: 500ms; }
+
+/* Reduced motion: no rise, no fade, the copy is there at once. The video
+   never plays (site.js), so the poster is the hero. */
+@media (prefers-reduced-motion: reduce) {
+  .hero-intro .hero--video .hero__copy > * { opacity: 1; animation: none; }
+  .hero--video .hero__video { display: none; }
+}
+
 /* --- Section header ------------------------------------------------------ */
 
 .section-head {
@@ -136,7 +262,7 @@
 .card__fact dt { font-family: var(--f-mono); font-size: var(--t-eyebrow); letter-spacing: var(--ls-meta); text-transform: uppercase; color: var(--c-muted); }
 .card__fact dd { margin: 0; font-size: var(--t-body-m); }
 .card__detail { color: var(--c-muted); }
-.card__action { margin-top: auto; padding-top: var(--s-2); }
+.card__action { margin-top: auto; padding-top: var(--s-2); display: grid; justify-items: start; gap: var(--s-4); }
 
 /* --- HitTrax ------------------------------------------------------------ */
 

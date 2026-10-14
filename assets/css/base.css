@@ -49,8 +49,9 @@ a { color: inherit; text-decoration: none; }
   border-radius: var(--r-1);
 }
 /* A heading focused by script, so a screen reader lands on the new step, is
-   not a control and is never tabbed to: no ring. */
-[tabindex="-1"]:focus { outline: none; }
+   not a control and is never tabbed to: no ring. Named for :focus-visible
+   too, so no browser's own focus-visible styling can put one back. */
+[tabindex="-1"]:focus, [tabindex="-1"]:focus-visible { outline: none; }
 
 .skip-link {
   position: absolute; left: 12px; top: -80px; z-index: 200;
@@ -62,10 +63,23 @@ a { color: inherit; text-decoration: none; }
 }
 .skip-link:focus { top: 12px; }
 
+/* Keeps a unit such as a time range (2:30pm-4:00pm) on one line. build.mjs
+   wraps every time range in it. */
+.nowrap { white-space: nowrap; }
+
 .visually-hidden {
   position: absolute !important; width: 1px; height: 1px;
   padding: 0; margin: -1px; overflow: hidden;
   clip: rect(0 0 0 0); white-space: nowrap; border: 0;
+}
+
+/* A control with a short label on phones and a long one from 768px up.
+   Each label carries the program name in a visually hidden span, so the
+   accessible name is complete at both widths. */
+.label-long { display: none; }
+@media (min-width: 768px) {
+  .label-short { display: none; }
+  .label-long { display: inline; }
 }
 
 /* --- Layout ------------------------------------------------------------- */
@@ -81,6 +95,9 @@ a { color: inherit; text-decoration: none; }
 .container { width: 100%; max-width: var(--container); margin-inline: auto; }
 
 /* --- Type primitives ---------------------------------------------------- */
+
+/* Display and heading lines balance, so no heading ends on one word alone. */
+.display-xl, .display-l, .heading-xl, .heading-l, .heading-m, .heading-s { text-wrap: balance; }
 
 .display-xl {
   font-family: var(--f-sans); font-weight: 900;

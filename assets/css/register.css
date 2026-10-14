@@ -13,7 +13,12 @@
 .form__row { display: grid; grid-template-columns: repeat(2, 1fr); gap: var(--s-5); }
 @media (max-width: 639px) { .form__row { grid-template-columns: 1fr; } }
 
-.field { display: grid; gap: 8px; }
+/* align-content: start keeps label and control at the top of the field.
+   In a two column .form__row both fields stretch to the taller one, and
+   without it the grid shares that extra height out between its rows, so a
+   hint under one field pushed the control in the other field down. Now
+   the controls in a row line up and a hint hangs below its own control. */
+.field { display: grid; gap: 8px; align-content: start; }
 .field > label {
   font-family: var(--f-mono); font-weight: 500;
   font-size: var(--t-eyebrow); letter-spacing: var(--ls-eyebrow);

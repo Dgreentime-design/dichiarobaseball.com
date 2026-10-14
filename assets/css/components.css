@@ -150,16 +150,18 @@
 
 /* --- Header ------------------------------------------------------------- */
 
-.site-header { background: var(--c-bone); border-bottom: 1px solid var(--c-line); }
-
-/* Sticky once site.js has measured it. Scrolling down slides the whole
+/* Sticky from the first paint, in CSS alone, so the nav never leaves the
+   top: not before site.js has run, not on a slow connection, not if the
+   script fails. It is a direct child of <body>, so it sticks for the whole
+   page. Once site.js has measured it, scrolling down slides the whole
    header up by the announcement bar's measured height, so the bar leaves
    and the nav stays pinned. transform only, never height or margin, so
    nothing below it moves. */
-.has-sticky-header .site-header {
+.site-header {
   position: sticky; top: 0; z-index: 100;
-  transition: transform var(--dur-reveal) var(--ease-reveal);
+  background: var(--c-bone); border-bottom: 1px solid var(--c-line);
 }
+.has-sticky-header .site-header { transition: transform var(--dur-reveal) var(--ease-reveal); }
 .header-condensed .site-header { transform: translateY(calc(-1 * var(--announce-h))); }
 
 /* Reduced motion: no travel. The global rule in base.css already cuts the

@@ -91,7 +91,8 @@
   }
 
   /* --- Sticky header -------------------------------------------------------
-     The header sticks once it has been measured. Scrolling down past its
+     The header sticks in CSS alone (components.css). Once it has been
+     measured, scrolling down past its
      own height slides it up by the announcement bar's height, so the bar
      leaves and the nav stays. Scrolling up by any amount brings the bar
      back, and at the top of the page it is always shown.
@@ -200,8 +201,39 @@
       if (empty) empty.hidden = shown !== 0;
     };
 
+    /* The camps bar scrolls sideways. The chosen or focused pill is always
+       brought fully into view, and the fade at the right edge shows only
+       while there are pills past it. */
+    var barScroller = document.querySelector("[data-filter-scroller]");
+    var barTrack = barScroller && barScroller.querySelector(".filters__pills");
+    var barReveal = function () {};
+    if (barTrack) {
+      var barStill = window.matchMedia("(prefers-reduced-motion: reduce)");
+      var barFade = function () {
+        barScroller.classList.toggle("has-more", barTrack.scrollLeft + barTrack.clientWidth < barTrack.scrollWidth - 1);
+      };
+      /* A pill already fully in view stays put. Otherwise it scrolls to the
+         start of the row: "nearest" would stop between snap points and the
+         x proximity snap would pull the pill half out of view again. */
+      barReveal = function (p) {
+        if (p.closest(".filters__pills") !== barTrack) return;
+        var r = p.getBoundingClientRect(), t = barTrack.getBoundingClientRect();
+        if (r.left >= t.left && r.right <= t.right) return;
+        p.scrollIntoView({ inline: "start", block: "nearest", behavior: barStill.matches ? "auto" : "smooth" });
+      };
+      barTrack.addEventListener("scroll", barFade, { passive: true });
+      barTrack.addEventListener("focusin", function (e) { barReveal(e.target); });
+      window.addEventListener("resize", barFade);
+      window.addEventListener("load", barFade);
+      if (document.fonts && document.fonts.ready) document.fonts.ready.then(barFade);
+      barFade();
+    }
+
     Array.prototype.forEach.call(pills, function (p) {
-      p.addEventListener("click", function () { apply(p.getAttribute("data-filter")); });
+      p.addEventListener("click", function () {
+        apply(p.getAttribute("data-filter"));
+        barReveal(p);
+      });
     });
 
     apply("all");
@@ -348,6 +380,60 @@
         });
     });
   });
+
+  /* --- Home video hero ----------------------------------------------------
+     The poster paints first and is the LCP image. The video gets its file
+     only after the page has loaded, so it never competes with the poster:
+     the phone file (4:5) under 768px, the desktop file from 768px up, picked
+     here because <source media> is unreliable in some browsers, and picked
+     again if the breakpoint changes. It fades in once it is really playing.
+
+     It never loads with reduced motion or Save-Data, and if autoplay is
+     refused the play() promise is caught and the poster simply stays. No
+     play or pause control, by Daniel's decision. */
+
+  var heroVideo = document.querySelector(".hero--video .hero__video");
+  if (heroVideo) {
+    var still = window.matchMedia("(prefers-reduced-motion: reduce)");
+    var phone = window.matchMedia("(max-width: 767px)");
+    var saveData = !!(navigator.connection && navigator.connection.saveData);
+    var heroPoster = document.querySelector(".hero--video .hero__poster img");
+    var loaded = false;
+
+    var startVideo = function () {
+      if (!loaded) return;
+      if (still.matches || saveData) {
+        heroVideo.pause();
+        heroVideo.classList.remove("is-playing");
+        return;
+      }
+      var src = heroVideo.getAttribute(phone.matches ? "data-src-mobile" : "data-src-desktop");
+      if (heroVideo.getAttribute("src") !== src) {
+        heroVideo.classList.remove("is-playing");
+        /* The poster already on screen, from the browser cache. */
+        if (heroPoster && heroPoster.currentSrc) heroVideo.poster = heroPoster.currentSrc;
+        heroVideo.src = src;
+      }
+      try {
+        var playing = heroVideo.play();
+        if (playing && playing.catch) playing.catch(function () { /* no autoplay: the poster stays */ });
+      } catch (e) { /* the poster stays */ }
+    };
+
+    heroVideo.addEventListener("playing", function () { heroVideo.classList.add("is-playing"); });
+    heroVideo.addEventListener("error", function () { heroVideo.classList.remove("is-playing"); });
+
+    var onLoad = function () { loaded = true; startVideo(); };
+    if (document.readyState === "complete") onLoad();
+    else window.addEventListener("load", onLoad);
+
+    var watch = function (mq) {
+      if (mq.addEventListener) mq.addEventListener("change", startVideo);
+      else if (mq.addListener) mq.addListener(startVideo);
+    };
+    watch(phone);
+    watch(still);
+  }
 
   /* --- Marquee -----------------------------------------------------------
      The track holds the run of words twice. The animation translates by

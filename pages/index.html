@@ -10,6 +10,14 @@
 <meta property="og:url" content="https://dichiarobaseball.com/">
 <meta property="og:image" content="{{img_url 7}}">
 <meta name="twitter:card" content="summary_large_image">
+<!-- The hero poster is the LCP image: one preload per breakpoint, so a
+     phone fetches only the phone poster and a desktop only the desktop one. -->
+<link rel="preload" as="image" type="image/webp" href="assets/video/dichiaro-hero-mobile-poster.webp" media="(max-width: 767px)" fetchpriority="high">
+<link rel="preload" as="image" type="image/webp" href="assets/video/dichiaro-hero-desktop-poster.webp" media="(min-width: 768px)" fetchpriority="high">
+<!-- The hero copy starts hidden only when JavaScript runs, so it is never
+     invisible without it. Set here, before the first paint, not in site.js,
+     which is deferred. The rise itself is CSS (home.css, .hero--video). -->
+<script>document.documentElement.classList.add("hero-intro");</script>
 </head>
 
 <body>
@@ -27,18 +35,31 @@
 <!-- ===================================================================== -->
 <!-- Hero                                                                  -->
 <!-- ===================================================================== -->
-<section class="hero">
-  <div class="hero__media media media--16x9 media--note">
-    {{img 1 hero}}
-    <span class="media__label">dbsa-07 · Little League camp on the turf</span>
+<section class="hero hero--video">
+  <!-- The poster shows first and is the still for reduced motion, Save-Data
+       and no autoplay. site.js sets the video's file for the breakpoint
+       (desktop by default) once the page has loaded, so the video never
+       competes with the poster, and never loads at all with reduced motion.
+       The photo slot this replaced (slot 1) stays in data/images.json. -->
+  <div class="hero__media">
+    <picture class="hero__poster">
+      <source media="(max-width: 767px)" type="image/webp" srcset="assets/video/dichiaro-hero-mobile-poster.webp">
+      <source media="(max-width: 767px)" srcset="assets/video/dichiaro-hero-mobile-poster.jpg">
+      <source type="image/webp" srcset="assets/video/dichiaro-hero-desktop-poster.webp">
+      <img src="assets/video/dichiaro-hero-desktop-poster.jpg" width="1280" height="720" alt="" fetchpriority="high">
+    </picture>
+    <video class="hero__video" autoplay muted loop playsinline preload="metadata"
+           aria-hidden="true" tabindex="-1"
+           data-src-desktop="assets/video/dichiaro-hero-desktop-web.mp4"
+           data-src-mobile="assets/video/dichiaro-hero-mobile-web.mp4"></video>
   </div>
 
   <div class="hero__inner">
     <div class="hero__copy">
-      <p class="eyebrow">Baseball and softball &nbsp;·&nbsp; Fair Lawn, NJ</p>
+      <p class="eyebrow">Baseball &amp; softball training &nbsp;·&nbsp; Fair&nbsp;Lawn,&nbsp;NJ</p>
       <h1 class="display-xl">Get better at the game you love.</h1>
       <p class="hero__lede body-l">
-        Year-round lessons and camps for ages 6 and up, taught by coaches who played the game.
+        Year-round lessons and camps for ages 6 and up, from coaches who played the game and love teaching it.
       </p>
       <div class="hero__actions">
         <a class="btn btn--primary" href="camps-and-clinics.html">See camps and clinics</a>
@@ -86,14 +107,14 @@
           <dl class="card__facts">
             <div class="card__fact"><dt>Who</dt><dd>Ages 6-12</dd></div>
             <div class="card__fact"><dt>When</dt><dd>8 Sundays · 2:30pm-4:00pm</dd></div>
-            <div class="card__fact"><dt>Price</dt><dd>$320 full camp</dd></div>
+            <div class="card__fact"><dt>Price</dt><dd>$320</dd></div>
           </dl>
           <p class="body-s card__detail">
             Hitting drills · Tee work · Live BP · Soft toss · Ground balls
           </p>
           <div class="card__action">
-            <a class="btn btn--primary btn--block" href="register.html?program=little-league-fall-2026">Register for this camp</a>
-            <a class="arrow-link" href="programs/little-league-fall-2026.html"><span>See dates and details</span><span aria-hidden="true">&rarr;</span></a>
+            <a class="btn btn--primary btn--block" href="register.html?program=little-league-fall-2026"><span class="label-short">Register<span class="visually-hidden"> for Little League Training Camp</span></span><span class="label-long">Register for this camp<span class="visually-hidden"> (Little League Training Camp)</span></span></a>
+            <a class="arrow-link" href="programs/little-league-fall-2026.html"><span><span class="label-short">More information<span class="visually-hidden"> about Little League Training Camp</span></span><span class="label-long">See dates and details<span class="visually-hidden"> for Little League Training Camp</span></span></span><span aria-hidden="true">&rarr;</span></a>
           </div>
         </div>
       </article>
@@ -104,7 +125,6 @@
             {{img 3}}
             <span class="media__label">dbsa-03 · Hit Night, the cage at 8pm</span>
           </div>
-          <span class="chip chip--red">4 spots left</span>
         </div>
         <div class="card__body">
           <p class="meta card__meta">Baseball / Softball</p>
@@ -118,8 +138,8 @@
             Professional instruction · Proper approach to hitting · Tee work · Live hitting · Machine
           </p>
           <div class="card__action">
-            <a class="btn btn--primary btn--block" href="register.html?program=hit-night-fall-2026">Register for Hit Night</a>
-            <a class="arrow-link" href="programs/hit-night-fall-2026.html"><span>See dates and details</span><span aria-hidden="true">&rarr;</span></a>
+            <a class="btn btn--primary btn--block" href="register.html?program=hit-night-fall-2026"><span class="label-short">Register<span class="visually-hidden"> for Monday Hit Night</span></span><span class="label-long">Register for Hit Night<span class="visually-hidden"> (Monday Hit Night)</span></span></a>
+            <a class="arrow-link" href="programs/hit-night-fall-2026.html"><span><span class="label-short">More information<span class="visually-hidden"> about Monday Hit Night</span></span><span class="label-long">See dates and details<span class="visually-hidden"> for Monday Hit Night</span></span></span><span aria-hidden="true">&rarr;</span></a>
           </div>
         </div>
       </article>
@@ -138,14 +158,14 @@
           <dl class="card__facts">
             <div class="card__fact"><dt>Who</dt><dd>Grades 4-8 &amp; high school</dd></div>
             <div class="card__fact"><dt>When</dt><dd>15 Saturdays · 9:00am-12:00pm<br>{{superdome infield-camp-2026-27}}</dd></div>
-            <div class="card__fact"><dt>Price</dt><dd>$950 full camp</dd></div>
+            <div class="card__fact"><dt>Price</dt><dd>$950</dd></div>
           </dl>
           <p class="body-s card__detail">
             Ground ball approach · Footwork · Double plays · Slow rollers · Relays
           </p>
           <div class="card__action">
-            <a class="btn btn--primary btn--block" href="register.html?program=infield-camp-2026-27">Register for this camp</a>
-            <a class="arrow-link" href="programs/infield-camp-2026-27.html"><span>See dates and details</span><span aria-hidden="true">&rarr;</span></a>
+            <a class="btn btn--primary btn--block" href="register.html?program=infield-camp-2026-27"><span class="label-short">Register<span class="visually-hidden"> for Lou DiChiaro&rsquo;s Infield Camp</span></span><span class="label-long">Register for this camp<span class="visually-hidden"> (Lou DiChiaro&rsquo;s Infield Camp)</span></span></a>
+            <a class="arrow-link" href="programs/infield-camp-2026-27.html"><span><span class="label-short">More information<span class="visually-hidden"> about Lou DiChiaro&rsquo;s Infield Camp</span></span><span class="label-long">See dates and details<span class="visually-hidden"> for Lou DiChiaro&rsquo;s Infield Camp</span></span></span><span aria-hidden="true">&rarr;</span></a>
           </div>
         </div>
       </article>
@@ -203,7 +223,7 @@
         </div>
         <div class="split__body">
           <p class="meta split__eyebrow">For players</p>
-          <h3 class="heading-m">Private and semi-private lessons</h3>
+          <h3 class="heading-m">Private and <span class="nowrap">semi-private</span> lessons</h3>
           <p class="body-s split__text">
             One on one, or bring a teammate. Same coach every week.
           </p>
@@ -286,7 +306,7 @@
         <a class="btn btn--secondary" href="lous-journey.html">Read Lou&rsquo;s story</a>
       </p>
       <p class="lou__social">
-        <a class="arrow-link" href="https://www.instagram.com/dichiaroacademy" target="_blank" rel="noopener" aria-label="Follow DiChiaro Academy on Instagram (opens Instagram in a new tab)"><span>Follow on Instagram</span><span aria-hidden="true">&rarr;</span></a>
+        <a class="arrow-link" href="https://www.instagram.com/dichiaroacademy" target="_blank" rel="noopener"><span>Follow on Instagram</span><span aria-hidden="true">&rarr;</span><span class="visually-hidden"> (opens in a new tab)</span></a>
       </p>
     </div>
 

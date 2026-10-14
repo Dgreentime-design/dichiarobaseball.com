@@ -15,7 +15,7 @@
 <link rel="preload" href="assets/fonts/jetbrains-mono-latin.woff2" as="font" type="font/woff2" crossorigin>
 
 <!-- One stylesheet, built by build.mjs from the files in assets/css/. -->
-<link rel="stylesheet" href="assets/css/site.min.css?v=8ee950e5">
+<link rel="stylesheet" href="assets/css/site.min.css?v=1b486a98">
 
 <!-- Analytics. Vercel Web Analytics: no cookies, so no consent banner. It
      records nothing until it is enabled in the Vercel dashboard (project,
@@ -72,20 +72,22 @@
 
     <ul class="nav__social">
       <li>
-        <a href="https://www.instagram.com/dichiaroacademy" rel="noopener" aria-label="DiChiaro Academy on Instagram">
+        <a href="https://www.instagram.com/dichiaroacademy" rel="noopener" target="_blank">
           <svg viewBox="0 0 24 24" width="20" height="20" fill="none" aria-hidden="true" focusable="false">
             <rect x="2.6" y="2.6" width="18.8" height="18.8" rx="5.2" stroke="currentColor" stroke-width="2"/>
             <circle cx="12" cy="12" r="4.1" stroke="currentColor" stroke-width="2"/>
             <circle cx="17.4" cy="6.6" r="1.4" fill="currentColor"/>
           </svg>
+          <span class="visually-hidden">DiChiaro Academy on Instagram (opens in a new tab)</span>
         </a>
       </li>
       <li>
-        <a href="https://www.facebook.com/dichiaroacademy" rel="noopener" aria-label="DiChiaro Academy on Facebook">
+        <a href="https://www.facebook.com/dichiaroacademy" rel="noopener" target="_blank">
           <svg viewBox="0 0 24 24" width="20" height="20" fill="none" aria-hidden="true" focusable="false">
             <circle cx="12" cy="12" r="9.4" stroke="currentColor" stroke-width="2"/>
             <path d="M13.9 12.4h2.1l.33-2.6H13.9V8.15c0-.75.21-1.26 1.29-1.26h1.37V4.56c-.24-.03-1.05-.1-2-.1-1.98 0-3.34 1.21-3.34 3.43V9.8H9.1v2.6h2.12v6.66h2.68V12.4Z" fill="currentColor"/>
           </svg>
+          <span class="visually-hidden">DiChiaro Academy on Facebook (opens in a new tab)</span>
         </a>
       </li>
     </ul>
@@ -124,20 +126,22 @@
     <a class="btn btn--ghost btn--block" href="tel:+12017736858">Call (201) 773-6858</a>
     <ul class="nav__social nav__social--menu">
       <li>
-        <a href="https://www.instagram.com/dichiaroacademy" rel="noopener" aria-label="DiChiaro Academy on Instagram">
+        <a href="https://www.instagram.com/dichiaroacademy" rel="noopener" target="_blank">
           <svg viewBox="0 0 24 24" width="22" height="22" fill="none" aria-hidden="true" focusable="false">
             <rect x="2.6" y="2.6" width="18.8" height="18.8" rx="5.2" stroke="currentColor" stroke-width="2"/>
             <circle cx="12" cy="12" r="4.1" stroke="currentColor" stroke-width="2"/>
             <circle cx="17.4" cy="6.6" r="1.4" fill="currentColor"/>
           </svg>
+          <span class="visually-hidden">DiChiaro Academy on Instagram (opens in a new tab)</span>
         </a>
       </li>
       <li>
-        <a href="https://www.facebook.com/dichiaroacademy" rel="noopener" aria-label="DiChiaro Academy on Facebook">
+        <a href="https://www.facebook.com/dichiaroacademy" rel="noopener" target="_blank">
           <svg viewBox="0 0 24 24" width="22" height="22" fill="none" aria-hidden="true" focusable="false">
             <circle cx="12" cy="12" r="9.4" stroke="currentColor" stroke-width="2"/>
             <path d="M13.9 12.4h2.1l.33-2.6H13.9V8.15c0-.75.21-1.26 1.29-1.26h1.37V4.56c-.24-.03-1.05-.1-2-.1-1.98 0-3.34 1.21-3.34 3.43V9.8H9.1v2.6h2.12v6.66h2.68V12.4Z" fill="currentColor"/>
           </svg>
+          <span class="visually-hidden">DiChiaro Academy on Facebook (opens in a new tab)</span>
         </a>
       </li>
     </ul>
@@ -151,28 +155,13 @@
 <main id="main">
 
 <!-- ===================================================================== -->
-<!-- Hero                                                                  -->
-<!-- ===================================================================== -->
-<section class="hero-light">
-  <div class="hero-light__inner">
-    <div class="hero-light__copy">
-      <p class="eyebrow">Facility and rentals</p>
-      <h1 class="display-l">The room is yours<br>by the hour.</h1>
-      <p class="hero-light__lede body-l">
-        Cages, turf and HitTrax on Pollitt Drive. January works the same as June.
-      </p>
-    </div>
-  </div>
-</section>
-
-<!-- ===================================================================== -->
 <!-- What you can rent                                                     -->
 <!-- ===================================================================== -->
 <section class="band band--surface" aria-labelledby="rent-title">
   <div class="container">
     <div class="sec-head">
       <p class="eyebrow">What you can rent</p>
-      <h2 class="display-l" id="rent-title">Three ways to use the space.</h2>
+      <h1 class="display-l" id="rent-title">Three ways to use the space.</h1>
     </div>
 
     <div class="trio-grid">
@@ -254,10 +243,18 @@
 </section>
 
 <!-- ===================================================================== -->
-<!-- The room, in numbers                                                  -->
+<!-- The room: intro, photo and numbers                                    -->
 <!-- ===================================================================== -->
-<section class="hero-light" aria-label="The facility in numbers">
+<section class="hero-light" aria-labelledby="room-title">
   <div class="hero-light__inner">
+    <div class="hero-light__copy">
+      <p class="eyebrow">Facility and rentals</p>
+      <h2 class="display-l" id="room-title">The room is yours<br>by the hour.</h2>
+      <p class="hero-light__lede body-l">
+        Cages, turf and HitTrax on Pollitt Drive. January works the same as June.
+      </p>
+    </div>
+
     <div class="media media--3x1">
       <picture><source type="image/webp" srcset="assets/img/gen/dbsa-20-facility-turf-wide-480-8486feab.webp 480w, assets/img/gen/dbsa-20-facility-turf-wide-800-8486feab.webp 800w, assets/img/gen/dbsa-20-facility-turf-wide-1280-8486feab.webp 1280w, assets/img/gen/dbsa-20-facility-turf-wide-1920-8486feab.webp 1920w" sizes="(min-width: 1344px) 1280px, calc(100vw - 40px)"><img src="assets/img/gen/dbsa-20-facility-turf-wide-1280-8486feab.jpg" srcset="assets/img/gen/dbsa-20-facility-turf-wide-480-8486feab.jpg 480w, assets/img/gen/dbsa-20-facility-turf-wide-800-8486feab.jpg 800w, assets/img/gen/dbsa-20-facility-turf-wide-1280-8486feab.jpg 1280w, assets/img/gen/dbsa-20-facility-turf-wide-1920-8486feab.jpg 1920w" sizes="(min-width: 1344px) 1280px, calc(100vw - 40px)" alt="The academy floor from turf level, with batting cages down both sides and the DiChiaro logo on the far wall" width="2528" height="1904" loading="lazy" decoding="async" data-slot="37" style="--focal: 50% 45%;"></picture>
       <span class="media__label">dbsa-02 · Empty room, nets down, turf visible end to end</span>
@@ -429,7 +426,7 @@
       <p>&copy; 2026 DiChiaro Baseball &amp; Softball Academy</p>
       <span class="spacer"></span>
       <span class="legal-links">
-        <a href="https://www.instagram.com/dichiaroacademy" rel="noopener">@dichiaroacademy</a>
+        <a href="https://www.instagram.com/dichiaroacademy" rel="noopener" target="_blank">@dichiaroacademy<span class="visually-hidden"> (opens in a new tab)</span></a>
         <a href="privacy-policy.html">Privacy</a>
         <a href="terms-and-conditions.html">Terms</a>
       </span>

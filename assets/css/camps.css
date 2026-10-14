@@ -51,6 +51,20 @@
   font-family: var(--f-mono); font-size: var(--t-data-m); color: var(--c-muted);
 }
 
+/* One bar from a tablet up: label, pills, count, in three columns. The
+   pills wrap inside their own column, so the count stays at the right end
+   of the pills row and never drops onto a line of its own. Label and count
+   sit on the first row of pills. */
+@media (min-width: 768px) {
+  .filters__inner {
+    display: grid; grid-template-columns: auto minmax(0, 1fr) auto;
+    align-items: start; column-gap: var(--s-6);
+  }
+  .filters__label, .filters__count {
+    display: flex; align-items: center; min-height: var(--tap); margin-left: 0;
+  }
+}
+
 @media (max-width: 767px) {
   .filters { padding: 14px var(--gutter); }
   .filters__inner { gap: var(--s-3); }
@@ -63,6 +77,42 @@
   .filters__pills::-webkit-scrollbar { display: none; }
   .pill { flex: none; scroll-snap-align: start; }
   .filters__count { width: 100%; margin-left: 0; }
+}
+
+/* The camps bar: one row at every width, as short as a pill. No visible
+   label or count (the group is named by aria-label and the count is
+   announced from a visually hidden live region). The pills scroll sideways
+   and bleed to the screen edge; the gutter sits inside the scroller so the
+   first pill still lines up with the content edge. 12 + 44 + 12 + the 1px
+   rule = 69px. A fade at the right edge says more pills are hidden, and
+   goes once the last pill is in view. */
+.filters.filters--scroll { padding: var(--s-3) 0; }
+.filters--scroll .filters__inner {
+  --edge: max(var(--gutter), (100% - var(--container)) / 2);
+  position: relative; display: block; max-width: none;
+}
+.filters--scroll .filters__label { display: none; }
+.filters--scroll .filters__pills {
+  flex-wrap: nowrap; gap: var(--s-2); overflow-x: auto; padding: 0 var(--edge);
+  scroll-padding-inline: var(--edge); scroll-snap-type: x proximity;
+  scrollbar-width: none; -ms-overflow-style: none;
+}
+.filters--scroll .filters__pills::-webkit-scrollbar { display: none; }
+
+/* 16px sides (18 elsewhere) so all seven pills fit inside the content
+   edges from 1024px, with no scroll. */
+.filters--scroll .pill { flex: none; scroll-snap-align: start; padding: 0 var(--s-4); }
+.filters--scroll .filters__inner::after {
+  content: ""; position: absolute; top: 0; right: 0; bottom: 0; width: var(--s-7);
+  background: linear-gradient(270deg, var(--c-bone), rgba(251,250,249,0));
+  pointer-events: none; opacity: 0; transition: opacity .16s var(--ease);
+}
+.filters--scroll .filters__inner.has-more::after { opacity: 1; }
+
+/* A card jumped to by its anchor clears the stuck bar as well as the
+   header. */
+.filters--scroll ~ .programs [id] {
+  scroll-margin-top: calc(var(--header-h) + 2 * var(--s-3) + var(--tap) + 1px + var(--s-4));
 }
 
 /* --- Programs ----------------------------------------------------------- */
@@ -119,6 +169,10 @@
 /* Two buttons sharing one row need a little less padding than a lone one,
    so the longest label ("Tell me when it opens") still sits on one line. */
 .card--wide .card__actions .btn { padding-inline: 16px; font-size: 0.9375rem; }
+/* Stacked full width on a phone, the label is centred, so the side padding
+   only decides when it wraps: 12px keeps "More information" on one line
+   down to 320px. */
+@media (max-width: 479px) { .card--wide .card__actions .btn { padding-inline: var(--s-3); } }
 
 /* --- Stub pages ----------------------------------------------------------
    Designed but not built yet. Real header and footer, so the prototype
