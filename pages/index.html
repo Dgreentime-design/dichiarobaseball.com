@@ -10,6 +10,14 @@
 <meta property="og:url" content="https://dichiarobaseball.com/">
 <meta property="og:image" content="{{img_url 7}}">
 <meta name="twitter:card" content="summary_large_image">
+<!-- The hero poster is the LCP image: one preload per breakpoint, so a
+     phone fetches only the phone poster and a desktop only the desktop one. -->
+<link rel="preload" as="image" type="image/webp" href="assets/video/dichiaro-hero-mobile-poster.webp" media="(max-width: 767px)" fetchpriority="high">
+<link rel="preload" as="image" type="image/webp" href="assets/video/dichiaro-hero-desktop-poster.webp" media="(min-width: 768px)" fetchpriority="high">
+<!-- The hero copy starts hidden only when JavaScript runs, so it is never
+     invisible without it. Set here, before the first paint, not in site.js,
+     which is deferred. The rise itself is CSS (home.css, .hero--video). -->
+<script>document.documentElement.classList.add("hero-intro");</script>
 </head>
 
 <body>
@@ -27,15 +35,28 @@
 <!-- ===================================================================== -->
 <!-- Hero                                                                  -->
 <!-- ===================================================================== -->
-<section class="hero">
-  <div class="hero__media media media--16x9 media--note">
-    {{img 1 hero}}
-    <span class="media__label">dbsa-07 · Little League camp on the turf</span>
+<section class="hero hero--video">
+  <!-- The poster shows first and is the still for reduced motion, Save-Data
+       and no autoplay. site.js sets the video's file for the breakpoint
+       (desktop by default) once the page has loaded, so the video never
+       competes with the poster, and never loads at all with reduced motion.
+       The photo slot this replaced (slot 1) stays in data/images.json. -->
+  <div class="hero__media">
+    <picture class="hero__poster">
+      <source media="(max-width: 767px)" type="image/webp" srcset="assets/video/dichiaro-hero-mobile-poster.webp">
+      <source media="(max-width: 767px)" srcset="assets/video/dichiaro-hero-mobile-poster.jpg">
+      <source type="image/webp" srcset="assets/video/dichiaro-hero-desktop-poster.webp">
+      <img src="assets/video/dichiaro-hero-desktop-poster.jpg" width="1280" height="720" alt="" fetchpriority="high">
+    </picture>
+    <video class="hero__video" autoplay muted loop playsinline preload="metadata"
+           aria-hidden="true" tabindex="-1"
+           data-src-desktop="assets/video/dichiaro-hero-desktop-web.mp4"
+           data-src-mobile="assets/video/dichiaro-hero-mobile-web.mp4"></video>
   </div>
 
   <div class="hero__inner">
     <div class="hero__copy">
-      <p class="eyebrow">Baseball and softball &nbsp;·&nbsp; Fair Lawn, NJ</p>
+      <p class="eyebrow">Baseball &amp; softball training &nbsp;·&nbsp; Fair&nbsp;Lawn,&nbsp;NJ</p>
       <h1 class="display-xl">Get better at the game you love.</h1>
       <p class="hero__lede body-l">
         Year-round lessons and camps for ages 6 and up, taught by coaches who played the game.

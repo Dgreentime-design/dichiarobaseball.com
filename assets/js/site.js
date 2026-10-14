@@ -350,6 +350,60 @@
     });
   });
 
+  /* --- Home video hero ----------------------------------------------------
+     The poster paints first and is the LCP image. The video gets its file
+     only after the page has loaded, so it never competes with the poster:
+     the phone file (4:5) under 768px, the desktop file from 768px up, picked
+     here because <source media> is unreliable in some browsers, and picked
+     again if the breakpoint changes. It fades in once it is really playing.
+
+     It never loads with reduced motion or Save-Data, and if autoplay is
+     refused the play() promise is caught and the poster simply stays. No
+     play or pause control, by Daniel's decision. */
+
+  var heroVideo = document.querySelector(".hero--video .hero__video");
+  if (heroVideo) {
+    var still = window.matchMedia("(prefers-reduced-motion: reduce)");
+    var phone = window.matchMedia("(max-width: 767px)");
+    var saveData = !!(navigator.connection && navigator.connection.saveData);
+    var heroPoster = document.querySelector(".hero--video .hero__poster img");
+    var loaded = false;
+
+    var startVideo = function () {
+      if (!loaded) return;
+      if (still.matches || saveData) {
+        heroVideo.pause();
+        heroVideo.classList.remove("is-playing");
+        return;
+      }
+      var src = heroVideo.getAttribute(phone.matches ? "data-src-mobile" : "data-src-desktop");
+      if (heroVideo.getAttribute("src") !== src) {
+        heroVideo.classList.remove("is-playing");
+        /* The poster already on screen, from the browser cache. */
+        if (heroPoster && heroPoster.currentSrc) heroVideo.poster = heroPoster.currentSrc;
+        heroVideo.src = src;
+      }
+      try {
+        var playing = heroVideo.play();
+        if (playing && playing.catch) playing.catch(function () { /* no autoplay: the poster stays */ });
+      } catch (e) { /* the poster stays */ }
+    };
+
+    heroVideo.addEventListener("playing", function () { heroVideo.classList.add("is-playing"); });
+    heroVideo.addEventListener("error", function () { heroVideo.classList.remove("is-playing"); });
+
+    var onLoad = function () { loaded = true; startVideo(); };
+    if (document.readyState === "complete") onLoad();
+    else window.addEventListener("load", onLoad);
+
+    var watch = function (mq) {
+      if (mq.addEventListener) mq.addEventListener("change", startVideo);
+      else if (mq.addListener) mq.addListener(startVideo);
+    };
+    watch(phone);
+    watch(still);
+  }
+
   /* --- Marquee -----------------------------------------------------------
      The track holds the run of words twice. The animation translates by
      50%, so the loop is seamless whatever the content length. The second
