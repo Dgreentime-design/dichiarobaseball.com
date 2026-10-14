@@ -119,13 +119,31 @@
 
 /* Desktop scrim: dark on the left behind the copy, nearly clear on the right
    so the action reads, and a shade along the bottom. Replaces the shared
-   scrim for this hero only. */
+   scrim for this hero only.
+
+   The canvas gives its stops in percent of a 1440 frame, but the copy is
+   in pixels, so at 1024 and 768 the lede ran out past the dark part onto
+   bright video (1.0:1 at worst). The stops are tied to where the lede
+   actually ends instead (--lede-end): the scrim holds at least .86 to just
+   past it, which keeps the lede at 4.5:1 even over a white pixel, then
+   falls off over the same distances as the canvas. At 1440 that is the
+   canvas curve starting about 90px later. Between 768 and 1199 the lede is
+   480px wide, so a tablet still shows the right third of the video. */
+.hero--video {
+  --lede-w: 640px;
+  --lede-end: calc(max(var(--gutter), (100% - var(--container)) / 2) + var(--lede-w));
+}
+@media (max-width: 1199px) { .hero--video { --lede-w: 480px; } }
 .hero--video .hero__media::before {
   background:
     linear-gradient(0deg, rgba(23,18,15,.55) 0%, rgba(23,18,15,0) 24%),
     linear-gradient(90deg,
-      rgba(23,18,15,.95) 0%, rgba(23,18,15,.93) 32%, rgba(23,18,15,.84) 44%,
-      rgba(23,18,15,.56) 56%, rgba(23,18,15,.26) 68%, rgba(23,18,15,.08) 82%,
+      rgba(23,18,15,.95) 0%,
+      rgba(23,18,15,.93) calc(var(--lede-end) - 100px),
+      rgba(23,18,15,.87) calc(var(--lede-end) + 10px),
+      rgba(23,18,15,.56) calc(var(--lede-end) + 170px),
+      rgba(23,18,15,.26) calc(var(--lede-end) + 340px),
+      rgba(23,18,15,.08) calc(var(--lede-end) + 540px),
       rgba(23,18,15,.02) 100%);
 }
 
@@ -135,7 +153,7 @@
 .hero--video .hero__inner { max-width: calc(var(--container) + 2 * var(--gutter)); }
 .hero--video .hero__copy { max-width: 760px; gap: var(--s-6); padding: var(--s-13) 0; }
 .hero--video h1 { font-size: max(var(--t-display-xl), 2.5rem); }
-.hero--video .hero__lede { color: var(--c-dim); max-width: 58ch; }
+.hero--video .hero__lede { color: var(--c-dim); max-width: min(58ch, var(--lede-w)); }
 .hero--video .hero__actions { margin-top: var(--s-3); }
 /* The Scroll label is hidden on Home only; the markup stays in index.html. */
 .hero--video .hero__scroll { display: none; }
