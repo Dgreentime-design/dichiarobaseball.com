@@ -119,10 +119,14 @@
    only for something strictly larger, and it sizes an image by its
    natural size but a video by its whole box, so at most widths the video's
    first frame came out a few hundred square pixels larger and replaced the
-   poster as the LCP. The video stops 2px short of the bottom to stay
-   smaller; the scrims below put solid ink over that strip, so the still
-   poster never shows under the moving video. */
-.hero--video .hero__video { height: calc(100% - 2px); }
+   poster as the LCP. Trimming the bottom is not enough, because a short
+   viewport cuts the hero off before its bottom edge, so on a desktop the
+   video starts 2px in from the left, under a solid ink edge in the scrim
+   where it is .95 anyway. On a phone it stops 2px short of the bottom,
+   where the scrim is fully opaque. Either way the still poster never shows
+   beside the moving video. Checked at 1024x768, 1200x800, 1280x650 and
+   the phone sizes, where the video had been winning. */
+.hero--video .hero__video { left: 2px; width: calc(100% - 2px); }
 .hero--video .hero__video.is-playing { opacity: 1; }
 
 /* Desktop scrim: dark on the left behind the copy, nearly clear on the right
@@ -144,9 +148,10 @@
 @media (max-width: 1199px) { .hero--video { --lede-w: 480px; } }
 .hero--video .hero__media::before {
   background:
-    linear-gradient(0deg, rgb(23,18,15) 0 2px, rgba(23,18,15,.55) 2px, rgba(23,18,15,0) 24%),
+    linear-gradient(0deg, rgba(23,18,15,.55) 0%, rgba(23,18,15,0) 24%),
     linear-gradient(90deg,
-      rgba(23,18,15,.95) 0%,
+      rgb(23,18,15) 0 2px,
+      rgba(23,18,15,.95) 2px,
       rgba(23,18,15,.93) calc(var(--lede-end) - 100px),
       rgba(23,18,15,.87) calc(var(--lede-end) + 10px),
       rgba(23,18,15,.56) calc(var(--lede-end) + 170px),
@@ -182,6 +187,7 @@
   .hero--video .hero__media { inset: 0 0 auto; aspect-ratio: 4 / 5; }
   .hero--video .hero__poster img,
   .hero--video .hero__video { object-position: 50% 40%; }
+  .hero--video .hero__video { left: 0; width: 100%; height: calc(100% - 2px); }
 
   .hero--video .hero__media::before {
     background: linear-gradient(0deg,
