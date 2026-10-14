@@ -51,6 +51,20 @@
   font-family: var(--f-mono); font-size: var(--t-data-m); color: var(--c-muted);
 }
 
+/* One bar from a tablet up: label, pills, count, in three columns. The
+   pills wrap inside their own column, so the count stays at the right end
+   of the pills row and never drops onto a line of its own. Label and count
+   sit on the first row of pills. */
+@media (min-width: 768px) {
+  .filters__inner {
+    display: grid; grid-template-columns: auto minmax(0, 1fr) auto;
+    align-items: start; column-gap: var(--s-6);
+  }
+  .filters__label, .filters__count {
+    display: flex; align-items: center; min-height: var(--tap); margin-left: 0;
+  }
+}
+
 @media (max-width: 767px) {
   .filters { padding: 14px var(--gutter); }
   .filters__inner { gap: var(--s-3); }

@@ -49,8 +49,9 @@ a { color: inherit; text-decoration: none; }
   border-radius: var(--r-1);
 }
 /* A heading focused by script, so a screen reader lands on the new step, is
-   not a control and is never tabbed to: no ring. */
-[tabindex="-1"]:focus { outline: none; }
+   not a control and is never tabbed to: no ring. Named for :focus-visible
+   too, so no browser's own focus-visible styling can put one back. */
+[tabindex="-1"]:focus, [tabindex="-1"]:focus-visible { outline: none; }
 
 .skip-link {
   position: absolute; left: 12px; top: -80px; z-index: 200;
@@ -61,6 +62,10 @@ a { color: inherit; text-decoration: none; }
   transition: top .18s var(--ease);
 }
 .skip-link:focus { top: 12px; }
+
+/* Keeps a unit such as a time range (2:30pm-4:00pm) on one line. build.mjs
+   wraps every time range in it. */
+.nowrap { white-space: nowrap; }
 
 .visually-hidden {
   position: absolute !important; width: 1px; height: 1px;
@@ -81,6 +86,9 @@ a { color: inherit; text-decoration: none; }
 .container { width: 100%; max-width: var(--container); margin-inline: auto; }
 
 /* --- Type primitives ---------------------------------------------------- */
+
+/* Display and heading lines balance, so no heading ends on one word alone. */
+.display-xl, .display-l, .heading-xl, .heading-l, .heading-m, .heading-s { text-wrap: balance; }
 
 .display-xl {
   font-family: var(--f-sans); font-weight: 900;

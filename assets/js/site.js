@@ -91,7 +91,8 @@
   }
 
   /* --- Sticky header -------------------------------------------------------
-     The header sticks once it has been measured. Scrolling down past its
+     The header sticks in CSS alone (components.css). Once it has been
+     measured, scrolling down past its
      own height slides it up by the announcement bar's height, so the bar
      leaves and the nav stays. Scrolling up by any amount brings the bar
      back, and at the top of the page it is always shown.

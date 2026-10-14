@@ -136,7 +136,7 @@
 .card__fact dt { font-family: var(--f-mono); font-size: var(--t-eyebrow); letter-spacing: var(--ls-meta); text-transform: uppercase; color: var(--c-muted); }
 .card__fact dd { margin: 0; font-size: var(--t-body-m); }
 .card__detail { color: var(--c-muted); }
-.card__action { margin-top: auto; padding-top: var(--s-2); }
+.card__action { margin-top: auto; padding-top: var(--s-2); display: grid; justify-items: start; gap: var(--s-4); }
 
 /* --- HitTrax ------------------------------------------------------------ */
 
