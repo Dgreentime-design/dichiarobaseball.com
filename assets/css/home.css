@@ -174,6 +174,13 @@
   .hero--video .hero__media { inset: 0 0 auto; aspect-ratio: 4 / 5; }
   .hero--video .hero__poster img,
   .hero--video .hero__video { object-position: 50% 40%; }
+  /* The poster must stay the LCP element. Chrome reports a new LCP entry
+     only for something strictly larger, and the 4:5 box has a fractional
+     height that rounded the video one pixel row taller than the poster,
+     so the video's first frame became the LCP. Stopping the video 2px
+     short keeps it smaller; the scrim is fully opaque there, so it cannot
+     be seen. */
+  .hero--video .hero__video { height: calc(100% - 2px); }
   .hero--video .hero__media::before {
     background: linear-gradient(0deg,
       rgba(23,18,15,1) 0%, rgba(23,18,15,.97) 40%, rgba(23,18,15,.78) 52%,
