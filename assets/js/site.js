@@ -201,8 +201,39 @@
       if (empty) empty.hidden = shown !== 0;
     };
 
+    /* The camps bar scrolls sideways. The chosen or focused pill is always
+       brought fully into view, and the fade at the right edge shows only
+       while there are pills past it. */
+    var barScroller = document.querySelector("[data-filter-scroller]");
+    var barTrack = barScroller && barScroller.querySelector(".filters__pills");
+    var barReveal = function () {};
+    if (barTrack) {
+      var barStill = window.matchMedia("(prefers-reduced-motion: reduce)");
+      var barFade = function () {
+        barScroller.classList.toggle("has-more", barTrack.scrollLeft + barTrack.clientWidth < barTrack.scrollWidth - 1);
+      };
+      /* A pill already fully in view stays put. Otherwise it scrolls to the
+         start of the row: "nearest" would stop between snap points and the
+         x proximity snap would pull the pill half out of view again. */
+      barReveal = function (p) {
+        if (p.closest(".filters__pills") !== barTrack) return;
+        var r = p.getBoundingClientRect(), t = barTrack.getBoundingClientRect();
+        if (r.left >= t.left && r.right <= t.right) return;
+        p.scrollIntoView({ inline: "start", block: "nearest", behavior: barStill.matches ? "auto" : "smooth" });
+      };
+      barTrack.addEventListener("scroll", barFade, { passive: true });
+      barTrack.addEventListener("focusin", function (e) { barReveal(e.target); });
+      window.addEventListener("resize", barFade);
+      window.addEventListener("load", barFade);
+      if (document.fonts && document.fonts.ready) document.fonts.ready.then(barFade);
+      barFade();
+    }
+
     Array.prototype.forEach.call(pills, function (p) {
-      p.addEventListener("click", function () { apply(p.getAttribute("data-filter")); });
+      p.addEventListener("click", function () {
+        apply(p.getAttribute("data-filter"));
+        barReveal(p);
+      });
     });
 
     apply("all");

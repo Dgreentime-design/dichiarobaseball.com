@@ -44,10 +44,10 @@
 <!-- ===================================================================== -->
 <!-- Filters                                                               -->
 <!-- ===================================================================== -->
-<section class="filters" aria-label="Filter programs">
-  <div class="filters__inner">
+<section class="filters filters--scroll" aria-label="Filter programs">
+  <div class="filters__inner" data-filter-scroller>
     <p class="filters__label" id="filter-label">Filter</p>
-    <div class="filters__pills" role="group" aria-labelledby="filter-label">
+    <div class="filters__pills" role="group" aria-label="Filter programs">
       <button class="pill" type="button" data-filter="all"        aria-pressed="true">All programs</button>
       <button class="pill" type="button" data-filter="baseball"   aria-pressed="false">Baseball</button>
       <button class="pill" type="button" data-filter="softball"   aria-pressed="false">Softball</button>
@@ -56,7 +56,7 @@
       <button class="pill" type="button" data-filter="weekends"   aria-pressed="false">Weekends</button>
       <button class="pill" type="button" data-filter="weeknights" aria-pressed="false">Weeknights</button>
     </div>
-    <p class="filters__count" data-filter-count aria-live="polite">Showing 5</p>
+    <p class="filters__count visually-hidden" data-filter-count aria-live="polite">Showing 5</p>
   </div>
 </section>
 
@@ -91,8 +91,8 @@
           <div class="card__fact"><dt>Price</dt><dd>$320</dd></div>
         </dl>
         <div class="card__actions">
-          <a class="btn btn--primary" href="register.html?program=little-league-fall-2026">Register for this camp</a>
-          <a class="btn btn--outline" href="programs/little-league-fall-2026.html">See dates and details</a>
+          <a class="btn btn--primary" href="register.html?program=little-league-fall-2026"><span class="label-short">Register<span class="visually-hidden"> for Little League Training Camp, fall 2026</span></span><span class="label-long">Register for this camp<span class="visually-hidden"> (Little League Training Camp, fall 2026)</span></span></a>
+          <a class="btn btn--outline" href="programs/little-league-fall-2026.html"><span class="label-short">More information<span class="visually-hidden"> about Little League Training Camp, fall 2026</span></span><span class="label-long">See dates and details<span class="visually-hidden"> for Little League Training Camp, fall 2026</span></span></a>
         </div>
       </div>
     </article>
@@ -122,8 +122,8 @@
           <div class="card__fact"><dt>Price</dt><dd>$950</dd></div>
         </dl>
         <div class="card__actions">
-          <a class="btn btn--primary" href="register.html?program=infield-camp-2026-27">Register for this camp</a>
-          <a class="btn btn--outline" href="programs/infield-camp-2026-27.html">See dates and details</a>
+          <a class="btn btn--primary" href="register.html?program=infield-camp-2026-27"><span class="label-short">Register<span class="visually-hidden"> for Lou DiChiaro&rsquo;s Infield Camp</span></span><span class="label-long">Register for this camp<span class="visually-hidden"> (Lou DiChiaro&rsquo;s Infield Camp)</span></span></a>
+          <a class="btn btn--outline" href="programs/infield-camp-2026-27.html"><span class="label-short">More information<span class="visually-hidden"> about Lou DiChiaro&rsquo;s Infield Camp</span></span><span class="label-long">See dates and details<span class="visually-hidden"> for Lou DiChiaro&rsquo;s Infield Camp</span></span></a>
         </div>
       </div>
     </article>
@@ -153,8 +153,8 @@
           <div class="card__fact"><dt>Price</dt><dd>{{price hit-night-fall-2026 drop-in}} per session<br>Monthly packages</dd></div>
         </dl>
         <div class="card__actions">
-          <a class="btn btn--primary" href="register.html?program=hit-night-fall-2026">Register for Hit Night</a>
-          <a class="btn btn--outline" href="programs/hit-night-fall-2026.html">See dates and details</a>
+          <a class="btn btn--primary" href="register.html?program=hit-night-fall-2026"><span class="label-short">Register<span class="visually-hidden"> for Monday Hit Nights</span></span><span class="label-long">Register for Hit Night<span class="visually-hidden"> (Monday Hit Nights)</span></span></a>
+          <a class="btn btn--outline" href="programs/hit-night-fall-2026.html"><span class="label-short">More information<span class="visually-hidden"> about Monday Hit Nights</span></span><span class="label-long">See dates and details<span class="visually-hidden"> for Monday Hit Nights</span></span></a>
         </div>
       </div>
     </article>
@@ -184,8 +184,8 @@
           <div class="card__fact"><dt>Price</dt><dd>$350</dd></div>
         </dl>
         <div class="card__actions">
-          <a class="btn btn--primary" href="register.html?program=little-league-winter-2027">Register for this camp</a>
-          <a class="btn btn--outline" href="programs/little-league-winter-2027.html">See dates and details</a>
+          <a class="btn btn--primary" href="register.html?program=little-league-winter-2027"><span class="label-short">Register<span class="visually-hidden"> for Little League Training Camp, winter 2027</span></span><span class="label-long">Register for this camp<span class="visually-hidden"> (Little League Training Camp, winter 2027)</span></span></a>
+          <a class="btn btn--outline" href="programs/little-league-winter-2027.html"><span class="label-short">More information<span class="visually-hidden"> about Little League Training Camp, winter 2027</span></span><span class="label-long">See dates and details<span class="visually-hidden"> for Little League Training Camp, winter 2027</span></span></a>
         </div>
       </div>
     </article>
@@ -215,8 +215,8 @@
           <div class="card__fact"><dt>Price</dt><dd>$165</dd></div>
         </dl>
         <div class="card__actions">
-          <a class="btn btn--secondary" href="contact.html?about=spring-little-league">Ask about the spring camp</a>
-          <a class="btn btn--outline" href="programs/little-league-march-2027.html">See dates and details</a>
+          <a class="btn btn--secondary" href="contact.html?about=spring-little-league"><span class="label-short">Ask about spring<span class="visually-hidden"> camp (Little League Training Camp, March 2027)</span></span><span class="label-long">Ask about the spring camp<span class="visually-hidden"> (Little League Training Camp, March 2027)</span></span></a>
+          <a class="btn btn--outline" href="programs/little-league-march-2027.html"><span class="label-short">More information<span class="visually-hidden"> about Little League Training Camp, March 2027</span></span><span class="label-long">See dates and details<span class="visually-hidden"> for Little League Training Camp, March 2027</span></span></a>
         </div>
       </div>
     </article>

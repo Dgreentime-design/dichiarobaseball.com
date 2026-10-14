@@ -73,6 +73,15 @@ a { color: inherit; text-decoration: none; }
   clip: rect(0 0 0 0); white-space: nowrap; border: 0;
 }
 
+/* A control with a short label on phones and a long one from 768px up.
+   Each label carries the program name in a visually hidden span, so the
+   accessible name is complete at both widths. */
+.label-long { display: none; }
+@media (min-width: 768px) {
+  .label-short { display: none; }
+  .label-long { display: inline; }
+}
+
 /* --- Layout ------------------------------------------------------------- */
 
 .band { padding: var(--band-y) var(--gutter); }
