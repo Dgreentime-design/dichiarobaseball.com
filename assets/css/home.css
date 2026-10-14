@@ -115,6 +115,14 @@
   object-fit: cover; object-position: 62% 50%;
 }
 .hero--video .hero__video { opacity: 0; transition: opacity 900ms var(--ease-reveal); }
+/* The poster must stay the LCP element. Chrome reports a new LCP entry
+   only for something strictly larger, and it sizes an image by its
+   natural size but a video by its whole box, so at most widths the video's
+   first frame came out a few hundred square pixels larger and replaced the
+   poster as the LCP. The video stops 2px short of the bottom to stay
+   smaller; the scrims below put solid ink over that strip, so the still
+   poster never shows under the moving video. */
+.hero--video .hero__video { height: calc(100% - 2px); }
 .hero--video .hero__video.is-playing { opacity: 1; }
 
 /* Desktop scrim: dark on the left behind the copy, nearly clear on the right
@@ -136,7 +144,7 @@
 @media (max-width: 1199px) { .hero--video { --lede-w: 480px; } }
 .hero--video .hero__media::before {
   background:
-    linear-gradient(0deg, rgba(23,18,15,.55) 0%, rgba(23,18,15,0) 24%),
+    linear-gradient(0deg, rgb(23,18,15) 0 2px, rgba(23,18,15,.55) 2px, rgba(23,18,15,0) 24%),
     linear-gradient(90deg,
       rgba(23,18,15,.95) 0%,
       rgba(23,18,15,.93) calc(var(--lede-end) - 100px),
@@ -174,13 +182,7 @@
   .hero--video .hero__media { inset: 0 0 auto; aspect-ratio: 4 / 5; }
   .hero--video .hero__poster img,
   .hero--video .hero__video { object-position: 50% 40%; }
-  /* The poster must stay the LCP element. Chrome reports a new LCP entry
-     only for something strictly larger, and the 4:5 box has a fractional
-     height that rounded the video one pixel row taller than the poster,
-     so the video's first frame became the LCP. Stopping the video 2px
-     short keeps it smaller; the scrim is fully opaque there, so it cannot
-     be seen. */
-  .hero--video .hero__video { height: calc(100% - 2px); }
+
   .hero--video .hero__media::before {
     background: linear-gradient(0deg,
       rgba(23,18,15,1) 0%, rgba(23,18,15,.97) 40%, rgba(23,18,15,.78) 52%,
