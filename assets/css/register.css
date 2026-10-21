@@ -413,10 +413,13 @@ main:has(> .step-panel):not(:has(> .step-panel:not([hidden]))) { min-height: 100
    and cannot be chosen. */
 .team-camps { display: grid; }
 .team-camp .choice__copy { gap: 6px; }
-.team-camp__top { display: flex; justify-content: space-between; align-items: baseline; gap: var(--s-4); flex-wrap: wrap; }
-.team-camp__price { font-family: var(--f-mono); font-size: var(--t-data-l); }
+/* Inside .choice__copy, whose spans are the small muted detail lines, so
+   the name row and the price restate their own color and size. */
+.choice__copy .team-camp__top { display: flex; justify-content: space-between; align-items: baseline; gap: var(--s-4); flex-wrap: wrap; color: var(--c-ink); font-size: inherit; }
+.choice__copy .team-camp__price { font-family: var(--f-mono); font-size: var(--t-data-l); color: var(--c-ink); line-height: var(--lh-tight); }
 .choice.is-full { cursor: not-allowed; background: var(--c-surface); }
 .choice.is-full .choice__copy strong { color: var(--c-muted); }
+.choice__copy .team-camp__price .chip { color: var(--c-bone); font-size: var(--t-eyebrow); line-height: 1.5; }
 .choice[hidden] { display: none; }
 .team-pick { display: grid; gap: var(--s-8); }
 .team-pick[hidden], [data-team-entry][hidden] { display: none; }
