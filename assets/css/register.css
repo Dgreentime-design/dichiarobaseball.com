@@ -387,8 +387,8 @@ main:has(> .step-panel):not(:has(> .step-panel:not([hidden]))) { min-height: 100
    button. The code is set in the mono face and shown in capitals. */
 
 .team-code { align-content: start; }
-.programs__grid > .team-code { grid-column: 1 / -1; }
-.programs__grid > .team-code[hidden] { display: none; }
+.programs > .team-code { max-width: var(--container); margin-inline: auto; }
+.programs > .team-code[hidden] { display: none; }
 .team-code__head { display: grid; gap: var(--s-3); }
 .team-code__lede { color: var(--c-muted); max-width: 60ch; }
 .team-code__row { display: flex; gap: 12px; align-items: stretch; }

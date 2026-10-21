@@ -179,6 +179,11 @@
   var pills = document.querySelectorAll("[data-filter]");
   var count = document.querySelector("[data-filter-count]");
   var empty = document.querySelector("[data-filter-empty]");
+  /* A panel outside the grid, shown under its own filter and no other,
+     All included: the team and town code card. It has no data-tags, so a
+     cached older site.js, which un-hides every [data-tags] in the grid,
+     never touches it. */
+  var panels = document.querySelectorAll("[data-filter-panel]");
 
   if (grid && pills.length) {
     var cards = Array.prototype.slice.call(grid.querySelectorAll("[data-tags]"));
@@ -188,10 +193,13 @@
       var shown = 0;
       cards.forEach(function (card) {
         var tags = (card.getAttribute("data-tags") || "").split(/\s+/);
-        /* A card marked data-filter-only shows under its own filter and
-           no other, All included: the team and town code card. */
-        var match = filter === "all" ? !card.hasAttribute("data-filter-only") : tags.indexOf(filter) !== -1;
+        var match = filter === "all" || tags.indexOf(filter) !== -1;
         card.hidden = !match;
+        if (match) shown++;
+      });
+      Array.prototype.forEach.call(panels, function (panel) {
+        var match = panel.getAttribute("data-filter-panel") === filter;
+        panel.hidden = !match;
         if (match) shown++;
       });
       Array.prototype.forEach.call(pills, function (p) {
