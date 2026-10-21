@@ -7,10 +7,10 @@
      registration_id, status, program, option, players, parent_name,
      parent_email, parent_phone, amount, payment_method, provider_order_id,
      checkout_session_id, waiver_accepted, photo_consent, webhook_note,
-     marketing_opt_in, marketing_opt_in_at
+     marketing_opt_in, marketing_opt_in_at, team_group, team_camp_ref
 
-   webhook_note and the two marketing fields are optional: where the table
-   lacks one, writes go ahead without it.
+   webhook_note, the two marketing fields and the two team fields are
+   optional: where the table lacks one, writes go ahead without it.
 
    created_at is Airtable's own created-time field and is never written.
 
@@ -59,7 +59,7 @@ function airtableTable(table) {
 /* Fields a table may not have yet. If Airtable says one does not exist,
    the same row is written without it rather than lost, and the log names
    the field, never its value. Every other error still fails the write. */
-const OPTIONAL_FIELDS = ["webhook_note", "marketing_opt_in", "marketing_opt_in_at"];
+const OPTIONAL_FIELDS = ["webhook_note", "marketing_opt_in", "marketing_opt_in_at", "team_group", "team_camp_ref"];
 
 async function writeOptional(call, path, method, fields, wrap) {
   let current = fields;
@@ -109,6 +109,18 @@ function airtable() {
       const { records } = await call(`?${q}`);
       return records[0] ? records[0].fields : null;
     },
+    /* Confirmed registrations for one team camp, for its capacity. */
+    async countConfirmedTeamCamp(ref) {
+      const q = new URLSearchParams({ filterByFormula: `AND({team_camp_ref}=${Number(ref)},{status}='confirmed')`, "fields[]": "registration_id", pageSize: "100" });
+      let count = 0, offset = "";
+      do {
+        if (offset) q.set("offset", offset);
+        const page = await call(`?${q}`);
+        count += page.records.length;
+        offset = page.offset || "";
+      } while (offset);
+      return count;
+    },
     async update(id, fields) {
       const r = await findOne("registration_id", id);
       if (!r) throw new Error(`No registration ${id}`);
@@ -131,6 +143,7 @@ function localFile() {
     async all(id) { return read().filter((r) => r.registration_id === id); },
     async findBySession(sessionId) { return read().find((r) => r.checkout_session_id === sessionId) || null; },
     async findBySessionAmong(values) { return read().find((r) => r.checkout_session_id && values.includes(r.checkout_session_id)) || null; },
+    async countConfirmedTeamCamp(ref) { return read().filter((r) => r.team_camp_ref === Number(ref) && r.status === "confirmed").length; },
     async update(id, fields) {
       const rows = read();
       const row = rows.find((r) => r.registration_id === id);

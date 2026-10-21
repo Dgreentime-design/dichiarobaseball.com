@@ -53,8 +53,7 @@
       <button class="pill" type="button" data-filter="softball"   aria-pressed="false">Softball</button>
       <button class="pill" type="button" data-filter="ages-6-12"  aria-pressed="false">Ages 6-12</button>
       <button class="pill" type="button" data-filter="ages-10-18" aria-pressed="false">Ages 10-18</button>
-      <button class="pill" type="button" data-filter="weekends"   aria-pressed="false">Weekends</button>
-      <button class="pill" type="button" data-filter="weeknights" aria-pressed="false">Weeknights</button>
+      <button class="pill" type="button" data-filter="team-town"  aria-pressed="false">Team/Town</button>
     </div>
     <p class="filters__count visually-hidden" data-filter-count aria-live="polite">Showing 5</p>
   </div>
@@ -65,6 +64,19 @@
 <!-- ===================================================================== -->
 <section class="programs" aria-label="Open programs">
   <div class="programs__grid" data-filter-grid data-filter-noun="program">
+
+    <!-- Team/Town only, never under All. Hidden until the filter shows it,
+         so without JavaScript it stays out of the list. No group, camp or
+         price is in this page: the code goes to /api/team-code. -->
+    <div class="form-card team-code team-code--wide" data-tags="team-town" data-filter-only hidden>
+      <div class="team-code__head">
+        <p class="eyebrow">Team &amp; town camps</p>
+        <h2 class="heading-l">Registering with your town or team?</h2>
+        <p class="body-m team-code__lede">Enter the code from your flyer to see your camps and register.</p>
+      </div>
+      {{> team-code }}
+      <a class="arrow-link" href="team-camps.html#ask-title">Plan a team block <span aria-hidden="true">&rarr;</span></a>
+    </div>
 
     <article class="card card--wide" id="little-league-training-camp"
              data-tags="baseball softball ages-6-12 weekends">

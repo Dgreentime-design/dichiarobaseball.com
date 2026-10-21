@@ -188,7 +188,9 @@
       var shown = 0;
       cards.forEach(function (card) {
         var tags = (card.getAttribute("data-tags") || "").split(/\s+/);
-        var match = filter === "all" || tags.indexOf(filter) !== -1;
+        /* A card marked data-filter-only shows under its own filter and
+           no other, All included: the team and town code card. */
+        var match = filter === "all" ? !card.hasAttribute("data-filter-only") : tags.indexOf(filter) !== -1;
         card.hidden = !match;
         if (match) shown++;
       });
@@ -238,6 +240,76 @@
 
     apply("all");
   }
+
+  /* --- Team and town codes -----------------------------------------------
+     The code from a flyer goes to /api/team-code, which answers with that
+     group's live camps or one generic failure. Nothing about any group is
+     in the page. On success the answer is handed to the register page in
+     this tab's session storage (it never goes in a link), unless a page
+     handles it itself: register.js listens for dbsa:team-code and calls
+     preventDefault. */
+
+  window.dbsaTeamCode = { KEY: "dbsa-team" };
+
+  Array.prototype.forEach.call(document.querySelectorAll("[data-team-code]"), function (form) {
+    var input = form.querySelector("input[name=code]");
+    var button = form.querySelector("[data-team-code-submit]");
+    var message = form.querySelector("[data-team-code-message]");
+    var label = button.textContent;
+
+    /* Typed in capitals, whatever the keyboard sends. The caret stays put. */
+    input.addEventListener("input", function () {
+      var at = input.selectionStart;
+      var up = input.value.toUpperCase();
+      if (up !== input.value) { input.value = up; try { input.setSelectionRange(at, at); } catch (e) { /* not a text input */ } }
+      form.classList.remove("is-invalid");
+      message.textContent = "";
+    });
+
+    form.addEventListener("submit", function (e) {
+      e.preventDefault();
+      if (button.disabled) return;
+      var code = input.value.trim();
+      if (!code) {
+        form.classList.add("is-invalid");
+        message.textContent = "Enter the code from your flyer.";
+        input.focus();
+        return;
+      }
+      button.disabled = true;
+      button.textContent = "Checking...";
+      message.textContent = "";
+
+      var done = function (text) {
+        button.disabled = false;
+        button.textContent = label;
+        if (text) { form.classList.add("is-invalid"); message.textContent = text; input.focus(); }
+      };
+
+      fetch("/api/team-code", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ code: code })
+      })
+        .then(function (res) {
+          return res.json().catch(function () { return {}; }).then(function (data) {
+            if (res.ok && data.group) {
+              var ev = new CustomEvent("dbsa:team-code", { cancelable: true, detail: { code: code, result: data } });
+              if (!form.dispatchEvent(ev)) { done(); return; }
+              var stored = false;
+              try { sessionStorage.setItem(window.dbsaTeamCode.KEY, JSON.stringify({ code: code, result: data })); stored = true; } catch (err) { /* blocked: the link carries the code instead */ }
+              window.location.assign(stored ? "register.html?team=1" : "register.html?code=" + encodeURIComponent(code));
+              return;
+            }
+            done(res.status === 429 ? "Too many tries. Please wait a minute and try again."
+              : "We don\u2019t recognise that code. Check your flyer, or call us at (201) 773-6858.");
+          });
+        })
+        .catch(function () {
+          done("We could not reach the server. Check your connection, or call us at (201) 773-6858.");
+        });
+    });
+  });
 
   /* --- Instructor bios ----------------------------------------------------
      The card expands in place to the full row width and the cards below it

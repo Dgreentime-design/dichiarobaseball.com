@@ -15,7 +15,7 @@
 <link rel="preload" href="assets/fonts/jetbrains-mono-latin.woff2" as="font" type="font/woff2" crossorigin>
 
 <!-- One stylesheet, built by build.mjs from the files in assets/css/. -->
-<link rel="stylesheet" href="assets/css/site.min.css?v=1b486a98">
+<link rel="stylesheet" href="assets/css/site.min.css?v=366cca87">
 
 <!-- Analytics. Vercel Web Analytics: no cookies, so no consent banner. It
      records nothing until it is enabled in the Vercel dashboard (project,
@@ -183,6 +183,31 @@
       <div class="stat"><dt>6,500</dt><dd>Square feet, four cages</dd></div>
       <div class="stat"><dt>7 days</dt><dd>A week, year round</dd></div>
     </dl>
+  </div>
+</section>
+
+<!-- ===================================================================== -->
+<!-- Code from a flyer                                                     -->
+<!-- ===================================================================== -->
+<section class="band band--surface team-code-band" aria-labelledby="code-title">
+  <div class="container">
+    <div class="form-card team-code team-code--wide">
+      <div class="team-code__head">
+        <p class="eyebrow">Team &amp; town camps</p>
+        <h2 class="heading-l" id="code-title">Have a code from your flyer?</h2>
+        <p class="body-m team-code__lede">Enter it to see your camps and register.</p>
+      </div>
+      <form class="team-code__form" data-team-code novalidate>
+  <div class="field">
+    <label for="team-code-input">Team or town code</label>
+    <div class="team-code__row">
+      <input class="input input--code" id="team-code-input" name="code" type="text" placeholder="e.g. ABCD-2345" autocomplete="off" autocapitalize="characters" autocorrect="off" spellcheck="false" maxlength="40" required>
+      <button class="btn btn--primary" type="submit" data-team-code-submit>Find my camps</button>
+    </div>
+    <p class="field__error team-code__message" data-team-code-message aria-live="polite"></p>
+  </div>
+</form>
+    </div>
   </div>
 </section>
 

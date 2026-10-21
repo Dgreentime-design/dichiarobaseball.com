@@ -64,6 +64,38 @@
   </div>
 </section>
 
+<!-- ===================================================================== -->
+<!-- Step 00 · Team and town camps, reached with a code                    -->
+<!-- ===================================================================== -->
+<!-- Empty in the page: the group and its camps come only from
+     /api/team-code, for the code the family typed or scanned. -->
+<section class="reg step-panel" data-step="0" aria-labelledby="s0-title" hidden>
+  <div class="reg__inner">
+    <div class="reg__form">
+      <div class="reg__head">
+        <p class="eyebrow">Team &amp; town camps</p>
+        <h1 class="display-l" id="s0-title" data-team-title>Find your camps</h1>
+        <p class="body-l" data-team-lede>Enter the code from your flyer to see your camps and register.</p>
+        <p data-team-change-row hidden><button class="reg__back" type="button" data-team-change></button></p>
+      </div>
+
+      <div class="form-card team-code" data-team-entry>
+        {{> team-code }}
+      </div>
+
+      <form class="team-pick" data-team-pick novalidate hidden>
+        <div class="reg-card">
+          <div class="reg-card__head"><h2 class="heading-s">Choose a camp</h2></div>
+          <div class="team-camps" data-team-camps role="radiogroup" aria-labelledby="s0-title"></div>
+        </div>
+        <div class="reg__actions">
+          <button class="btn btn--primary" type="submit">Continue</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</section>
+
 <section class="reg step-panel" data-step="1" aria-labelledby="s1-title" hidden>
   <div class="reg__inner">
     <form class="reg__form" data-step-form="1" novalidate>
@@ -158,7 +190,7 @@
 
       <div class="reg__actions">
         <button class="btn btn--primary" type="submit">Continue to the waiver</button>
-        <a class="reg__back" href="camps-and-clinics.html">Back to the camp page</a>
+        <a class="reg__back" href="camps-and-clinics.html" data-back-link>Back to the camp page</a>
       </div>
     </form>
 
@@ -301,7 +333,7 @@
 
       <div class="reg-card">
         <div class="reg-card__head"><h3 class="heading-s">How would you like to pay?</h3></div>
-        <p class="reg-card__note">This camp accepts all three. Pick the one that suits you.</p>
+        <p class="reg-card__note" data-pay-note>This camp accepts all three. Pick the one that suits you.</p>
 
         <div>
           <label class="choice">
