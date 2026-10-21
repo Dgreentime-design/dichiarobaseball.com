@@ -494,9 +494,11 @@
       ref: ctx.id || ""
     };
 
-    var program = ctx.programLabel || (p ? (p.season ? p.name + ", " + p.season : p.name) : "");
+    /* A team camp's name comes from the camp this browser picked; the
+       status endpoint only ever says "Team camp". */
+    var program = (p && p.team ? p.name : ctx.programLabel) || (p ? (p.season ? p.name + ", " + p.season : p.name) : "");
     var option = ctx.optionLabel || (o ? o.label : "");
-    var about = [program, option].filter(Boolean).join(". ");
+    var about = [program, option !== program ? option : ""].filter(Boolean).join(". ");
     var lede = (about ? about + (start ? ", starting " + long(start) : "") + ". " : "") + fill(c.lede, values);
 
     set("[data-confirm-eyebrow]", c.eyebrow);

@@ -187,6 +187,7 @@ test registrations stay out of the handover table (`Registrations`).
 | 18a | 9 Oct | New Home hero (coach) and Facility band (turf). `prompts/2026-10-09-round18a-home-hero-test.md` |
 | 18b | 9 Oct | Phone hero: `file_mobile` and `zoom_mobile` in the registry, turf photo on phones. `prompts/2026-10-09-round18b-phone-hero.md` |
 | 19 | 9 Oct | Launch readiness: images locked, cutover rehearsed, variables audited, 404 page, runbook. `prompts/2026-10-09-round19-launch-readiness.md` |
+| 31 | 21 Oct | Team and town camps behind a private code, read from the Airtable Groups and Team camps tables at runtime. `POST /api/team-code`, `api/_lib/teams.js`, checkout takes `code` + `campRef`. Rounds 20 to 30 are in `prompts/`. `prompts/2026-10-21-round31-team-town-codes.md` |
 
 Every round is a committed prompt file in `prompts/`. Read the round in flight
 before doing anything.
@@ -557,6 +558,7 @@ under "Before go-live". The two that bite silently:
 - **Program pages are static.** A past option disappears from a page at the
   next deploy; between deploys the checkout refuses it, and the register
   flow does not offer it.
+- **Team and town camps (round 31)** live in Airtable, not `data/programs.json`: Groups (one code each) and Team camps (`status` live, a session to come). A code change takes effect within 60 seconds. `is_test` rows work only off production. Rate limit and the 60 second cache are per warm function instance. The three unlisted team programs move onto codes in round 32.
 - **Gated team programs register by contact only.** Whether Michael wants
   them registered online is his decision; online needs the code system.
 - `llms.txt` still lists only ungated programs, from round 08's rule. The
