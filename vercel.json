@@ -98,6 +98,66 @@
       "source": "/template-pages/blog/:path*",
       "destination": "/",
       "statusCode": 301
+    },
+    {
+      "source": "/programs/iha-softball-winter-2027.html",
+      "destination": "/team-camps.html",
+      "statusCode": 301
+    },
+    {
+      "source": "/programs/iha-softball-winter-2027.ics",
+      "destination": "/team-camps.html",
+      "statusCode": 301
+    },
+    {
+      "source": "/programs/iha-softball-winter-2027",
+      "destination": "/team-camps.html",
+      "statusCode": 301
+    },
+    {
+      "source": "/assets/flyers/iha-softball-winter-2027.pdf",
+      "destination": "/team-camps.html",
+      "statusCode": 301
+    },
+    {
+      "source": "/programs/fair-lawn-hs-softball-2027.html",
+      "destination": "/team-camps.html",
+      "statusCode": 301
+    },
+    {
+      "source": "/programs/fair-lawn-hs-softball-2027.ics",
+      "destination": "/team-camps.html",
+      "statusCode": 301
+    },
+    {
+      "source": "/programs/fair-lawn-hs-softball-2027",
+      "destination": "/team-camps.html",
+      "statusCode": 301
+    },
+    {
+      "source": "/assets/flyers/fair-lawn-hs-softball-2027.pdf",
+      "destination": "/team-camps.html",
+      "statusCode": 301
+    },
+    {
+      "source": "/programs/old-tappan-hs-2026-27.html",
+      "destination": "/team-camps.html",
+      "statusCode": 301
+    },
+    {
+      "source": "/programs/old-tappan-hs-2026-27.ics",
+      "destination": "/team-camps.html",
+      "statusCode": 301
+    },
+    {
+      "source": "/programs/old-tappan-hs-2026-27",
+      "destination": "/team-camps.html",
+      "statusCode": 301
+    },
+    {
+      "source": "/assets/flyers/old-tappan-hs-2026-27.pdf",
+      "destination": "/team-camps.html",
+      "statusCode": 301
     }
   ],
   "rewrites": [

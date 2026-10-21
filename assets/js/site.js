@@ -302,6 +302,7 @@
               return;
             }
             done(res.status === 429 ? "Too many tries. Please wait a minute and try again."
+              : res.status === 503 ? "We couldn\u2019t check your code just now. Please try again in a minute, or call (201) 773-6858."
               : "We don\u2019t recognise that code. Check your flyer, or call us at (201) 773-6858.");
           });
         })

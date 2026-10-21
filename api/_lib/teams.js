@@ -66,6 +66,11 @@ const production = () => process.env.VERCEL_ENV === "production";
 
 /* --- Reading the tables -------------------------------------------------- */
 
+/* Airtable could not be reached at all, or answered with a server error or
+   its own rate limit. Said honestly to the family, and decided before any
+   code is compared, so it says nothing about whether a code is valid. */
+export class AirtableUnreachable extends Error {}
+
 /* Every record of a table, only the named fields, keyed by field ID. */
 async function readTable(table, fieldIds) {
   const token = process.env.AIRTABLE_TOKEN;
@@ -77,9 +82,15 @@ async function readTable(table, fieldIds) {
     const q = new URLSearchParams({ returnFieldsByFieldId: "true", pageSize: "100" });
     for (const f of fieldIds) q.append("fields[]", f);
     if (offset) q.set("offset", offset);
-    const res = await fetch(`https://api.airtable.com/v0/${encodeURIComponent(base)}/${encodeURIComponent(table)}?${q}`, {
-      headers: { Authorization: `Bearer ${token}` }
-    });
+    let res;
+    try {
+      res = await fetch(`https://api.airtable.com/v0/${encodeURIComponent(base)}/${encodeURIComponent(table)}?${q}`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+    } catch (e) {
+      throw new AirtableUnreachable(`Airtable unreachable: ${e.name}`);
+    }
+    if (res.status >= 500 || res.status === 429) throw new AirtableUnreachable(`Airtable ${res.status}`);
     if (!res.ok) throw new Error(`Airtable ${res.status}: ${(await res.text()).slice(0, 300)}`);
     const page = await res.json();
     out.push(...page.records.map((r) => ({ id: r.id, fields: r.fields || {} })));
@@ -253,4 +264,5 @@ export async function holdUntil(started, ms = FLOOR_MS) {
 
 /* The one failure, for every cause. */
 export const NOT_RECOGNISED = { error: "not_recognised", message: "We don't recognise that code. Check your flyer, or call us at (201) 773-6858." };
+export const UNAVAILABLE = { error: "unavailable", message: "We couldn\u2019t check your code just now. Please try again in a minute, or call (201) 773-6858." };
 export const TOO_MANY = { error: "too_many", message: "Too many tries. Please wait a minute and try again." };

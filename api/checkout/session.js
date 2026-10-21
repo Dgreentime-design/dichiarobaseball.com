@@ -24,7 +24,7 @@ import { priceCart, CartError, PAYMENT_METHODS, MAX_PLAYERS } from "../_lib/prog
 import { store, StoreUnavailable } from "../_lib/store.js";
 import { provider } from "../_lib/providers/index.js";
 import { json, newRegistrationId } from "../_lib/http.js";
-import { lookup, limited, clientIp, hashIp, holdUntil, NOT_RECOGNISED, TOO_MANY } from "../_lib/teams.js";
+import { lookup, limited, clientIp, hashIp, holdUntil, NOT_RECOGNISED, TOO_MANY, UNAVAILABLE, AirtableUnreachable } from "../_lib/teams.js";
 
 const MAX_BODY = 20000;
 const EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -168,6 +168,11 @@ async function priceTeamCamp(request, body, method, playerCount) {
     found = typeof body.code === "string" ? await lookup(body.code, (ref) => db.countConfirmedTeamCamp(ref)) : null;
   } catch (e) {
     console.error("checkout/session team lookup", e.name);
+    if (e instanceof AirtableUnreachable) {
+      log("unavailable");
+      await holdUntil(started);
+      return { response: json(UNAVAILABLE, 503) };
+    }
     found = null;
   }
   const camp = found && found.camps.find((c) => c.ref === Number(body.campRef));
