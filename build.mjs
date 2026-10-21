@@ -129,6 +129,14 @@ writeFileSync(join("assets", "css", "site.min.css"), CSS);
 const CSS_HREF = `assets/css/site.min.css?v=${createHash("sha1").update(CSS).digest("hex").slice(0, 8)}`;
 console.log(`  assets/css/site.min.css, ${(CSS.length / 1024).toFixed(1)} KB`);
 
+/* Each local script gets the same kind of hash in its src, set in write()
+   on every page, so a changed site.js or register.js reaches returning
+   visitors at once instead of after the week-long cache on /assets/. */
+const JS_VERSION = Object.fromEntries(readdirSync(join("assets", "js")).filter((f) => f.endsWith(".js"))
+  .map((f) => [f, createHash("sha1").update(readFileSync(join("assets", "js", f))).digest("hex").slice(0, 8)]));
+const versionScripts = (html) => html.replace(/(<script\b[^>]*\bsrc="(?:\.\.\/|\/)?assets\/js\/)([\w.-]+\.js)"/g,
+  (m, pre, f) => (JS_VERSION[f] ? `${pre}${f}?v=${JS_VERSION[f]}"` : m));
+
 /* --- Google Analytics 4 ---------------------------------------------------
 
    GA4_MEASUREMENT_ID turns the tag on, set in Vercel for Production and
@@ -592,6 +600,7 @@ function write(file, html) {
   html = setRobots(html, file);
   html = injectJsonLd(html, file);
   html = setCurrent(html, file);
+  html = versionScripts(html);
   writeFileSync(file, html);
   built.push({
     file,

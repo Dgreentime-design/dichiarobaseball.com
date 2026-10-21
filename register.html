@@ -15,7 +15,7 @@
 <link rel="preload" href="assets/fonts/jetbrains-mono-latin.woff2" as="font" type="font/woff2" crossorigin>
 
 <!-- One stylesheet, built by build.mjs from the files in assets/css/. -->
-<link rel="stylesheet" href="assets/css/site.min.css?v=41c0c70e">
+<link rel="stylesheet" href="assets/css/site.min.css?v=b014eae0">
 
 <!-- Analytics. Vercel Web Analytics: no cookies, so no consent banner. It
      records nothing until it is enabled in the Vercel dashboard (project,
@@ -219,7 +219,7 @@
     <label for="team-code-input">Team or town code</label>
     <div class="team-code__row">
       <input class="input input--code" id="team-code-input" name="code" type="text" placeholder="e.g. ABCD-2345" autocomplete="off" autocapitalize="characters" autocorrect="off" spellcheck="false" maxlength="40" required>
-      <button class="btn btn--primary" type="submit" data-team-code-submit>Find my camps</button>
+      <button class="btn btn--primary" type="submit" data-team-code-submit>Find my camp</button>
     </div>
     <p class="field__error team-code__message" data-team-code-message aria-live="polite"></p>
   </div>
@@ -346,6 +346,7 @@
         <div class="summary__fact"><dt>Sessions</dt><dd data-program-sessions></dd></div>
         <div class="summary__fact"><dt>Where</dt><dd data-program-where></dd></div>
       </dl>
+      <dl class="summary__fee" data-fee-summary hidden><dt>Online processing fee</dt><dd data-fee-price></dd></dl>
       <dl class="summary__total">
         <dt>Total</dt>
         <dd data-total></dd>
@@ -430,6 +431,7 @@
         <div class="summary__fact"><dt>Sessions</dt><dd data-program-sessions></dd></div>
         <div class="summary__fact"><dt>Where</dt><dd data-program-where></dd></div>
       </dl>
+      <dl class="summary__fee" data-fee-summary hidden><dt>Online processing fee</dt><dd data-fee-price></dd></dl>
       <dl class="summary__total"><dt>Total</dt><dd data-total></dd></dl>
       <p class="summary__note">One player.</p>
     </aside>
@@ -466,6 +468,14 @@
             <span class="line__price" data-line-price></span>
           </div>
 
+          <div class="line" data-fee-line hidden>
+            <div class="line__copy">
+              <span>Online processing fee</span>
+              <small>Team and town camps paid online only.</small>
+            </div>
+            <span class="line__price" data-fee-price></span>
+          </div>
+
           <div class="line line--total">
             <div class="line__copy">Total due today</div>
             <span class="line__price" data-due-today></span>
@@ -482,22 +492,22 @@
           <label class="choice">
             <input type="radio" name="pay" value="online" checked>
             <span class="choice__copy">
-              <strong>Online now</strong>
-              <span>Card or digital wallet on Clover&rsquo;s secure page. Your place is confirmed the moment payment clears.</span>
+              <strong>Online now <span class="chip choice__fee" data-fee-tag hidden></span></strong>
+              <span data-pay-desc>Card or digital wallet on Clover&rsquo;s secure page. Your place is confirmed the moment payment clears.</span>
             </span>
           </label>
           <label class="choice">
             <input type="radio" name="pay" value="facility">
             <span class="choice__copy">
               <strong>At the facility</strong>
-              <span>Pay at the front desk. We hold the place for seven days.</span>
+              <span data-pay-desc>Pay at the front desk. We hold the place for seven days.</span>
             </span>
           </label>
           <label class="choice">
             <input type="radio" name="pay" value="check">
             <span class="choice__copy">
               <strong>By check</strong>
-              <span>Payable to DiChiaro Baseball &amp; Softball Academy. We hold the place until it clears.</span>
+              <span data-pay-desc>Payable to DiChiaro Baseball &amp; Softball Academy. We hold the place until it clears.</span>
             </span>
           </label>
         </div>
@@ -530,6 +540,7 @@
         <div class="summary__fact"><dt>Sessions</dt><dd data-program-sessions></dd></div>
         <div class="summary__fact"><dt>Where</dt><dd data-program-where></dd></div>
       </dl>
+      <dl class="summary__fee" data-fee-summary hidden><dt>Online processing fee</dt><dd data-fee-price></dd></dl>
       <dl class="summary__total"><dt>Total</dt><dd data-total></dd></dl>
       <p class="summary__note">One player.</p>
     </aside>
@@ -657,7 +668,7 @@
   </div>
 </footer>
 
-<script src="assets/js/site.js" defer></script>
-<script src="assets/js/register.js" defer></script>
+<script src="assets/js/site.js?v=f2f97d20" defer></script>
+<script src="assets/js/register.js?v=eb0cff03" defer></script>
 </body>
 </html>

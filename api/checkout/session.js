@@ -17,6 +17,11 @@
    payment method must be one the camp allows, and a camp at capacity is
    refused. A bad code gets the same answer as on /api/team-code, after
    the same delay, and counts against the same five a minute.
+
+   A team camp paid online adds TEAM_ONLINE_FEE_CENTS once, as its own
+   line item, so Clover's receipt shows it apart from the camp. amount on
+   the row is the total charged, so the webhook's amount check still
+   matches, and processing_fee says how much of it was the fee.
    ========================================================================== */
 
 import "../_lib/guard.js";
@@ -24,7 +29,7 @@ import { priceCart, CartError, PAYMENT_METHODS, MAX_PLAYERS } from "../_lib/prog
 import { store, StoreUnavailable } from "../_lib/store.js";
 import { provider } from "../_lib/providers/index.js";
 import { json, newRegistrationId } from "../_lib/http.js";
-import { lookup, limited, clientIp, hashIp, holdUntil, NOT_RECOGNISED, TOO_MANY, UNAVAILABLE, AirtableUnreachable } from "../_lib/teams.js";
+import { lookup, limited, clientIp, hashIp, holdUntil, NOT_RECOGNISED, TOO_MANY, UNAVAILABLE, AirtableUnreachable, TEAM_ONLINE_FEE_CENTS } from "../_lib/teams.js";
 
 const MAX_BODY = 20000;
 const EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -92,7 +97,7 @@ export async function POST(request) {
     status: method === "online" ? "pending" : "confirmed",
     program: team ? team.campName : `${cart.program.name}, ${cart.program.season}`,
     option: team ? "Team camp" : cart.option.label,
-    ...(team ? { team_group: team.groupName, team_camp_ref: team.campRef } : {}),
+    ...(team ? { team_group: team.groupName, team_camp_ref: team.campRef, processing_fee: team.feeCents / 100 } : {}),
     players: JSON.stringify(players),
     parent_name: `${parent.firstName} ${parent.lastName}`,
     parent_email: parent.email,
@@ -113,7 +118,7 @@ export async function POST(request) {
     await db.create(record);
 
     if (method !== "online") {
-      return json({ registrationId, status: record.status, amountCents: cart.amountCents });
+      return json({ registrationId, status: record.status, amountCents: cart.amountCents, processingFeeCents: team ? team.feeCents : 0 });
     }
 
     stage = "provider";
@@ -128,7 +133,7 @@ export async function POST(request) {
     stage = "store.update";
     await db.update(registrationId, { checkout_session_id: sessionId });
 
-    return json({ registrationId, status: "pending", amountCents: cart.amountCents, redirectUrl });
+    return json({ registrationId, status: "pending", amountCents: cart.amountCents, processingFeeCents: team ? team.feeCents : 0, redirectUrl });
   } catch (e) {
     console.error("checkout/session", registrationId, e);
     const status = e instanceof StoreUnavailable ? 503 : 502;
@@ -187,11 +192,14 @@ async function priceTeamCamp(request, body, method, playerCount) {
   if (!camp.paymentMethods.includes(method)) return { response: json({ error: "This camp does not take that payment method." }, 400) };
 
   const unitCents = camp.priceCents;
+  const feeCents = method === "online" ? TEAM_ONLINE_FEE_CENTS : 0;
+  const lineItems = [{ name: camp.name, unitCents, quantity: playerCount }];
+  if (feeCents) lineItems.push({ name: "Online processing fee", unitCents: feeCents, quantity: 1 });
   return {
-    team: { campName: camp.name, groupName: found.group.name, campRef: camp.ref },
+    team: { campName: camp.name, groupName: found.group.name, campRef: camp.ref, feeCents },
     cart: {
-      amountCents: unitCents * playerCount,
-      lineItems: [{ name: camp.name, unitCents, quantity: playerCount }]
+      amountCents: unitCents * playerCount + feeCents,
+      lineItems
     }
   };
 }

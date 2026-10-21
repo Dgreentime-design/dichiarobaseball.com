@@ -15,7 +15,7 @@
 <link rel="preload" href="assets/fonts/jetbrains-mono-latin.woff2" as="font" type="font/woff2" crossorigin>
 
 <!-- One stylesheet, built by build.mjs from the files in assets/css/. -->
-<link rel="stylesheet" href="assets/css/site.min.css?v=41c0c70e">
+<link rel="stylesheet" href="assets/css/site.min.css?v=b014eae0">
 
 <!-- Analytics. Vercel Web Analytics: no cookies, so no consent banner. It
      records nothing until it is enabled in the Vercel dashboard (project,
@@ -199,28 +199,6 @@
 <section class="programs" aria-label="Open programs">
   <div class="programs__grid" data-filter-grid data-filter-noun="program">
 
-    <!-- Team/Town only, never under All. Hidden until the filter shows it,
-         so without JavaScript it stays out of the list. No group, camp or
-         price is in this page: the code goes to /api/team-code. -->
-    <div class="form-card team-code team-code--wide" data-tags="team-town" data-filter-only hidden>
-      <div class="team-code__head">
-        <p class="eyebrow">Team &amp; town camps</p>
-        <h2 class="heading-l">Registering with your town or team?</h2>
-        <p class="body-m team-code__lede">Enter the code from your flyer to see your camps and register.</p>
-      </div>
-      <form class="team-code__form" data-team-code novalidate>
-  <div class="field">
-    <label for="team-code-input">Team or town code</label>
-    <div class="team-code__row">
-      <input class="input input--code" id="team-code-input" name="code" type="text" placeholder="e.g. ABCD-2345" autocomplete="off" autocapitalize="characters" autocorrect="off" spellcheck="false" maxlength="40" required>
-      <button class="btn btn--primary" type="submit" data-team-code-submit>Find my camps</button>
-    </div>
-    <p class="field__error team-code__message" data-team-code-message aria-live="polite"></p>
-  </div>
-</form>
-      <a class="arrow-link" href="team-camps.html#ask-title">Plan a team block <span aria-hidden="true">&rarr;</span></a>
-    </div>
-
     <article class="card card--wide" id="little-league-training-camp"
              data-tags="baseball softball ages-6-12 weekends">
       <div class="card__media">
@@ -382,6 +360,30 @@
     <button class="arrow-link" type="button" data-filter="all">Clear filters</button>
     <a href="contact.html" class="arrow-link">Tell us what you need <span aria-hidden="true">&rarr;</span></a>
   </p>
+
+  <!-- Team/Town only, never under All. Outside the grid and with no
+       data-tags, so no filter code, old or new, counts it as a card: only
+       site.js's data-filter-panel step shows it, under Team/Town alone.
+       Hidden in the HTML, so without JavaScript it never shows. No group,
+       camp or price is in this page: the code goes to /api/team-code. -->
+  <div class="form-card team-code team-code--wide" data-filter-panel="team-town" hidden>
+    <div class="team-code__head">
+      <p class="eyebrow">Team &amp; town camps</p>
+      <h2 class="heading-l">Registering with your town or team?</h2>
+      <p class="body-m team-code__lede">Enter the code from your flyer to see your camps and register.</p>
+    </div>
+    <form class="team-code__form" data-team-code novalidate>
+  <div class="field">
+    <label for="team-code-input">Team or town code</label>
+    <div class="team-code__row">
+      <input class="input input--code" id="team-code-input" name="code" type="text" placeholder="e.g. ABCD-2345" autocomplete="off" autocapitalize="characters" autocorrect="off" spellcheck="false" maxlength="40" required>
+      <button class="btn btn--primary" type="submit" data-team-code-submit>Find my camp</button>
+    </div>
+    <p class="field__error team-code__message" data-team-code-message aria-live="polite"></p>
+  </div>
+</form>
+    <a class="arrow-link" href="team-camps.html#ask-title">Plan a team block <span aria-hidden="true">&rarr;</span></a>
+  </div>
 </section>
 
 <!-- ===================================================================== -->
@@ -528,6 +530,6 @@
   </div>
 </footer>
 
-<script src="assets/js/site.js" defer></script>
+<script src="assets/js/site.js?v=f2f97d20" defer></script>
 </body>
 </html>

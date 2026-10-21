@@ -53,6 +53,18 @@
   }
   function moneyExact(cents) { return "$" + (cents / 100).toFixed(2); }
 
+  /* A team camp paid online carries the server's flat processing fee, once
+     per registration. Shown only; the server adds it whatever is sent. */
+  function feeCents() {
+    var p = state.program;
+    return p && p.team && state.method === "online" ? p.team.onlineFeeCents || 0 : 0;
+  }
+
+  /* The amount charged, with the fee named when there was one. */
+  function amountText(cents, fee) {
+    return fee ? moneyExact(cents) + " (" + moneyExact(cents - fee) + " camp, " + moneyExact(fee) + " online processing fee)" : moneyExact(cents);
+  }
+
   /* Dates in programs.json are ISO days with no time, so parse them as
      calendar dates, not as instants that a timezone could shift. */
   function day(iso) {
@@ -221,10 +233,12 @@
   /* Every amount on screen comes from the server's pricing of one option.
      Until an option is chosen, no total is shown at all. */
   function renderTotals() {
-    var o = state.option;
-    setAll("[data-total]", o ? money(o.totalCents) : "");
+    var o = state.option, fee = feeCents();
+    setAll("[data-total]", o ? money(o.totalCents + fee) : "");
     set("[data-line-price]", o ? money(o.totalCents) : "");
-    set("[data-due-today]", o ? money(o.dueNowCents) : "");
+    set("[data-due-today]", o ? money(o.dueNowCents + fee) : "");
+    setAll("[data-fee-price]", fee ? money(fee) : "");
+    Array.prototype.forEach.call(document.querySelectorAll("[data-fee-line], [data-fee-summary]"), function (el) { el.hidden = !(o && fee); });
     set("[data-line-detail]", o ? o.label + ". One player." : "Choose an option above. One player.");
     var later = document.querySelector("[data-line-later]");
     if (later) {
@@ -339,7 +353,27 @@
 
   /* Only the ways this program or camp can be paid. A team camp names its
      own; the server refuses any other. */
+  /* Each method's own description, as the page has it. A team camp adds
+     the fee to Online now and "No processing fee." to the other two. */
+  var payDesc = {};
+  Array.prototype.forEach.call(document.querySelectorAll('input[name="pay"]'), function (input) {
+    var desc = input.closest(".choice").querySelector("[data-pay-desc]");
+    if (desc) payDesc[input.value] = desc.textContent;
+  });
+
   function renderPayments(methods) {
+    var p = state.program, fee = p && p.team ? p.team.onlineFeeCents || 0 : 0;
+    Array.prototype.forEach.call(document.querySelectorAll('input[name="pay"]'), function (input) {
+      var desc = input.closest(".choice").querySelector("[data-pay-desc]");
+      if (desc) {
+        desc.textContent = !fee ? payDesc[input.value]
+          : input.value === "online"
+            ? "Card or digital wallet on Clover\u2019s secure page. A " + money(fee) + " processing fee applies to online payments. Your place is confirmed the moment payment clears."
+            : payDesc[input.value] + " No processing fee.";
+      }
+      var tag = input.closest(".choice").querySelector("[data-fee-tag]");
+      if (tag) { tag.textContent = fee ? "+" + money(fee) : ""; tag.hidden = !fee; }
+    });
     var first = null;
     Array.prototype.forEach.call(document.querySelectorAll('input[name="pay"]'), function (input) {
       var allowed = methods.indexOf(input.value) !== -1;
@@ -368,6 +402,7 @@
           ? "Continue to secure payment"
           : "Confirm this registration";
       }
+      renderTotals();
     });
   });
 
@@ -507,7 +542,7 @@
        title carries no name. */
     set("[data-confirm-title]", c.fullTitle || (state.player ? state.player + c.title : "You\u2019re registered."));
     set("[data-confirm-lede]", c.fullTitle ? fill(c.lede, values) : lede);
-    set("[data-due-amount]", typeof ctx.amountCents === "number" ? moneyExact(ctx.amountCents) : "");
+    set("[data-due-amount]", typeof ctx.amountCents === "number" ? amountText(ctx.amountCents, ctx.feeCents || 0) : "");
     set("[data-due-when]", fill(c.when, values));
     set("[data-due-accepted]", fill(c.accepted, values));
     set("[data-due-state]", key === "online" && o && o.later.length ? c.statePart : key === "online" && !o ? c.status : c.state);
@@ -657,7 +692,7 @@
           });
           return;
         }
-        finish(state.method, { id: data.registrationId, amountCents: data.amountCents });
+        finish(state.method, { id: data.registrationId, amountCents: data.amountCents, feeCents: data.processingFeeCents || 0 });
         /* At the facility and by check, the registration is confirmed now. */
         purchased(data.registrationId, state.method, data.amountCents);
       })
@@ -720,12 +755,12 @@
         var waited = Date.now() - started;
         if (!delayed && waited >= DELAY_MS) {
           delayed = true;
-          finish("delayed", { id: id, amountCents: lastAmount });
+          finish("delayed", { id: id, amountCents: lastAmount, feeCents: lastFee });
           unconfirmed(id, "timeout");
         }
         setTimeout(poll, waited < DELAY_MS ? Math.min(2000, DELAY_MS - waited) : 5000);
       };
-      var lastAmount;
+      var lastAmount, lastFee = 0;
       var settled = false;
       finish("confirming", { id: id });
       /* Leaving while still confirming is the drop-off after Clover. */
@@ -741,7 +776,7 @@
             });
           })
           .then(function (data) {
-            var ctx = { id: id, amountCents: data.amountCents, programLabel: data.program, optionLabel: data.option };
+            var ctx = { id: id, amountCents: data.amountCents, feeCents: data.processingFeeCents || 0, programLabel: data.program, optionLabel: data.option };
             if (data.status === "confirmed") {
               settled = true;
               remember(null);
@@ -753,7 +788,8 @@
               if (data.status === "failed") unconfirmed(id, "failed");
             } else {
               lastAmount = data.amountCents;
-              set("[data-due-amount]", moneyExact(data.amountCents));
+              lastFee = data.processingFeeCents || 0;
+              set("[data-due-amount]", amountText(data.amountCents, lastFee));
               again();
             }
           })
@@ -784,7 +820,7 @@
   function campProgram(camp, groupName, check) {
     return {
       slug: null,
-      team: { group: groupName },
+      team: { group: groupName, onlineFeeCents: camp.onlineFeeCents || 0 },
       name: camp.name,
       season: "",
       ages: camp.ages,

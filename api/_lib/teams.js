@@ -62,6 +62,13 @@ const C = {
 const METHODS = ["online", "facility", "check"];
 const CACHE_MS = 60000;
 
+/* A team or town camp paid online carries a flat processing fee, once per
+   registration, not per player. Set here only: the browser is told it to
+   show it, and anything a request sends as a fee or total is ignored. At
+   the facility or by check there is no fee, and public programs never
+   have one. */
+export const TEAM_ONLINE_FEE_CENTS = 1000;
+
 const production = () => process.env.VERCEL_ENV === "production";
 
 /* --- Reading the tables -------------------------------------------------- */
@@ -185,6 +192,7 @@ function publicCamp(rec, full) {
     priceCents: Math.round(Number(f[C.price] || 0) * 100),
     paymentMethods: METHODS.filter((m) => methods.includes(m)),
     summary: f[C.summary] || "",
+    onlineFeeCents: TEAM_ONLINE_FEE_CENTS,
     full
   };
 }

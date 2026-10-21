@@ -139,6 +139,9 @@
 .media--1x1  { aspect-ratio: 1 / 1; }
 .media--4x5  { aspect-ratio: 4 / 5; }
 .media--3x1  { aspect-ratio: 1280 / 420; }
+/* The Team camps team photo at its own ratio (the source file is 1424 x
+   1104), so the whole team shows at every width with nothing cropped. */
+.media--team-photo { aspect-ratio: 1424 / 1104; }
 
 /* Placeholder note pinned to a corner, for media that sits behind copy. */
 .media--note .media__label {
