@@ -3,12 +3,20 @@
 
    Body: { programSlug, optionId, rateId?, paymentMethod, players[], parent,
            waiverAccepted, photoConsent, marketingOptIn? }
+     or, for a team or town camp,
+         { code, campRef, paymentMethod, players[], parent, ... }
 
    The amount is computed here from the IDs. Any amount in the body is
    ignored. Online payment writes a pending row and returns the provider's
    redirect; the row becomes confirmed only when a verified webhook says
    so. Pay at the facility and pay by check have nothing to verify, so they
    are written confirmed straight away with no provider call.
+
+   A team camp is checked again here from its code: the code must still
+   open that camp, the price comes from Airtable (price x players), the
+   payment method must be one the camp allows, and a camp at capacity is
+   refused. A bad code gets the same answer as on /api/team-code, after
+   the same delay, and counts against the same five a minute.
    ========================================================================== */
 
 import "../_lib/guard.js";
@@ -16,6 +24,7 @@ import { priceCart, CartError, PAYMENT_METHODS, MAX_PLAYERS } from "../_lib/prog
 import { store, StoreUnavailable } from "../_lib/store.js";
 import { provider } from "../_lib/providers/index.js";
 import { json, newRegistrationId } from "../_lib/http.js";
+import { lookup, limited, clientIp, hashIp, holdUntil, NOT_RECOGNISED, TOO_MANY, UNAVAILABLE, AirtableUnreachable } from "../_lib/teams.js";
 
 const MAX_BODY = 20000;
 const EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -58,24 +67,32 @@ export async function POST(request) {
   if (!PAYMENT_METHODS.includes(method)) return json({ error: "Unknown payment method" }, 400);
 
   let cart;
-  try {
-    cart = priceCart({
-      programSlug: body.programSlug,
-      optionId: body.optionId,
-      rateId: body.rateId,
-      playerCount: players.length
-    });
-  } catch (e) {
-    if (e instanceof CartError) return json({ error: e.message }, 400);
-    throw e;
+  let team = null;
+  if (body.code !== undefined || body.campRef !== undefined) {
+    const priced = await priceTeamCamp(request, body, method, players.length);
+    if (priced.response) return priced.response;
+    ({ cart, team } = priced);
+  } else {
+    try {
+      cart = priceCart({
+        programSlug: body.programSlug,
+        optionId: body.optionId,
+        rateId: body.rateId,
+        playerCount: players.length
+      });
+    } catch (e) {
+      if (e instanceof CartError) return json({ error: e.message }, 400);
+      throw e;
+    }
   }
 
   const registrationId = newRegistrationId();
   const record = {
     registration_id: registrationId,
     status: method === "online" ? "pending" : "confirmed",
-    program: `${cart.program.name}, ${cart.program.season}`,
-    option: cart.option.label,
+    program: team ? team.campName : `${cart.program.name}, ${cart.program.season}`,
+    option: team ? "Team camp" : cart.option.label,
+    ...(team ? { team_group: team.groupName, team_camp_ref: team.campRef } : {}),
     players: JSON.stringify(players),
     parent_name: `${parent.firstName} ${parent.lastName}`,
     parent_email: parent.email,
@@ -132,4 +149,49 @@ export async function POST(request) {
     }
     return json(body, status);
   }
+}
+
+/* { cart, team } for a team camp, or { response } refusing it. */
+async function priceTeamCamp(request, body, method, playerCount) {
+  const started = Date.now();
+  const ip = clientIp(request);
+  const log = (result) => console.log("team-code", JSON.stringify({ ip: hashIp(ip), result, at: "checkout" }));
+  if (limited(ip)) {
+    log("rate_limited");
+    await holdUntil(started);
+    return { response: json(TOO_MANY, 429) };
+  }
+
+  let found = null;
+  try {
+    const db = store();
+    found = typeof body.code === "string" ? await lookup(body.code, (ref) => db.countConfirmedTeamCamp(ref)) : null;
+  } catch (e) {
+    console.error("checkout/session team lookup", e.name);
+    if (e instanceof AirtableUnreachable) {
+      log("unavailable");
+      await holdUntil(started);
+      return { response: json(UNAVAILABLE, 503) };
+    }
+    found = null;
+  }
+  const camp = found && found.camps.find((c) => c.ref === Number(body.campRef));
+  if (!camp) {
+    log("fail");
+    await holdUntil(started);
+    return { response: json(NOT_RECOGNISED, 404) };
+  }
+  log("ok");
+
+  if (camp.full) return { response: json({ error: "This camp is full." }, 400) };
+  if (!camp.paymentMethods.includes(method)) return { response: json({ error: "This camp does not take that payment method." }, 400) };
+
+  const unitCents = camp.priceCents;
+  return {
+    team: { campName: camp.name, groupName: found.group.name, campRef: camp.ref },
+    cart: {
+      amountCents: unitCents * playerCount,
+      lineItems: [{ name: camp.name, unitCents, quantity: playerCount }]
+    }
+  };
 }

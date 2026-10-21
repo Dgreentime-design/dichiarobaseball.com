@@ -4,7 +4,8 @@
      program, option }
 
    What the confirmation screen polls after the redirect back from payment.
-   Nothing personal comes back, only enough to render the right state. */
+   Nothing personal comes back, only enough to render the right state, and
+   nothing that names a team or town camp. */
 
 import "../../_lib/guard.js";
 import { store } from "../../_lib/store.js";
@@ -21,7 +22,9 @@ export async function GET(request) {
       status: reg.status,
       paymentMethod: reg.payment_method,
       amountCents: Math.round(reg.amount * 100),
-      program: reg.program,
+      /* A team camp is named only to the browser that holds its code:
+         this GET says "Team camp", never the camp or the group. */
+      program: reg.team_group ? "Team camp" : reg.program,
       option: reg.option
     });
   } catch (e) {

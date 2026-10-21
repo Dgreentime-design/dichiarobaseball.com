@@ -380,3 +380,49 @@ main:has(> .step-panel):not(:has(> .step-panel:not([hidden]))) { min-height: 100
 /* --- Step panels --------------------------------------------------------- */
 
 .step-panel[hidden] { display: none; }
+
+/* --- Team and town codes --------------------------------------------------
+   The code from a flyer, on Camps (under Team/Town only), Team camps and
+   the register page's camp picker. A .form-card with the site's input and
+   button. The code is set in the mono face and shown in capitals. */
+
+.team-code { align-content: start; }
+.programs__grid > .team-code { grid-column: 1 / -1; }
+.programs__grid > .team-code[hidden] { display: none; }
+.team-code__head { display: grid; gap: var(--s-3); }
+.team-code__lede { color: var(--c-muted); max-width: 60ch; }
+.team-code__row { display: flex; gap: 12px; align-items: stretch; }
+.team-code__row .input { flex: 1; min-width: 0; }
+.team-code__row .btn { flex: none; }
+.input--code {
+  font-family: var(--f-mono); text-transform: uppercase; letter-spacing: 0.04em;
+}
+.input--code::placeholder { text-transform: none; letter-spacing: 0; }
+.team-code__form.is-invalid .input { border-color: var(--c-red); box-shadow: inset 0 0 0 1px var(--c-red); }
+.team-code .arrow-link { justify-self: start; min-height: var(--tap); }
+@media (min-width: 900px) {
+  .team-code--wide { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); column-gap: var(--s-9); align-items: end; }
+  .team-code--wide > .arrow-link { grid-column: 1 / -1; }
+}
+@media (max-width: 479px) {
+  .team-code__row { flex-direction: column; }
+  .team-code__row .btn { width: 100%; }
+}
+
+/* The camp picker: one choice per live camp. A full camp is shown, greyed,
+   and cannot be chosen. */
+.team-camps { display: grid; }
+.team-camp .choice__copy { gap: 6px; }
+/* Inside .choice__copy, whose spans are the small muted detail lines, so
+   the name row and the price restate their own color and size. */
+.choice__copy .team-camp__top { display: flex; justify-content: space-between; align-items: baseline; gap: var(--s-4); flex-wrap: wrap; color: var(--c-ink); font-size: inherit; }
+.choice__copy .team-camp__price { font-family: var(--f-mono); font-size: var(--t-data-l); color: var(--c-ink); line-height: var(--lh-tight); }
+.choice.is-full { cursor: not-allowed; background: var(--c-surface); }
+.choice.is-full .choice__copy strong { color: var(--c-muted); }
+.choice__copy .team-camp__price .chip { color: var(--c-bone); font-size: var(--t-eyebrow); line-height: 1.5; }
+.choice[hidden] { display: none; }
+.team-pick { display: grid; gap: var(--s-8); }
+.team-pick[hidden], [data-team-entry][hidden] { display: none; }
+/* A button styled as the back link: no default padding, so it lines up
+   with the heading above it. */
+.reg__head .reg__back { padding: 0; }

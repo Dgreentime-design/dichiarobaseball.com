@@ -17,10 +17,13 @@
    polls /api/registration/:id/status until the server, which only learns
    of a payment from a verified webhook, says confirmed or failed.
 
-   Town and league codes are not built. When they are, a code goes to the
-   server and one rate comes back. No rate, code or town name may ever
-   appear in a public payload, or anyone can read the page source and see
-   which towns pay less. See the registration build spec.
+   Team and town camps: register.html?code=<code> (the flyer's QR code) or
+   ?team=1 after a code was entered on Camps or Team camps. The code goes
+   to /api/team-code, which answers with that group's live camps; nothing
+   about any group is in this page. The code is taken out of the address
+   bar at once. The family picks a camp (step 0), then the same three
+   steps. Checkout sends the code and the camp's ref, never a price, and
+   the server checks and prices it again.
    ========================================================================== */
 
 (function () {
@@ -29,7 +32,8 @@
   var root = document.querySelector("[data-progress]");
   if (!root) return;
 
-  var state = { step: 1, method: "online", player: "", program: null, option: null };
+  var state = { step: 1, method: "online", player: "", program: null, option: null, team: null };
+  var TEAM_KEY = "dbsa-team";
   var STORE_KEY = "dbsa-registration";
 
   /* ?plan= on the program page's links, mapped to option IDs. */
@@ -81,7 +85,7 @@
      packages and single sessions do not, so no date list is shown for them
      rather than a list the parent has not bought. */
   function wholeProgram(option) {
-    return !!option && (option.id === "full" || option.later.length > 0);
+    return !!option && (option.whole || option.id === "full" || option.later.length > 0);
   }
 
   function laterText(o) {
@@ -113,13 +117,15 @@
     try {
       var p = state.program;
       if (p) {
-        var meta = gaItems[p.slug] || {};
+        /* A team camp goes to analytics as "Team camp", never by its own
+           or its group's name. */
+        var meta = p.team ? { item_name: "Team camp", item_category: "team" } : gaItems[p.slug] || {};
         var cents = typeof amountCents === "number" ? amountCents
           : state.option ? state.option.dueNowCents
           : Math.min.apply(null, p.options.map(function (o) { return o.dueNowCents; }));
         out.currency = "USD";
         out.value = cents / 100;
-        out.items = [{ item_id: p.slug, item_name: meta.item_name || p.name + ", " + p.season,
+        out.items = [{ item_id: p.team ? "team-camp" : p.slug, item_name: meta.item_name || p.name + ", " + p.season,
           item_category: meta.item_category || "both", price: cents / 100, quantity: 1 }];
       }
     } catch (e) { out = {}; }
@@ -172,10 +178,17 @@
     setAll("[data-program-day]", when(s));
     setAll("[data-program-sessions]", dates.length ? String(dates.length) : "");
     setAll("[data-program-where]", p.venues.map(function (v) { return v.address.split(",")[0]; }).join(" and "));
-    set("[data-line-name]", p.name + ", " + p.season);
+    set("[data-line-name]", p.season ? p.name + ", " + p.season : p.name);
+    setAll(".summary__eyebrow", p.team ? p.team.group + " \u00b7 Team camp" : "You are registering for");
+    renderPayments(p.paymentMethods || ["online", "facility", "check"]);
 
     var again = document.querySelector("[data-register-again]");
-    if (again) again.setAttribute("href", "register.html?program=" + encodeURIComponent(p.slug));
+    if (again) again.setAttribute("href", p.team ? "register.html?team=1" : "register.html?program=" + encodeURIComponent(p.slug));
+    var back = document.querySelector("[data-back-link]");
+    if (back) {
+      back.textContent = p.team ? "Back to your camps" : "Back to the camp page";
+      back.setAttribute("href", p.team ? "#step-0" : "camps-and-clinics.html");
+    }
 
     var box = document.querySelector("[data-options]");
     if (p.options.length > 1) {
@@ -232,7 +245,7 @@
       else if (n === state.step) m.setAttribute("data-state", "now");
       else m.removeAttribute("data-state");
     });
-    if (root) root.hidden = state.step > 3;
+    if (root) root.hidden = state.step < 1 || state.step > 3;
 
     /* The waiver carries the date it is actually signed. */
     if (state.step === 2) {
@@ -321,6 +334,28 @@
   });
 
   /* --- Payment method ----------------------------------------------------- */
+
+  var PAY_WORDS = { online: "online", facility: "at the facility", check: "by check" };
+
+  /* Only the ways this program or camp can be paid. A team camp names its
+     own; the server refuses any other. */
+  function renderPayments(methods) {
+    var first = null;
+    Array.prototype.forEach.call(document.querySelectorAll('input[name="pay"]'), function (input) {
+      var allowed = methods.indexOf(input.value) !== -1;
+      input.closest(".choice").hidden = !allowed;
+      input.disabled = !allowed;
+      if (allowed && !first) first = input;
+    });
+    var current = document.querySelector('input[name="pay"]:checked');
+    var pick = current && !current.disabled ? current : first;
+    if (pick) { pick.checked = true; pick.dispatchEvent(new Event("change")); }
+    set("[data-pay-note]", methods.length >= 3
+      ? "This camp accepts all three. Pick the one that suits you."
+      : methods.length === 1
+        ? "This camp is paid " + PAY_WORDS[methods[0]] + "."
+        : "This camp can be paid " + methods.map(function (m) { return PAY_WORDS[m]; }).join(" or ") + ".");
+  }
 
   Array.prototype.forEach.call(document.querySelectorAll('input[name="pay"]'), function (input) {
     input.addEventListener("change", function () {
@@ -459,9 +494,11 @@
       ref: ctx.id || ""
     };
 
-    var program = ctx.programLabel || (p ? p.name + ", " + p.season : "");
+    /* A team camp's name comes from the camp this browser picked; the
+       status endpoint only ever says "Team camp". */
+    var program = (p && p.team ? p.name : ctx.programLabel) || (p ? (p.season ? p.name + ", " + p.season : p.name) : "");
     var option = ctx.optionLabel || (o ? o.label : "");
-    var about = [program, option].filter(Boolean).join(". ");
+    var about = [program, option !== program ? option : ""].filter(Boolean).join(". ");
     var lede = (about ? about + (start ? ", starting " + long(start) : "") + ". " : "") + fill(c.lede, values);
 
     set("[data-confirm-eyebrow]", c.eyebrow);
@@ -568,8 +605,6 @@
     track("add_payment_info", cart({ payment_type: state.method }));
 
     var payload = {
-      programSlug: state.program.slug,
-      optionId: state.option.id,
       paymentMethod: state.method,
       players: [{
         firstName: val("p1-first"),
@@ -588,6 +623,13 @@
       photoConsent: checked("photo-consent"),
       marketingOptIn: checked("marketing-opt-in")
     };
+    if (state.team) {
+      payload.code = state.team.code;
+      payload.campRef = state.team.camp.ref;
+    } else {
+      payload.programSlug = state.program.slug;
+      payload.optionId = state.option.id;
+    }
 
     fetch("/api/checkout/session", {
       method: "POST",
@@ -597,7 +639,7 @@
       .then(function (res) {
         return res.json().catch(function () { return {}; }).then(function (data) {
           if (!res.ok) {
-            var failed = new Error(data.error || "Something went wrong.");
+            var failed = new Error(data.message || data.error || "Something went wrong.");
             failed.status = res.status;
             throw failed;
           }
@@ -606,7 +648,8 @@
       })
       .then(function (data) {
         if (data.redirectUrl) {
-          remember({ id: data.registrationId, player: state.player, program: state.program.slug, option: state.option.id });
+          remember({ id: data.registrationId, player: state.player, program: state.program.slug, option: state.option.id,
+            team: state.team ? { group: state.team.group, camp: state.team.camp, check: state.team.check } : null });
           /* Sent before leaving for the payment page, and the navigation
              waits for it at most 800ms; at once if the tag is blocked. */
           track("checkout_redirect", cart({ transaction_id: data.registrationId }), function () {
@@ -661,7 +704,8 @@
     var mine = saved && saved.id === id ? saved : null;
     if (mine && mine.player) state.player = mine.player;
 
-    var ready = mine && mine.program
+    if (mine && mine.team) useProgram(campProgram(mine.team.camp, mine.team.group.name, mine.team.check), null);
+    var ready = mine && mine.program && !mine.team
       ? loadProgram(mine.program).then(function (p) { if (p) useProgram(p, mine.option); }).catch(function () {})
       : Promise.resolve();
 
@@ -733,6 +777,149 @@
     });
   }
 
+  /* --- Team and town camps -------------------------------------------------- */
+
+  /* The camp in the shape the steps render, from what /api/team-code sent.
+     One option, the camp itself, priced per player by the server. */
+  function campProgram(camp, groupName, check) {
+    return {
+      slug: null,
+      team: { group: groupName },
+      name: camp.name,
+      season: "",
+      ages: camp.ages,
+      /* The data says "Sundays"; when() adds the plural itself. */
+      schedule: { day: (camp.day || "").replace(/s$/i, ""), time: camp.time || null, groups: [], dates: camp.dates },
+      venues: [camp.venue],
+      options: [{ id: "team", label: "Team camp", dueNowCents: camp.priceCents, totalCents: camp.priceCents, later: [], whole: true }],
+      paymentMethods: camp.paymentMethods,
+      check: check
+    };
+  }
+
+  function range(dates) {
+    if (!dates.length) return "";
+    var a = dates[0], b = dates[dates.length - 1];
+    if (a === b) return longYear(a);
+    return a.slice(0, 4) === b.slice(0, 4)
+      ? short(a) + " to " + short(b) + ", " + b.slice(0, 4)
+      : short(a) + ", " + a.slice(0, 4) + " to " + short(b) + ", " + b.slice(0, 4);
+  }
+  function hours(h) { return h === 1 ? "1 hour" : h + " hours"; }
+
+  var teamPanel = document.querySelector('[data-step="0"]');
+  var teamEntry = document.querySelector("[data-team-entry]");
+  var teamPick = document.querySelector("[data-team-pick]");
+  var teamChange = document.querySelector("[data-team-change]");
+  var teamResult = null;
+
+  function showEntry(focus) {
+    teamEntry.hidden = false;
+    if (focus) { var input = teamEntry.querySelector("input"); if (input) input.focus(); }
+  }
+
+  /* The group's camps, from { code, result }. */
+  function showTeam(team) {
+    var r = team.result, name = r.group.name;
+    teamResult = team;
+    try { sessionStorage.setItem(TEAM_KEY, JSON.stringify(team)); } catch (e) { /* this tab only, and only a convenience */ }
+    set("[data-team-title]", name + " camps");
+    teamChange.textContent = "Not " + name + "? Use a different code";
+    document.querySelector("[data-team-change-row]").hidden = false;
+    teamEntry.hidden = true;
+    var lede = document.querySelector("[data-team-lede]");
+
+    var box = document.querySelector("[data-team-camps]");
+    if (!r.camps.length) {
+      lede.textContent = "Registration for " + name + " camps isn\u2019t open yet. Check back soon, or call (201) 773-6858.";
+      lede.hidden = false;
+      teamPick.hidden = true;
+      box.innerHTML = "";
+    } else {
+      lede.hidden = true;
+      box.innerHTML = r.camps.map(function () {
+        return '<label class="choice team-camp"><input type="radio" name="team-camp">' +
+          '<span class="choice__copy"><span class="team-camp__top"><strong></strong><span class="team-camp__price"></span></span>' +
+          '<span data-l1></span><span data-l2></span><span data-l3></span></span></label>';
+      }).join("");
+      Array.prototype.forEach.call(box.querySelectorAll(".choice"), function (label, i) {
+        var c = r.camps[i];
+        var input = label.querySelector("input");
+        input.value = String(c.ref);
+        input.disabled = c.full;
+        label.classList.toggle("is-full", c.full);
+        label.querySelector("strong").textContent = c.name;
+        var price = label.querySelector(".team-camp__price");
+        if (c.full) price.innerHTML = '<span class="chip">Full</span>';
+        else price.textContent = money(c.priceCents);
+        label.querySelector("[data-l1]").textContent = [c.ages, [c.day, span(c.time)].filter(Boolean).join(", ")].filter(Boolean).join(" \u00b7 ");
+        label.querySelector("[data-l2]").textContent = range(c.dates) + " \u00b7 " + c.dates.length + (c.dates.length === 1 ? " session" : " sessions");
+        label.querySelector("[data-l3]").textContent = [c.weeks ? c.weeks + (c.weeks === 1 ? " week" : " weeks") : "",
+          c.sessionHours ? hours(c.sessionHours) + " a session" : ""].filter(Boolean).join(" \u00b7 ");
+        input.addEventListener("change", function () {
+          box.closest(".reg-card").classList.remove("is-invalid");
+          var err = teamPick.querySelector("[data-submit-error]");
+          if (err) err.textContent = "";
+        });
+      });
+      teamPick.hidden = false;
+    }
+    state.step = 0;
+    renderStep(false);
+  }
+
+  function startTeam(params) {
+    state.step = 0;
+    renderStep(false);
+    var code = params.get("code");
+    if (code) {
+      /* The flyer's QR link. The code leaves the address bar at once, so it
+         is not in the history, a bookmark or a shared screenshot. */
+      if (history.replaceState) history.replaceState(null, "", "register.html");
+      var input = teamEntry.querySelector("input");
+      input.value = code.toUpperCase();
+      var form = teamEntry.querySelector("form");
+      if (form.requestSubmit) form.requestSubmit(); else form.dispatchEvent(new Event("submit", { cancelable: true }));
+      return;
+    }
+    var saved = null;
+    try { saved = JSON.parse(sessionStorage.getItem(TEAM_KEY) || "null"); } catch (e) { saved = null; }
+    if (saved && saved.result && saved.result.group) showTeam(saved);
+    else showEntry(false);
+  }
+
+  if (teamPanel) {
+    teamEntry.querySelector("form").addEventListener("dbsa:team-code", function (e) {
+      e.preventDefault();
+      showTeam(e.detail);
+      var h = document.getElementById("s0-title");
+      h.setAttribute("tabindex", "-1"); h.focus({ preventScroll: true });
+    });
+    teamChange.addEventListener("click", function () { showEntry(true); });
+
+    teamPick.addEventListener("submit", function (e) {
+      e.preventDefault();
+      var picked = teamPick.querySelector('input[name="team-camp"]:checked');
+      if (!picked) {
+        teamPick.querySelector(".reg-card").classList.add("is-invalid");
+        showError(teamPick, "Choose a camp to continue.");
+        var first = teamPick.querySelector('input[name="team-camp"]:not(:disabled)');
+        if (first) first.focus();
+        return;
+      }
+      var camp = teamResult.result.camps.filter(function (c) { return String(c.ref) === picked.value; })[0];
+      state.team = { code: teamResult.code, camp: camp, group: teamResult.result.group, check: teamResult.result.check };
+      useProgram(campProgram(camp, teamResult.result.group.name, teamResult.result.check), null);
+      if (once("dbsa-ga-begin:team-camp:" + camp.ref)) track("begin_checkout", cart({}));
+      go(1);
+    });
+
+    var backLink = document.querySelector("[data-back-link]");
+    if (backLink) backLink.addEventListener("click", function (e) {
+      if (state.team) { e.preventDefault(); go(0); }
+    });
+  }
+
   /* --- Start --------------------------------------------------------------- */
 
   /* The confirmation is never reachable from the address bar alone: #step-4
@@ -742,7 +929,9 @@
   var params = new URLSearchParams(window.location.search);
   if (!returning(params)) {
     var slug = params.get("program");
-    if (!slug) {
+    if (params.has("code") || params.get("team")) {
+      startTeam(params);
+    } else if (!slug) {
       missing();
     } else {
       loadProgram(slug)
