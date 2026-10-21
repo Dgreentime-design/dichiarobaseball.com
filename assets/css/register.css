@@ -71,6 +71,10 @@
 .choice__copy { display: grid; gap: 4px; }
 .choice__copy strong { font-weight: 600; font-size: var(--t-heading-s); }
 .choice__copy span { font-size: var(--t-body-s); color: var(--c-muted); line-height: 1.5; }
+/* The "+$10" tag beside "Online now" on a team camp: a .chip, restating
+   its own color and size over the muted detail spans above. */
+.choice__copy .choice__fee { color: var(--c-bone); font-size: var(--t-eyebrow); margin-left: var(--s-3); vertical-align: 2px; }
+.choice__copy .choice__fee[hidden] { display: none; }
 
 /* --- Contact page layout ------------------------------------------------- */
 
@@ -257,6 +261,12 @@ main:has(> .step-panel):not(:has(> .step-panel:not([hidden]))) { min-height: 100
 .summary__fact dd { margin: 0; font-size: var(--t-body-m); }
 .summary__fact--rate dd { color: var(--c-turf); }
 .summary__total { display: flex; align-items: baseline; justify-content: space-between; gap: var(--s-5); }
+.summary__fee { display: flex; align-items: baseline; justify-content: space-between; gap: var(--s-5); font-size: var(--t-body-s); color: var(--c-muted); }
+/* The fee and the total read as one group: the total sits --s-3 under the
+   fee instead of the summary's full --s-6 grid gap. */
+.summary__fee:not([hidden]) + .summary__total { margin-top: calc(var(--s-3) - var(--s-6)); }
+.summary__fee dd { margin: 0; font-family: var(--f-mono); color: var(--c-ink); }
+.summary__fee[hidden] { display: none; }
 .summary__total dt { font-weight: 700; font-size: var(--t-heading-m); }
 .summary__total dd { margin: 0; font-family: var(--f-sans); font-weight: 900; font-size: var(--t-heading-l); letter-spacing: var(--ls-heading); }
 .summary__note { font-size: var(--t-body-s); color: var(--c-muted); }
@@ -291,6 +301,7 @@ main:has(> .step-panel):not(:has(> .step-panel:not([hidden]))) { min-height: 100
 .line__copy small { font-size: var(--t-body-s); color: var(--c-muted); }
 .line__price { font-family: var(--f-mono); font-size: var(--t-data-l); flex: none; }
 .line--total { border-top: 1px solid var(--c-ink); padding-top: var(--s-5); }
+.line[hidden] { display: none; }
 .line--total .line__copy { font-weight: 700; font-size: var(--t-heading-m); }
 .line--total .line__price { font-family: var(--f-sans); font-weight: 900; font-size: var(--t-heading-l); letter-spacing: var(--ls-heading); }
 

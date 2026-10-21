@@ -7,9 +7,10 @@
      registration_id, status, program, option, players, parent_name,
      parent_email, parent_phone, amount, payment_method, provider_order_id,
      checkout_session_id, waiver_accepted, photo_consent, webhook_note,
-     marketing_opt_in, marketing_opt_in_at, team_group, team_camp_ref
+     marketing_opt_in, marketing_opt_in_at, team_group, team_camp_ref,
+     processing_fee
 
-   webhook_note, the two marketing fields and the two team fields are
+   webhook_note, the two marketing fields and the three team fields are
    optional: where the table lacks one, writes go ahead without it.
 
    created_at is Airtable's own created-time field and is never written.
@@ -59,7 +60,7 @@ function airtableTable(table) {
 /* Fields a table may not have yet. If Airtable says one does not exist,
    the same row is written without it rather than lost, and the log names
    the field, never its value. Every other error still fails the write. */
-const OPTIONAL_FIELDS = ["webhook_note", "marketing_opt_in", "marketing_opt_in_at", "team_group", "team_camp_ref"];
+const OPTIONAL_FIELDS = ["webhook_note", "marketing_opt_in", "marketing_opt_in_at", "team_group", "team_camp_ref", "processing_fee"];
 
 async function writeOptional(call, path, method, fields, wrap) {
   let current = fields;

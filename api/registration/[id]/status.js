@@ -1,7 +1,7 @@
 /* GET /api/registration/:id/status
 
    { status: "pending" | "confirmed" | "failed", paymentMethod, amountCents,
-     program, option }
+     processingFeeCents, program, option }
 
    What the confirmation screen polls after the redirect back from payment.
    Nothing personal comes back, only enough to render the right state, and
@@ -22,6 +22,9 @@ export async function GET(request) {
       status: reg.status,
       paymentMethod: reg.payment_method,
       amountCents: Math.round(reg.amount * 100),
+      /* The part of amountCents that was a team camp's online fee, 0 for
+         everything else. */
+      processingFeeCents: Math.round((Number(reg.processing_fee) || 0) * 100),
       /* A team camp is named only to the browser that holds its code:
          this GET says "Team camp", never the camp or the group. */
       program: reg.team_group ? "Team camp" : reg.program,
